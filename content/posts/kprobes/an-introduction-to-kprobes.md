@@ -1,5 +1,5 @@
 ---
-title: "译 | An Introduction to Kprobes"
+title: "译｜2005｜ An Introduction to Kprobes"
 date: 2020-04-11T15:52:54+08:00
 description:
 # draft: false
