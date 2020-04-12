@@ -1,0 +1,33 @@
+[[main]]
+  identifier = "about"
+  name = "about"
+  url = "about"
+  weight = 1
+
+[[main]]
+  identifier = "archive"
+  name = "archive"
+  url = "archive"
+  weight = 2
+
+[[main]]
+  identifier = "posts"
+  name = "posts"
+  url = "posts"
+  weight = 3
+
+[[main]]
+  identifier = "Github"
+  name = "Github"
+  url = "https://github.com/jayce"
+  weight = 4
+
+# [[main]]
+#   parent = "gallery"
+#   name = "cartoon"
+#   url = "gallery/cartoon"
+
+# [[main]]
+#   parent = "gallery"
+#   name = "photo"
+#   url = "gallery/photo"

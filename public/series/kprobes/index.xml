@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" 
+  xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+  xmlns:dc="http://purl.org/dc/elements/1.1/" 
+  xmlns:atom="http://www.w3.org/2005/Atom" 
+  xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" 
+  xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title>kprobes on Blog</title>
+    <link>https://jayce.github.io/public/series/kprobes/</link>
+    <description>Recent content in kprobes on Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>©{year}, All Rights Reserved</copyright>
+    <lastBuildDate>Sat, 11 Apr 2020 15:52:54 +0800</lastBuildDate>
+    
+        <atom:link href="https://jayce.github.io/public/series/kprobes/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    
+
+      
+      <item>
+        <title>译 | An Introduction to Kprobes</title>
+        <link>https://jayce.github.io/public/posts/kprobes/an-introduction-to-kprobes/</link>
+        <pubDate>Sat, 11 Apr 2020 15:52:54 +0800</pubDate>
+        
+        <atom:modified>Sat, 11 Apr 2020 15:52:54 +0800</atom:modified>
+        <guid>https://jayce.github.io/public/posts/kprobes/an-introduction-to-kprobes/</guid>
+        <description>译者序 本文翻译自 2005 年在 LWN 发布的，一篇 KProbes 入门级的文章：An introduction to KProbes，当时的内核版本为 2.6.11。文中的配图是用 Omnigraffle.app 重新做了一份，顺着</description>
+        
+        <dc:creator>jayce</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>kprobes</category>
+            
+          
+        
+        
+          
+            
+              <category>Dynamic Trace</category>
+            
+          
+        
+        
+          
+            
+              <category>kprobes</category>
+            
+          
+        
+      </item>
+      
+
+    
+  </channel>
+</rss>
