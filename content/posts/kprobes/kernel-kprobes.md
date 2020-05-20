@@ -3,7 +3,7 @@ title: "译｜2019｜Kernel Probes (Kprobes)"
 date: 2020-05-19T11:03:35+08:00
 description:
 # draft: false
-hideToc: true
+hideToc: false
 enableToc: true
 enableTocContent: false
 tags:
@@ -20,15 +20,21 @@ tags:
 * 查查以 TOC 作为函数调用的架构，及其原理
 * CPU 如何区分二进制中的指令和数据，或者说是可执行文件如何存储指令以及数据的？
 * 指令与函数怎么对应？编译原理？
-
-术语：
-* Kprobes：探测机制、框架，依赖于硬件的特定功能实现的
-* 探测点：用来观测执行经过的某个点
-* 探针：安插到探测点上的一个探头，用来观测经过探测点的上下文，用户使用的
 -->
 
 ## 译者序
 这篇文章翻译自 Linux 内核源码树中的 [kprobes.txt](https://github.com/torvalds/linux/blob/master/Documentation/kprobes.txt) 文件，此文件描述了 Kprobes 的概念、工作原理、限制等内容。因为文件的最后一次提交是在 2019 年，所以文章标题中的年份也就是指这个意思的。
+
+下面的表格是对关键词的一点解释，概念其实就这几个。
+
+关键词    | 解释
+--------  | ----
+Kprobes   | 指的是内核的探测机制、框架，依赖于硬件的特定功能实现的，比如 int3 指令
+kprobe    | 指的是 Kprobes 的对象或结构体，关联探测点和探针
+probepoint| **探测点**，一个可用于观察、监视目的的具体位置，比如：一个函数的入口、返回地址
+probe     | **探针**，在探测点做具体事情的对象，比如：分析、追踪
+
+**如果用一句话解释 Kprobes 原理就是**：Kprobes 在探测点上注册了一些探针，当 CPU 执行到探测点的时候 Kprobes 会调用所有相关探针的回调函数。CPU 是怎么从执行流转到 Kprobes 的呢？
 
 **注：因为水平有限，文中难免存在遗漏或者错误的地方。如有疑问，建议直接阅读原文。**
 ***
@@ -48,7 +54,7 @@ routine to be `invoked` when the breakpoint is hit.
 ## 概念： Kprobes 和 Return Probes
 Kprobes 能够让你动态的介入内核的任意函数，且无中断的收集调试和性能信息。几乎可以调试任意内核代码地址[^1]，指定一个回调函数，在断点命中的时候调用。
 
-[^1]: 有部分内核代码是不能被捕获的，详情见 **kprobes 黑名单**
+[^1]: 有部分内核代码是不能被捕获的，详情见[黑名单](#黑名单)
 
 <!--
 There are currently two types of probes: kprobes, and kretprobes
@@ -93,7 +99,7 @@ When a kprobe is registered, Kprobes `makes a copy of` the probed
 `instruction` and replaces the first byte(s) of the probed instruction
 with a breakpoint instruction (e.g., int3 on i386 and x86_64).
 -->
-## Kprobe 如何工作？
+### Kprobe 如何工作？
 Kprobes 在注册了一个 kprobe 后，复制被探测的指令，并且把被探测指令的第一个字节替换为断点指令（例如：在 i386、x86_64 平台上的 `int3`）。
 
 <!--
@@ -130,7 +136,7 @@ path etc. Since it operates on a running kernel and needs deep knowledge
 of computer architecture and `concurrent` computing, you can easily shoot
 your foot.
 -->
-## 改变执行路径
+### 改变执行路径
 kprobes 能够探测一段正在运行的内核代码，因此它能改变寄存器，包括指令指针。类似保存栈帧、恢复执行路径，这类操作需要非常地小心，因为 kprobes 作用在正在运行的内核上面，需要深入的了解计算结构体系和并行计算才行。
 
 <!--
@@ -148,7 +154,6 @@ TOC for your function in your module, and recover the old one after
 returning from it.
 -->
 注意，在那些使用 TOC （目录）进行函数调用的架构上，这种操作可能会更困难，因为你必须在你的模块中为你的函数设置新的 TOC，并且在函数返回之后还要恢复先前的 TOC。
-> TOC 函数调用机制？
 
 <!--
 ## Return Probes
@@ -163,9 +168,9 @@ the return address with the address of a “`trampoline`.”  The trampoline
 is an `arbitrary` piece of code — typically just a nop instruction.
 At boot time, Kprobes registers a kprobe at the trampoline.
 -->
-## Return 探针
+### Return 探针
 
-### Return 探针如何工作的？
+#### Return 探针如何工作的？
 在你调用 `register_kretprobe()` 函数的时候， Kprobes 会在函数的入口处建立一个 kprobe。在调用被探测函数的时候命中这个探针， Kprobes 会保存 return 地址的一个副本，且用一个 “trampoline”（蹦床）的地址替换 return 地址。trampoline 是一段任意的代码 — 通常只是 nop 指令。在启动的时候， Kprobes 在蹦床注册了一个 kprobe。
 
 <!--
@@ -222,7 +227,7 @@ returns a non-zero error then Kprobes leaves the return address as is, and
 the kretprobe has no further effect for that particular function instance.
 生词：placed by, corresponding（形容词）, guarantee, further（进一步）, effect（效果，影响）
 -->
-### Kretprobe 入口回调函数
+#### Kretprobe 入口回调函数
 Kretprobes 还提供一个可选的用户回调函数，它运行于函数入口。这个回调函数通过 kretprobe 结构体 `entry_handler` 字段指定。每当命中放置在函数入口处的 kprobe 时，就会调用用户自定义的 `entry_handler` 函数。如果 `entry_handler` 函数返回零（成功），那么对应的 return 回调函数保证会在函数返回的时候被调用。如果 `entry_handler` 返回一个非零错误， Kprobes 会保留返回地址，而 kretprobe 对特定的函数实例没有影响。
 
 <!--
@@ -234,8 +239,8 @@ data between corresponding user entry and return handlers. The size of each
 private data object can be specified at kretprobe registration time by
 setting the data_size field of the kretprobe struct. This data can be
 accessed through the data field of each kretprobe_instance object.
--->
 生词：invocation（名词，调用）, corresponding
+-->
 使用与它们关联的唯一对象 kretprobe_instance，可以匹配许多的 entry 和 return 回调函数调用。另外，用户也可以把每个 return-instace 的私有数据指定为每个 kretprobe_instance 对象的一部分。这在 entry 和 return 回调函数之间共享私有数据时尤其有用。每个私有数据对象的大小可以在 kretprobe 注册时通过 kretprobe 结构体中的 data_size 字段指定。私有数据可以通过每个 kretprobe_instance 对象的 data 字段访问。
 
 <!--
@@ -255,7 +260,7 @@ the “debug.kprobes_optimization” kernel parameter is set to 1 (see
 sysctl(8)), Kprobes tries to reduce probe-hit `overhead` by using a jump
 instruction instead of a breakpoint instruction at each probepoint.
 -->
-## 跳转优化如何工作的？
+### 跳转优化如何工作的？
 如果内核使用 CONFIG_OPTPROBES=y （x86/x86-64、非抢占式内核上该标记自动地设置为 y）编译，且内核参数 “debug.kprobes_optimization” 设置为 1 （见 sysctl(8) ），那么 Kprobes 尝试在每个探测点用 jump 指令代替 breakpoint 指令来减少命中探针的开销。
 
 <!--
@@ -267,7 +272,7 @@ Kprobes inserts an `ordinary`, breakpoint-based kprobe at the specified
 address. So, even if it’s not possible to optimize this particular
 probepoint, there’ll be a probe there.
 -->
-### 初始化 Kprobe
+#### 初始化 Kprobe
 在注册了一个探针试图优化之前，Kprobes 会在指定的地址插入一个普通的，基于断点的 kprobe。所以，即便不能优化这个特定的探测点，也会有一个探针在那儿。
 
 <!--
@@ -293,7 +298,7 @@ Before optimizing a probe, Kprobes `performs` the following safety checks:
 	* For each instruction in the optimized region, Kprobes verifies that
 	the instruction can be executed `out of line`.
 -->
-### 安全检查
+#### 安全检查
 在进行优化探针之前，Kprobes 会做以下安全检查：
 
 * Kprobes 校验会被 jump 指令替换的区域（”已优化的区域“）完全处于一个函数内部。（jump 指令是多字节指令，因此可能会覆盖多个指令）
@@ -318,11 +323,13 @@ instruction sequence:
 	- the instructions from the optimized region
 	- a jump back to the original execution path.
 -->
-### 准备 detour 缓冲区
+#### 准备 detour 缓冲区
+> detour 意思是像交通节点（环岛）那样
+
 接着，Kprobes 准备一个“环形”缓冲区，包含以下指令序列：
 
 * 推进 CPU 寄存器的代码（模拟断点 trap）
-* 调用蹦床代码，再间接调用用户的 probe 回调函数
+* 调用蹦床代码，再间接调用用户的探针回调函数
 * 恢复寄存器的代码
 * 优化区域的指令
 * 跳回原始执行路径的指令
@@ -330,27 +337,27 @@ instruction sequence:
 <!--
 Pre-optimization
 ^^^^^^^^^^^^^^^^^
+
 After preparing the detour buffer, Kprobes verifies that none of the
 following situations exist:
-
 
 	* The probe has a post_handler.
 	* Other instructions in the optimized region are probed.
 	* The probe is disabled.
 -->
-### 优化前
-在准备 detour 缓冲区后， Kprobes 确保以下情况不存在：
+#### 优化前
+在准备 detour 缓冲区后， Kprobes 会检查确保不出现以下情况：
 
-* 这个 probe 有一个 post_handler
-* 优化区域中的其他指令被探测
-* probe 被禁用
+* 探针有一个 post_handler 回调函数
+* 在优化区域中的其他指令被探测了
+* 已禁用的探针
 
 <!--
 In any of the above cases, Kprobes won’t start optimizing the probe.
 Since these are temporary situations, Kprobes tries to start
 optimizing it again if the situation is changed.
 -->
-在上述任何一种情况下，Kprobes 都不会优化探针。因为这些都是临时情况，如果情况发生变化的话，Kprobes 会再次尝试优化。
+在上述任何一种情况下，Kprobes 都不会优化探针。因为这都是临时情况，如果情况有变化，Kprobes 会再次进行优化。
 
 <!--
 If the kprobe can be optimized, Kprobes enqueues the kprobe to an
@@ -378,8 +385,8 @@ After that, the Kprobe-optimizer calls stop_machine() to replace
 the optimized region with a jump instruction to the detour buffer,
 using text_poke_smp().
 -->
-### 优化
-Kprobe-optimizer 并不会立即插入 jump 指令，相反为了安全它会先调用 `synchronize_rcu()` 函数，因为在处理优化区域的过程中 CPU 可能会被中断 [^3][^3]。如你所知， `synchronize_rcu()` 函数可以确保所有活跃的中断在调用 `synchronize_rcu()` 的时候已经完成，但前提是 `CONFIG_PREEMPT=n` 的时候。所以，kprobe 的优化版本只支持 `CONFIG_PREEMPT=n` 的内核 [^4][^4]。
+#### 优化
+Kprobe-optimizer 并不会立即插入 jump 指令，相反为了安全它会先调用 `synchronize_rcu()` 函数，因为在处理优化区域的过程中 CPU 可能会被中断 [^3]。如你所知， `synchronize_rcu()` 函数可以确保所有活跃的中断在调用 `synchronize_rcu()` 的时候已经完成，但前提是 `CONFIG_PREEMPT=n` 的时候。所以，kprobe 的优化版本只支持 `CONFIG_PREEMPT=n` 的内核 [^4]。
 
 之后， Kprobe-optimizer 调用 `stop_machine()` 函数替换优化区域，用一个跳转到 detour 缓冲区指令，使用 `text_poke_smp()` 函数。
 
@@ -393,7 +400,7 @@ optimized list.  If the optimization has been done, the jump is
 replaced with the original code (except for an int3 breakpoint in
 the first byte) by using text_poke_smp().
 -->
-### 取消优化
+#### 取消优化
 当优化的 kprobe 被其他 kprobe 注销、禁用或阻塞的时候，它将不会被优化。如果这种情况在优化完成之前发生，则只是将 kprobe 从优化队列中移除。如果优化已经完成，会通过调用 `text_poke_smp()` 函数把 jump 指令替换为原始代码（除了第一个字节中的 int3 断点）。
 
 <!--
@@ -427,12 +434,13 @@ using one of the following techniques:
 geeks 注意：
 跳转优化改变了 kprobe 的 `pre_handler` 的行为。优化前，`pre_handler` 通过改变 `regs->ip` 的同时返回 1 可以改变内核的执行路径。然而，在 probe 被优化的时候，修改会被忽略。因此，如果你想微调内核的执行路径，需要使用一个方法去抑制优化：
 
-	* 给 kprobe 的 post_handler 指定一个空函数
-	* 执行 `sysctl -w debug.kprobes_optimization=n` 命令
+* 给 kprobe 的 post_handler 指定一个空函数
+* 执行 `sysctl -w debug.kprobes_optimization=n` 命令
 
 <!--
 .. _kprobes_blacklist:
-## Blacklist
+Blacklist
+---------
 Kprobes can probe most of the kernel except itself. This means
 that there are some functions where kprobes cannot probe. Probing
 (trapping) such functions can cause a recursive trap (e.g. double
@@ -444,6 +452,7 @@ to specify a blacklisted function.
 Kprobes checks the given probe address `against` the blacklist and
 rejects registering it, if the given address is in the blacklist.
 -->
+### 黑名单
 Kprobes 可以探测除自身以外的大部分内核空间。这表示有一些函数 kprobes 无法探测。探测（trapping）这样的函数会导致递归 trap （比如：双重故障）或者嵌套的 probe 回调函数可能永远不会被调用。如果你想添加一个函数到黑名单中，只需要两个步骤：首先，引入` linux/kprobes.h` 文件；其次，使用 `NOKPROBE_SYMBOL()` 宏指定一个要被列入黑名单的函数。 Kprobes 对照黑名单检查传入的 probe 地址，如果传入的地址在黑名单中会拒绝注册。
 
 <!--
@@ -466,7 +475,8 @@ Kprobes 和 Kretprobes 已在下面的这些结构体系上实现：
 * parisc
 
 <!--
-# Configuring Kprobes
+Configuring Kprobes
+===================
 When configuring the kernel using make menuconfig/xconfig/oldconfig,
 ensure that CONFIG_KPROBES is set to “y”. Under “General setup”, look
 for “Kprobes”.
@@ -479,7 +489,7 @@ Also make sure that CONFIG_KALLSYMS and perhaps even CONFIG_KALLSYMS_ALL
 are set to “y”, since kallsyms_lookup_name() is used by the in-kernel
 kprobe `address` resolution code.
 -->
-# 配置 Kprobes
+## 配置 Kprobes
 在使用 `make menuconfig/xconfig/oldconfig` 配置内核时，确保 `CONFIG_KPROBES ` 设置为 “y”。在 “General setup” 字符后搜索 “Kprobes”。
 
 为了可以加载和卸载基于 Kprobes 的探测模块，请确保将“支持模块加载”（CONFIG_MODULES）和“模块卸载”（CONFIG_MODULE_UNLOAD）设置为 “y”。
@@ -496,7 +506,8 @@ code mapping.
 如果你需要在函数中间插入 probe，也许发现“使用 debug info 编译内核” (`CONFIG_DEBUG_INFO`) 非常有用，因此可以使用 `objdump -d -l vmlinux` 命令去查看源码到目标代码的映射关系。
 
 <!--
-# API Reference
+API Reference
+=============
 The Kprobes API includes a “register” function and an “unregister”
 function for each type of probe. The API also includes “register_*probes”
 and “unregister_*probes” functions for (un)registering arrays of probes.
@@ -504,14 +515,14 @@ Here are `terse`, mini-man-page specifications for these functions and
 the associated probe handlers that you’ll write. See the files in the
 samples/kprobes/ sub-directory for examples.
 -->
-# API 参考
+## API 参考
 Kprobes API 为每种探针类型提供了一个”注册“和“注销”函数。还包括批量注册、注销探针的 `register_*probes` 和 `unregister_*probes` 函数。这有些迷你手册以及将会用到的相关的探针回调函数的简短说明。相关例子，可查看在 `samples/kprobes/` 子目录内的文件。
 
-## register_kprobe
+### register_kprobe
 ```c
 #include <linux/kprobes.h>
 int register_kprobe(struct kprobe *kp);
-```c
+```
 <!--
 Sets a breakpoint at the address kp->addr.  When the breakpoint is
 hit, Kprobes calls kp->pre_handler.  After the probed instruction
@@ -528,13 +539,13 @@ so, its handlers aren’t hit until calling enable_kprobe(kp).
 .. note
 	1. With the introduction of the “symbol_name” field to struct kprobe, the probepoint address resolution will now be taken care of by the kernel. The following will now work:
 
-	kp.symbol_name = “symbol_name”;
+	kp.symbol_name = "symbol_name";
 
 	(64-bit powerpc `intricacies` such as function descriptors are handled `transparently`)
 	2. Use the “offset” field of struct kprobe if the offset into the symbol
 	to install a probepoint is known. This field is used to calculate the
 	probepoint.
-	3. Specify either the kprobe “symbol_name” OR the “addr”. If both are
+	3. Specify either the kprobe "symbol_name" OR the "addr". If both are
 	specified, kprobe registration will fail with -EINVAL.
 	4. With CISC architectures (such as i386 and x86_64), the kprobes code
 	does not validate if the kprobe.addr is at an instruction `boundary`.
@@ -543,24 +554,23 @@ so, its handlers aren’t hit until calling enable_kprobe(kp).
 register_kprobe() returns 0 on success, or a negative errno otherwise.
 -->
 注意：
-	1. 通过引入 `symbol_name` 字段来构造 kprobe，探测点地址解析将会由内核来处理。现在可以使用以下内容：
+1. 通过引入 `symbol_name` 字段来构造 kprobe，探测点地址解析将会由内核来处理。可以使用以下内容：
 
-	`kp.symbol_name = “symbol_name”;`
+	`kp.symbol_name = "symbol_name";`
 
 	（64 位 powepc 错综复杂，例如透明地处理函数描述符）
-	2. 如果在符号中用于安装 probepoint 的偏移量是已知的，使用 kprobes 结构体的 `offset` 字段。这个字段用于计算探测点。
-	3. kprobe 的 `symbol_name` 或者 `addr` 字段都被指定，kprobe 注册会失败且返回 `EINVAL`。
-	4. 使用 CISC 架构（如：i386，x86_64），kprobes 代码不会验证，如果 `kprobe.addr` 在指令边界。谨慎使用 `offset`。
+2. 如果在符号中用于安装探测点的偏移量是已知的，请使用 kprobes 结构体的 `offset` 字段。这个字段用于计算探测点。
+3. kprobe 的 `symbol_name` 或者 `addr` 字段都被指定，kprobe 注册会失败且返回 `EINVAL`。
+4. 使用 CISC 架构（如：i386，x86_64），kprobes 代码不会验证，如果 `kprobe.addr` 在指令边界。谨慎使用 `offset`。
 
 `register_kprobe()` 函数成功返回 0，其他情况返回一个负的 `errno`。
 
-<!-- User’s pre-handler (kp->pre_handler): -->
 用户的 pre-handler（`kp->pre_handler`）函数原型:
 ```c
 #include <linux/kprobes.h>
 #include <linux/ptrace.h>
 int pre_handler(struct kprobe *p, struct pt_regs *regs);
-```c
+```
 <!--
 Called with p pointing to the kprobe associated with the breakpoint,
 and regs pointing to the struct containing the registers saved when
@@ -575,7 +585,7 @@ the breakpoint was hit.  Return 0 here unless you’re a Kprobes geek.
 #include <linux/ptrace.h>
 void post_handler(struct kprobe *p, struct pt_regs *regs,
 		  unsigned long flags);
-```c
+```
 <!--
 p and regs are as described for the pre_handler.  flags always seems to be zero.
 -->
@@ -589,7 +599,7 @@ User’s fault-handler (kp->fault_handler):
 #include <linux/kprobes.h>
 #include <linux/ptrace.h>
 int fault_handler(struct kprobe *p, struct pt_regs *regs, int trapnr);
-```c
+```
 <!--
 p and regs are as described for the pre_handler.  trapnr is the
 architecture-specific trap number associated with the fault (e.g.,
@@ -598,11 +608,11 @@ Returns 1 if it successfully handled the exception.
 -->
 `p` 和 `regs` 同 `pre_handler` 所述 。 `trapnr` 是故障相关的特定架构下的 trap 号（例如：在 i386 上， 13 为普通防护故障，14 为页面故障）。如果成功的处理了异常返回 1。
 
-## register_kretprobe
+### register_kretprobe
 ```c
 #include <linux/kprobes.h>
 int register_kretprobe(struct kretprobe *rp);
-```c
+```
 <!--
 Establishes a return probe for the function whose address is
 rp->kp.addr.  When that function returns, Kprobes calls rp->handler.
@@ -624,7 +634,7 @@ User’s return-probe handler (rp->handler):
 #include <linux/ptrace.h>
 int kretprobe_handler(struct kretprobe_instance *ri,
 		      struct pt_regs *regs);
-```c
+```
 <!--
 regs is as described for kprobe.pre_handler.  ri points to the
 kretprobe_instance object, of which the following fields may be of interest:
@@ -636,11 +646,10 @@ kretprobe_instance object, of which the following fields may be of interest:
 	entry-handler” for details.
 -->
 `regs` 同 kprobe.pre_handler 描述那样。`ri` 指向 `kretprobe_instance` 对象，其中可能涉及以下字段：
-
-	* ret_addr：返回地址
-	* rp：指向相关的 kretprobe 对象
-	* task：指向相关的 task 结构体
-	* data：指向每个 return-instace 私有数据，细节参考 “kretprobe entry-handler”。
+ * ret_addr：返回地址
+ * rp：指向相关的 kretprobe 对象
+ * task：指向相关的 task 结构体
+ * data：指向每个 return-instace 私有数据，细节参考 “kretprobe entry-handler”。
 
 <!--
 The regs_return_value(regs) macro provides a simple abstraction to
@@ -653,12 +662,12 @@ The handler’s return value is currently ignored.
 
 目前，回调函数的返回值是被忽略的。
 
-## unregister_*probe
+### unregister_*probe
 ```c
 	#include <linux/kprobes.h>
 	void unregister_kprobe(struct kprobe *kp);
 	void unregister_kretprobe(struct kretprobe *rp);
-```c
+```
 <!--
 Removes the specified probe.  The unregister function can be called
 at any time after the probe has been registered.
@@ -673,12 +682,12 @@ at any time after the probe has been registered.
 注意：
 	如果这些发现一个不正确的探针（不包括未注册的探针），它们会清除探针的 `addr` 字段。
 
-## register_*probes
-```cc
+### register_*probes
+```c
 #include <linux/kprobes.h>
 int register_kprobes(struct kprobe **kps, int num);
 int register_kretprobes(struct kretprobe **rps, int num);
-```c
+```
 <!--
 Registers each of the num probes in the specified array.  If any
 error occurs during registration, all probes in the array, up to
@@ -695,18 +704,18 @@ function returns.
 -->
 注册数组中 `num` 个探针。如果在注册期间发生错误，在 `register_*probes` 函数返回之前会安全地注销数组中已注册的探针，直到发生错误的探针为止。
 
-	* `kps/rps`：指向 `*probe` 数据结构的指针数组
-	* `num`：数组的大小
+* `kps/rps`：指向 `*probe` 数据结构的指针数组
+* `num`：数组的大小
 
 注意：
 	必须分配（或定义）指针数组，且在使用这些函数之前设置数组的所有元素。
 
-## unregister_*probes
+### unregister_*probes
 ```c
 #include <linux/kprobes.h>
 void unregister_kprobes(struct kprobe **kps, int num);
 void unregister_kretprobes(struct kretprobe **rps, int num);
-```c
+```
 <!--
 Removes each of the num probes in the specified array at once.
 
@@ -722,34 +731,35 @@ Removes each of the num probes in the specified array at once.
 注意：
 	如果这些函数在数组中发现一些不正确的探针（比如：未注册的探针），会清除那些不正确探针的 `addr` 字段。数组中其他的探针会被注销掉。
 
-## disable_*probe
+### disable_*probe
 ```c
 #include <linux/kprobes.h>
 int disable_kprobe(struct kprobe *kp);
 int disable_kretprobe(struct kretprobe *rp);
-```c
+```
 <!--
 Temporarily disables the specified `*probe`. You can enable it again by using enable_*probe(). You must specify the probe which has been registered.
 -->
 临时地禁用某个探针。调用 `enable_*probe()` 函数可再次启用。必须是已经注册的探针。
 
-## enable_*probe
+### enable_*probe
 ```c
 #include <linux/kprobes.h>
 int enable_kprobe(struct kprobe *kp);
 int enable_kretprobe(struct kretprobe *rp);
-```c
+```
 Enables `*probe` which has been disabled by disable_*probe(). You must specify the probe which has been registered.
 通过 `disable_*probe()` 启用已经被禁用的 `*probe`。必须指定已经注册的 probe。
 
 <!--
-# Kprobes Features and Limitations
+Kprobes Features and Limitations
+================================
 Kprobes allows multiple probes at the same address. Also,
 a probepoint for which there is a post_handler cannot be optimized.
 So if you install a kprobe with a post_handler, at an optimized
 probepoint, the probepoint will be unoptimized automatically.
 -->
-# Kprobes 特性与限制
+## Kprobes 特性与限制
 kprobes 允许在同一个地址插入多个探针。此外，带有 `post_handler` 的探测点无法被优化。所以，如果在已优化的探测点插入带有 `post_handler` 回调函数的 kprobe 探针，探测点会自动地变成未优化的。
 
 <!--
@@ -864,7 +874,7 @@ instruction.
 	    [ins1][ins2][  ins3 ]
 	    [<-     DCR       ->]
 	    [<- JTPR ->]
-```c
+```
 
 ```c
 ins1: 1st Instruction
@@ -873,7 +883,7 @@ ins3: 3rd Instruction
 IA:  Insertion Address
 JTPR: Jump Target Prohibition Region
 DCR: Detoured Code Region
-```c
+```
 <!--
 The instructions in DCR are copied to the out-of-line buffer
 of the kprobe, because the bytes in DCR are replaced by
@@ -889,15 +899,16 @@ decoder, so you don’t need to worry about that.
 -->
 DCR 内的指令被复制到 kprobe 的离线缓冲区中，因为 DCR 内的字节被 5 字节 jump 指令替代了。所以，这儿会有几个限制。
 
-	* DCR 内的指令一定是可重定位的
-	* DCR 内的指令一定不能包含 `call` 指令
-	* JTPR 不能作为 `jump` 或 `call` 指令的目标
-	* DCR 不能跨越函数之间的边界
+* DCR 内的指令一定是可重定位的
+* DCR 内的指令一定不能包含 `call` 指令
+* JTPR 不能作为 `jump` 或 `call` 指令的目标
+* DCR 不能跨越函数之间的边界
 
 不过，这些限制由内核的指令解码器检查，所以不需要关心这些限制。
 
 <!--
-# Probe Overhead
+Probe Overhead
+==============
 On a typical CPU in use in 2005, a kprobe hit takes 0.5 to 1.0
 microseconds to process.  Specifically, a benchmark that hits the same
 probepoint repeatedly, firing a simple handler each time, reports 1-2
@@ -908,7 +919,7 @@ the entry to that function adds `essentially` no overhead.
 
 Here are sample overhead `figures` (in usec) for different architectures:
 -->
-# 探针的开销
+## 探针的开销
 在 2005 年常见的 CPU 上，处理命中 kprobe 要花费 0.5 - 1.0 微秒。具体一点，基准测试反复命中同一个探测点，每一次触发简单的回调函数，每秒 1-2 百万次命中，具体数值取决于 CPU 架构。通常，命中 return 探针比命中 kprobe 多花费 50-75% 的时间。当你把一个 kretprobe 插入到一个函数的时候，实际是在函数入口处添加一个 kprobe，基本上上函数不会增加开销。
 
 下面有些不同架构开销的样本（微秒）：
@@ -926,7 +937,8 @@ Here are sample overhead `figures` (in usec) for different architectures:
 	k = 0.77 usec; r = 1.26; kr = 1.45
 
 <!--
-## Optimized Probe Overhead
+Optimized Probe Overhead
+========================
 Typically, an optimized kprobe hit takes 0.07 to 0.1 microseconds to
 process. Here are sample overhead figures (in usec) for x86 architectures:
 -->
@@ -942,7 +954,7 @@ process. Here are sample overhead figures (in usec) for x86 architectures:
 	x86-64: Intel(R) Xeon(R) E5410, 2.33GHz, 4656.90 bogomips
 	k = 0.99 usec; b = 0.43; o = 0.06; r = 1.24; rb = 0.68; ro = 0.30
 
-# TODO
+## TODO
 <!--
 a. SystemTap (http://sourceware.org/systemtap): Provides a simplified
 programming interface for probe-based instrumentation.  Try it out.
@@ -958,79 +970,86 @@ e. Watchpoint probes (which fire on data references).
 	4. 用户空间的探针
 	5. 观察点探针（在数据引用时触发）
 
-# Kprobes 例子
+## Kprobes 例子
 见 [samples/kprobes/kprobe_example.c](https://github.com/torvalds/linux/blob/master/samples/kprobes/kprobe_example.c) 文件
 
-# Kretprobes 例子
+## Kretprobes 例子
 见 [samples/kprobes/kretprobe_example.c](https://github.com/torvalds/linux/blob/master/samples/kprobes/kretprobe_example.c) 文件
 
 <!--
 For additional information on Kprobes, `refer to` the following URLs:
 -->
 有关 Kprobes 的其他信息，请参考以下 URL 链接：
-	* http://www-106.ibm.com/developerworks/library/l-kprobes.html?ca=dgr-lnxw42Kprobe
-	* http://www.redhat.com/magazine/005mar05/features/kprobes/
-	* http://www-users.cs.umn.edu/~boutcher/kprobes/
-	* http://www.linuxsymposium.org/2006/linuxsymposium_procv2.pdf (pages 101-115)
+
+* http://www-106.ibm.com/developerworks/library/l-kprobes.html?ca=dgr-lnxw42Kprobe
+* http://www.redhat.com/magazine/005mar05/features/kprobes/
+* http://www-users.cs.umn.edu/~boutcher/kprobes/
+* http://www.linuxsymposium.org/2006/linuxsymposium_procv2.pdf (pages 101-115)
 
 <!--
-# Deprecated Features
+Deprecated Features
+===================
 Jprobes is now a `deprecated` feature. People who are depending on it should
 migrate to other tracing features or use older kernels. Please consider to
 migrate your tool to one of the following options:
 
-	* Use trace-event to trace target function with arguments.
+* Use trace-event to trace target function with arguments.
 
-	trace-event is a low-overhead (and almost no visible overhead if it
-	is off) statically defined event interface. You can define new events
-	and trace it via ftrace or any other tracing tools.
+  trace-event is a low-overhead (and almost no visible overhead if it
+  is off) statically defined event interface. You can define new events
+  and trace it via ftrace or any other tracing tools.
 
-	* Use ftrace dynamic events (kprobe event) with perf-probe.
+  See the following urls:
 
-	If you build your kernel with debug info (CONFIG_DEBUG_INFO=y), you can
-	find which register/stack is assigned to which local variable or arguments
-	by using perf-probe and set up new event to trace it.
--->
-# 不推荐的特性
-现在 Jprobes 是一个不被推荐的机制。依赖它的应该迁移到其他追踪机制或使用旧的内核。请考虑把你的工具迁移到下面这些选项中：
+    - https://lwn.net/Articles/379903/
+    - https://lwn.net/Articles/381064/
+    - https://lwn.net/Articles/383362/
 
-	* 使用 trace-event 追踪带参数的函数
-	trace-event 是个低开销的静态定义的事件接口（如果关闭，没有明显的开销）。你可以定义新事件，通过 ftrace 或者其他追踪工具追踪它。
+* Use ftrace dynamic events (kprobe event) with perf-probe.
 
-	参考以下 URL 链接：
-		- https://lwn.net/Articles/379903/
-		- https://lwn.net/Articles/381064/
-		- https://lwn.net/Articles/383362/
+  If you build your kernel with debug info (CONFIG_DEBUG_INFO=y), you can
+  find which register/stack is assigned to which local variable or arguments
+  by using perf-probe and set up new event to trace it.
 
-	* 使用 ftrace 动态事件（kprobe 事件）和 perf-probe
-	如果你使用调试信息（`CONFIG_DEBUG_INFO=y`）编译你的内核，可以用 perf-probe 设置新事件去追踪它，能发现寄存器/栈被分配给了哪个本地变量或者参数。
+  See following documents:
 
-<!--
-See following documents:
 	* Documentation/trace/kprobetrace.rst
 	* Documentation/trace/events.rst
 	* tools/perf/Documentation/perf-probe.txt
 -->
-参考以下文档：
-	* [Documentation/trace/kprobetrace.rst](https://github.com/torvalds/linux/blob/master/Documentation/trace/kprobetrace.rst)
-	* [Documentation/trace/events.rst](https://github.com/torvalds/linux/blob/master/Documentation/trace/events.rst)
-	* [tools/perf/Documentation/perf-probe.txt](https://github.com/torvalds/linux/blob/master/tools/perf/Documentation/perf-probe.txt)
+## 已弃用的机制
+现在 Jprobes 是一个不被推荐的机制。依赖它的应该迁移到其他追踪机制或使用旧的内核。请考虑把你的工具迁移到以下工具中：
+
+* 使用 trace-event 追踪带参数的函数
+> trace-event 是个低开销的静态定义的事件接口（如果关闭，没有明显的开销）。你可以定义新事件，通过 ftrace 或者其他追踪工具追踪它。
+	参考以下 URL 链接：
+    - https://lwn.net/Articles/379903/
+    - https://lwn.net/Articles/381064/
+    - https://lwn.net/Articles/383362/
+
+* 使用 ftrace 动态事件（kprobe 事件）和 perf-probe
+> 如果你使用调试信息（`CONFIG_DEBUG_INFO=y`）编译你的内核，可以用 perf-probe 设置新事件去追踪它，能发现寄存器/栈被分配给了哪个本地变量或者参数。
+	参考以下文档：
+	- [Documentation/trace/kprobetrace.rst](https://github.com/torvalds/linux/blob/master/Documentation/trace/kprobetrace.rst)
+	- [Documentation/trace/events.rst](https://github.com/torvalds/linux/blob/master/Documentation/trace/events.rst)
+	- [tools/perf/Documentation/perf-probe.txt](https://github.com/torvalds/linux/blob/master/tools/perf/Documentation/perf-probe.txt)
 
 <!--
-# The kprobes debugfs interface
+The kprobes debugfs interface
+=============================
 With recent kernels (> 2.6.20) the list of registered kprobes is visible
 under the /sys/kernel/debug/kprobes/ directory (assuming debugfs is mounted at //sys/kernel/debug).
 
 /sys/kernel/debug/kprobes/list: Lists all registered probes on the system:
 -->
-# kprobes debugfs 接口
+## kprobes debugfs 接口
 最新的内核（> 2.6.20），已经注册的 kprobes 列表位于 `/sys/kernel/debug/kprobes/` 目录之下（假设 debugfs 被挂载到 `/sys/kernel/debug` 目录）。
 
 `/sys/kernel/debug/kprobes/list`：列出在系统上所有已注册的 probes：
 ```c
 c015d71a  k  vfs_read+0x0
 c03dedc5  r  tcp_v4_rcv+0x0
-```c
+```
 <!--
 The first column provides the kernel address where the probe is inserted.
 The second column identifies the type of probe (k - kprobe and r - kretprobe)
@@ -1062,7 +1081,8 @@ change each probe’s disabling state. This means that disabled kprobes (marked
 提供一个全局按钮，强制的开启或关闭已注册的 kprobes。默认情况下，所有 kprobes 是开启的。输出 “0” 到这个文件，所有已注册的探针会被卸载，输出 “1” 到这个文件，又重新加载。请注意，这个按钮只是卸载和加载所有 kprobes，并不会改变每个探针的禁用状态。意思是，已经禁用的探针（标记为 [DISABLED]）是不会被激活的。
 
 <!--
-# The kprobes sysctl interface
+The kprobes sysctl interface
+============================
 /proc/sys/debug/kprobes-optimization: Turn kprobes optimization ON/OFF.
 
 When CONFIG_OPTPROBES=y, this sysctl interface `appears` and it provides
@@ -1076,7 +1096,7 @@ Note that this knob changes the optimized state. This means that optimized
 probes (marked [OPTIMIZED]) will be unoptimized ([OPTIMIZED] tag will be
 removed). If the knob is turned on, they will be optimized again.
 -->
-# kprobes sysctl 接口
+## kprobes sysctl 接口
 `/proc/sys/debug/kprobes-optimization`： kprobes 优化开关。
 
 在 `CONFIG_OPTPROBES=y` 的时候， `sysctl` 接口提供一个全局按钮，强制的开启或关闭跳转优化（查看跳转章节）。默认情况下，跳转优化是开启的。如果输出 “0” 到这个文件或者通过 `sysctl` 设置 `debug.kprobes_optimization` 为 0 ，所有优化的探针将会变成未优化的，而且在这之后任何新的被注册的探针都不会被优化。

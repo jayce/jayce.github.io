@@ -1480,7 +1480,7 @@
             
             
 
-<main class="single__main main">
+<main class="single__main main-main">
   
     <nav class="breadcrumb hide" aria-label="breadcrumbs">
   <script>document.querySelector('.breadcrumb').classList.remove('hide')</script>
@@ -1525,7 +1525,7 @@
 <div class="single__infos">
   <time class="single__info" title="Written At">📅&nbsp;May 19, 2020 </time>
   
-  &nbsp;&middot;&nbsp; <span class="single__info" title="Reading Time"> ☕&nbsp;23&nbsp;min read </span>
+  &nbsp;&middot;&nbsp; <span class="single__info" title="Reading Time"> ☕&nbsp;18&nbsp;min read </span>
   
   <span class="single__info">
     
@@ -1553,14 +1553,37 @@
 * 查查以 TOC 作为函数调用的架构，及其原理
 * CPU 如何区分二进制中的指令和数据，或者说是可执行文件如何存储指令以及数据的？
 * 指令与函数怎么对应？编译原理？
-
-术语：
-* Kprobes：探测机制、框架，依赖于硬件的特定功能实现的
-* 探测点：用来观测执行经过的某个点
-* 探针：安插到探测点上的一个探头，用来观测经过探测点的上下文，用户使用的
 -->
 <h2 id="译者序">译者序</h2>
 <p>这篇文章翻译自 Linux 内核源码树中的 <a href="https://github.com/torvalds/linux/blob/master/Documentation/kprobes.txt">kprobes.txt</a> 文件，此文件描述了 Kprobes 的概念、工作原理、限制等内容。因为文件的最后一次提交是在 2019 年，所以文章标题中的年份也就是指这个意思的。</p>
+<p>下面的表格是对关键词的一点解释，概念其实就这几个。</p>
+<table>
+<thead>
+<tr>
+<th>关键词</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Kprobes</td>
+<td>指的是内核的探测机制、框架，依赖于硬件的特定功能实现的，比如 int3 指令</td>
+</tr>
+<tr>
+<td>kprobe</td>
+<td>指的是 Kprobes 的对象或结构体，关联探测点和探针</td>
+</tr>
+<tr>
+<td>probepoint</td>
+<td><strong>探测点</strong>，一个可用于观察、监视目的的具体位置，比如：一个函数的入口、返回地址</td>
+</tr>
+<tr>
+<td>probe</td>
+<td><strong>探针</strong>，在探测点做具体事情的对象，比如：分析、追踪</td>
+</tr>
+</tbody>
+</table>
+<p><strong>如果用一句话解释 Kprobes 原理就是</strong>：Kprobes 在探测点上注册了一些探针，当 CPU 执行到探测点的时候 Kprobes 会调用所有相关探针的回调函数。CPU 是怎么从执行流转到 Kprobes 的呢？</p>
 <p><strong>注：因为水平有限，文中难免存在遗漏或者错误的地方。如有疑问，建议直接阅读原文。</strong></p>
 <hr />
 <!--
@@ -1617,7 +1640,7 @@ When a kprobe is registered, Kprobes `makes a copy of` the probed
 `instruction` and replaces the first byte(s) of the probed instruction
 with a breakpoint instruction (e.g., int3 on i386 and x86_64).
 -->
-<h2 id="kprobe-如何工作">Kprobe 如何工作？</h2>
+<h3 id="kprobe-如何工作">Kprobe 如何工作？</h3>
 <p>Kprobes 在注册了一个 kprobe 后，复制被探测的指令，并且把被探测指令的第一个字节替换为断点指令（例如：在 i386、x86_64 平台上的 <code>int3</code>）。</p>
 <!--
 When a CPU hits the breakpoint instruction, a trap `occurs`, the CPU’s
@@ -1650,7 +1673,7 @@ path etc. Since it operates on a running kernel and needs deep knowledge
 of computer architecture and `concurrent` computing, you can easily shoot
 your foot.
 -->
-<h2 id="改变执行路径">改变执行路径</h2>
+<h3 id="改变执行路径">改变执行路径</h3>
 <p>kprobes 能够探测一段正在运行的内核代码，因此它能改变寄存器，包括指令指针。类似保存栈帧、恢复执行路径，这类操作需要非常地小心，因为 kprobes 作用在正在运行的内核上面，需要深入的了解计算结构体系和并行计算才行。</p>
 <!--
 If you change the instruction pointer (and set up other `related`
@@ -1666,9 +1689,6 @@ TOC for your function in your module, and recover the old one after
 returning from it.
 -->
 <p>注意，在那些使用 TOC （目录）进行函数调用的架构上，这种操作可能会更困难，因为你必须在你的模块中为你的函数设置新的 TOC，并且在函数返回之后还要恢复先前的 TOC。</p>
-<blockquote>
-<p>TOC 函数调用机制？</p>
-</blockquote>
 <!--
 ## Return Probes
 How Does a Return Probe Work?
@@ -1682,8 +1702,8 @@ the return address with the address of a “`trampoline`.”  The trampoline
 is an `arbitrary` piece of code — typically just a nop instruction.
 At boot time, Kprobes registers a kprobe at the trampoline.
 -->
-<h2 id="return-探针">Return 探针</h2>
-<h3 id="return-探针如何工作的">Return 探针如何工作的？</h3>
+<h3 id="return-探针">Return 探针</h3>
+<h4 id="return-探针如何工作的">Return 探针如何工作的？</h4>
 <p>在你调用 <code>register_kretprobe()</code> 函数的时候， Kprobes 会在函数的入口处建立一个 kprobe。在调用被探测函数的时候命中这个探针， Kprobes 会保存 return 地址的一个副本，且用一个 “trampoline”（蹦床）的地址替换 return 地址。trampoline 是一段任意的代码 — 通常只是 nop 指令。在启动的时候， Kprobes 在蹦床注册了一个 kprobe。</p>
 <!--
 When the probed function executes its return instruction, control
@@ -1735,7 +1755,7 @@ returns a non-zero error then Kprobes leaves the return address as is, and
 the kretprobe has no further effect for that particular function instance.
 生词：placed by, corresponding（形容词）, guarantee, further（进一步）, effect（效果，影响）
 -->
-<h3 id="kretprobe-入口回调函数">Kretprobe 入口回调函数</h3>
+<h4 id="kretprobe-入口回调函数">Kretprobe 入口回调函数</h4>
 <p>Kretprobes 还提供一个可选的用户回调函数，它运行于函数入口。这个回调函数通过 kretprobe 结构体 <code>entry_handler</code> 字段指定。每当命中放置在函数入口处的 kprobe 时，就会调用用户自定义的 <code>entry_handler</code> 函数。如果 <code>entry_handler</code> 函数返回零（成功），那么对应的 return 回调函数保证会在函数返回的时候被调用。如果 <code>entry_handler</code> 返回一个非零错误， Kprobes 会保留返回地址，而 kretprobe 对特定的函数实例没有影响。</p>
 <!--
 Multiple entry and return handler `invocations` are matched using the unique
@@ -1746,9 +1766,9 @@ data between corresponding user entry and return handlers. The size of each
 private data object can be specified at kretprobe registration time by
 setting the data_size field of the kretprobe struct. This data can be
 accessed through the data field of each kretprobe_instance object.
+生词：invocation（名词，调用）, corresponding
 -->
-<p>生词：invocation（名词，调用）, corresponding<br />
-使用与它们关联的唯一对象 kretprobe_instance，可以匹配许多的 entry 和 return 回调函数调用。另外，用户也可以把每个 return-instace 的私有数据指定为每个 kretprobe_instance 对象的一部分。这在 entry 和 return 回调函数之间共享私有数据时尤其有用。每个私有数据对象的大小可以在 kretprobe 注册时通过 kretprobe 结构体中的 data_size 字段指定。私有数据可以通过每个 kretprobe_instance 对象的 data 字段访问。</p>
+<p>使用与它们关联的唯一对象 kretprobe_instance，可以匹配许多的 entry 和 return 回调函数调用。另外，用户也可以把每个 return-instace 的私有数据指定为每个 kretprobe_instance 对象的一部分。这在 entry 和 return 回调函数之间共享私有数据时尤其有用。每个私有数据对象的大小可以在 kretprobe 注册时通过 kretprobe 结构体中的 data_size 字段指定。私有数据可以通过每个 kretprobe_instance 对象的 data 字段访问。</p>
 <!--
 `In case` probed function is entered but there is no kretprobe_instance
 object available, then `in addition to` incrementing the nmissed count,
@@ -1765,7 +1785,7 @@ the “debug.kprobes_optimization” kernel parameter is set to 1 (see
 sysctl(8)), Kprobes tries to reduce probe-hit `overhead` by using a jump
 instruction instead of a breakpoint instruction at each probepoint.
 -->
-<h2 id="跳转优化如何工作的">跳转优化如何工作的？</h2>
+<h3 id="跳转优化如何工作的">跳转优化如何工作的？</h3>
 <p>如果内核使用 CONFIG_OPTPROBES=y （x86/x86-64、非抢占式内核上该标记自动地设置为 y）编译，且内核参数 “debug.kprobes_optimization” 设置为 1 （见 sysctl(8) ），那么 Kprobes 尝试在每个探测点用 jump 指令代替 breakpoint 指令来减少命中探针的开销。</p>
 <!--
 Init a Kprobe
@@ -1776,7 +1796,7 @@ Kprobes inserts an `ordinary`, breakpoint-based kprobe at the specified
 address. So, even if it’s not possible to optimize this particular
 probepoint, there’ll be a probe there.
 -->
-<h3 id="初始化-kprobe">初始化 Kprobe</h3>
+<h4 id="初始化-kprobe">初始化 Kprobe</h4>
 <p>在注册了一个探针试图优化之前，Kprobes 会在指定的地址插入一个普通的，基于断点的 kprobe。所以，即便不能优化这个特定的探测点，也会有一个探针在那儿。</p>
 <!--
 Safety Check
@@ -1801,7 +1821,7 @@ Before optimizing a probe, Kprobes `performs` the following safety checks:
 	* For each instruction in the optimized region, Kprobes verifies that
 	the instruction can be executed `out of line`.
 -->
-<h3 id="安全检查">安全检查</h3>
+<h4 id="安全检查">安全检查</h4>
 <p>在进行优化探针之前，Kprobes 会做以下安全检查：</p>
 <ul>
 <li>
@@ -1832,11 +1852,14 @@ instruction sequence:
 	- the instructions from the optimized region
 	- a jump back to the original execution path.
 -->
-<h3 id="准备-detour-缓冲区">准备 detour 缓冲区</h3>
+<h4 id="准备-detour-缓冲区">准备 detour 缓冲区</h4>
+<blockquote>
+<p>detour 意思是像交通节点（环岛）那样</p>
+</blockquote>
 <p>接着，Kprobes 准备一个“环形”缓冲区，包含以下指令序列：</p>
 <ul>
 <li>推进 CPU 寄存器的代码（模拟断点 trap）</li>
-<li>调用蹦床代码，再间接调用用户的 probe 回调函数</li>
+<li>调用蹦床代码，再间接调用用户的探针回调函数</li>
 <li>恢复寄存器的代码</li>
 <li>优化区域的指令</li>
 <li>跳回原始执行路径的指令</li>
@@ -1844,27 +1867,27 @@ instruction sequence:
 <!--
 Pre-optimization
 ^^^^^^^^^^^^^^^^^
+
 After preparing the detour buffer, Kprobes verifies that none of the
 following situations exist:
-
 
 	* The probe has a post_handler.
 	* Other instructions in the optimized region are probed.
 	* The probe is disabled.
 -->
-<h3 id="优化前">优化前</h3>
-<p>在准备 detour 缓冲区后， Kprobes 确保以下情况不存在：</p>
+<h4 id="优化前">优化前</h4>
+<p>在准备 detour 缓冲区后， Kprobes 会检查确保不出现以下情况：</p>
 <ul>
-<li>这个 probe 有一个 post_handler</li>
-<li>优化区域中的其他指令被探测</li>
-<li>probe 被禁用</li>
+<li>探针有一个 post_handler 回调函数</li>
+<li>在优化区域中的其他指令被探测了</li>
+<li>已禁用的探针</li>
 </ul>
 <!--
 In any of the above cases, Kprobes won’t start optimizing the probe.
 Since these are temporary situations, Kprobes tries to start
 optimizing it again if the situation is changed.
 -->
-<p>在上述任何一种情况下，Kprobes 都不会优化探针。因为这些都是临时情况，如果情况发生变化的话，Kprobes 会再次尝试优化。</p>
+<p>在上述任何一种情况下，Kprobes 都不会优化探针。因为这都是临时情况，如果情况有变化，Kprobes 会再次进行优化。</p>
 <!--
 If the kprobe can be optimized, Kprobes enqueues the kprobe to an
 optimizing list, and kicks the kprobe-optimizer workqueue to optimize
@@ -1890,8 +1913,8 @@ After that, the Kprobe-optimizer calls stop_machine() to replace
 the optimized region with a jump instruction to the detour buffer,
 using text_poke_smp().
 -->
-<h3 id="优化">优化</h3>
-<p>Kprobe-optimizer 并不会立即插入 jump 指令，相反为了安全它会先调用 <code>synchronize_rcu()</code> 函数，因为在处理优化区域的过程中 CPU 可能会被中断 <sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup><sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>。如你所知， <code>synchronize_rcu()</code> 函数可以确保所有活跃的中断在调用 <code>synchronize_rcu()</code> 的时候已经完成，但前提是 <code>CONFIG_PREEMPT=n</code> 的时候。所以，kprobe 的优化版本只支持 <code>CONFIG_PREEMPT=n</code> 的内核 <sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup><sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>。</p>
+<h4 id="优化">优化</h4>
+<p>Kprobe-optimizer 并不会立即插入 jump 指令，相反为了安全它会先调用 <code>synchronize_rcu()</code> 函数，因为在处理优化区域的过程中 CPU 可能会被中断 <sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>。如你所知， <code>synchronize_rcu()</code> 函数可以确保所有活跃的中断在调用 <code>synchronize_rcu()</code> 的时候已经完成，但前提是 <code>CONFIG_PREEMPT=n</code> 的时候。所以，kprobe 的优化版本只支持 <code>CONFIG_PREEMPT=n</code> 的内核 <sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>。</p>
 <p>之后， Kprobe-optimizer 调用 <code>stop_machine()</code> 函数替换优化区域，用一个跳转到 detour 缓冲区指令，使用 <code>text_poke_smp()</code> 函数。</p>
 <!--
 Unoptimization
@@ -1903,7 +1926,7 @@ optimized list.  If the optimization has been done, the jump is
 replaced with the original code (except for an int3 breakpoint in
 the first byte) by using text_poke_smp().
 -->
-<h3 id="取消优化">取消优化</h3>
+<h4 id="取消优化">取消优化</h4>
 <p>当优化的 kprobe 被其他 kprobe 注销、禁用或阻塞的时候，它将不会被优化。如果这种情况在优化完成之前发生，则只是将 kprobe 从优化队列中移除。如果优化已经完成，会通过调用 <code>text_poke_smp()</code> 函数把 jump 指令替换为原始代码（除了第一个字节中的 int3 断点）。</p>
 <!--
 [^3]: Please imagine that the 2nd instruction is interrupted and then
@@ -1931,12 +1954,14 @@ using one of the following techniques:
 -->
 <p>geeks 注意：<br />
 跳转优化改变了 kprobe 的 <code>pre_handler</code> 的行为。优化前，<code>pre_handler</code> 通过改变 <code>regs-&gt;ip</code> 的同时返回 1 可以改变内核的执行路径。然而，在 probe 被优化的时候，修改会被忽略。因此，如果你想微调内核的执行路径，需要使用一个方法去抑制优化：</p>
-<pre><code>* 给 kprobe 的 post_handler 指定一个空函数
-* 执行 `sysctl -w debug.kprobes_optimization=n` 命令
-</code></pre>
+<ul>
+<li>给 kprobe 的 post_handler 指定一个空函数</li>
+<li>执行 <code>sysctl -w debug.kprobes_optimization=n</code> 命令</li>
+</ul>
 <!--
 .. _kprobes_blacklist:
-## Blacklist
+Blacklist
+---------
 Kprobes can probe most of the kernel except itself. This means
 that there are some functions where kprobes cannot probe. Probing
 (trapping) such functions can cause a recursive trap (e.g. double
@@ -1948,6 +1973,7 @@ to specify a blacklisted function.
 Kprobes checks the given probe address `against` the blacklist and
 rejects registering it, if the given address is in the blacklist.
 -->
+<h3 id="黑名单">黑名单</h3>
 <p>Kprobes 可以探测除自身以外的大部分内核空间。这表示有一些函数 kprobes 无法探测。探测（trapping）这样的函数会导致递归 trap （比如：双重故障）或者嵌套的 probe 回调函数可能永远不会被调用。如果你想添加一个函数到黑名单中，只需要两个步骤：首先，引入<code> linux/kprobes.h</code> 文件；其次，使用 <code>NOKPROBE_SYMBOL()</code> 宏指定一个要被列入黑名单的函数。 Kprobes 对照黑名单检查传入的 probe 地址，如果传入的地址在黑名单中会拒绝注册。</p>
 <!--
 .. kprobes_archs_supported:
@@ -1970,7 +1996,8 @@ architectures:
 <li>parisc</li>
 </ul>
 <!--
-# Configuring Kprobes
+Configuring Kprobes
+===================
 When configuring the kernel using make menuconfig/xconfig/oldconfig,
 ensure that CONFIG_KPROBES is set to “y”. Under “General setup”, look
 for “Kprobes”.
@@ -1983,7 +2010,7 @@ Also make sure that CONFIG_KALLSYMS and perhaps even CONFIG_KALLSYMS_ALL
 are set to “y”, since kallsyms_lookup_name() is used by the in-kernel
 kprobe `address` resolution code.
 -->
-<h1 id="配置-kprobes">配置 Kprobes</h1>
+<h2 id="配置-kprobes">配置 Kprobes</h2>
 <p>在使用 <code>make menuconfig/xconfig/oldconfig</code> 配置内核时，确保 <code>CONFIG_KPROBES </code> 设置为 “y”。在 “General setup” 字符后搜索 “Kprobes”。</p>
 <p>为了可以加载和卸载基于 Kprobes 的探测模块，请确保将“支持模块加载”（CONFIG_MODULES）和“模块卸载”（CONFIG_MODULE_UNLOAD）设置为 “y”。</p>
 <p>还要确保将  <code>CONFIG_KALLSYMS </code> 甚至是 <code>CONFIG_KALLSYMS_ALL</code> 都设置为 “y”，因为 <code>kallsyms_lookup_name()</code> 函数被内核里的 kprobe 地址解析代码使用。</p>
@@ -1996,7 +2023,8 @@ code mapping.
 -->
 <p>如果你需要在函数中间插入 probe，也许发现“使用 debug info 编译内核” (<code>CONFIG_DEBUG_INFO</code>) 非常有用，因此可以使用 <code>objdump -d -l vmlinux</code> 命令去查看源码到目标代码的映射关系。</p>
 <!--
-# API Reference
+API Reference
+=============
 The Kprobes API includes a “register” function and an “unregister”
 function for each type of probe. The API also includes “register_*probes”
 and “unregister_*probes” functions for (un)registering arrays of probes.
@@ -2004,1165 +2032,670 @@ Here are `terse`, mini-man-page specifications for these functions and
 the associated probe handlers that you’ll write. See the files in the
 samples/kprobes/ sub-directory for examples.
 -->
-<h1 id="api-参考">API 参考</h1>
+<h2 id="api-参考">API 参考</h2>
 <p>Kprobes API 为每种探针类型提供了一个”注册“和“注销”函数。还包括批量注册、注销探针的 <code>register_*probes</code> 和 <code>unregister_*probes</code> 函数。这有些迷你手册以及将会用到的相关的探针回调函数的简短说明。相关例子，可查看在 <code>samples/kprobes/</code> 子目录内的文件。</p>
-<h2 id="register_kprobe">register_kprobe</h2>
+<h3 id="register_kprobe">register_kprobe</h3>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">  1
-</span><span class="lnt">  2
-</span><span class="lnt">  3
-</span><span class="lnt">  4
-</span><span class="lnt">  5
-</span><span class="lnt">  6
-</span><span class="lnt">  7
-</span><span class="lnt">  8
-</span><span class="lnt">  9
-</span><span class="lnt"> 10
-</span><span class="lnt"> 11
-</span><span class="lnt"> 12
-</span><span class="lnt"> 13
-</span><span class="lnt"> 14
-</span><span class="lnt"> 15
-</span><span class="lnt"> 16
-</span><span class="lnt"> 17
-</span><span class="lnt"> 18
-</span><span class="lnt"> 19
-</span><span class="lnt"> 20
-</span><span class="lnt"> 21
-</span><span class="lnt"> 22
-</span><span class="lnt"> 23
-</span><span class="lnt"> 24
-</span><span class="lnt"> 25
-</span><span class="lnt"> 26
-</span><span class="lnt"> 27
-</span><span class="lnt"> 28
-</span><span class="lnt"> 29
-</span><span class="lnt"> 30
-</span><span class="lnt"> 31
-</span><span class="lnt"> 32
-</span><span class="lnt"> 33
-</span><span class="lnt"> 34
-</span><span class="lnt"> 35
-</span><span class="lnt"> 36
-</span><span class="lnt"> 37
-</span><span class="lnt"> 38
-</span><span class="lnt"> 39
-</span><span class="lnt"> 40
-</span><span class="lnt"> 41
-</span><span class="lnt"> 42
-</span><span class="lnt"> 43
-</span><span class="lnt"> 44
-</span><span class="lnt"> 45
-</span><span class="lnt"> 46
-</span><span class="lnt"> 47
-</span><span class="lnt"> 48
-</span><span class="lnt"> 49
-</span><span class="lnt"> 50
-</span><span class="lnt"> 51
-</span><span class="lnt"> 52
-</span><span class="lnt"> 53
-</span><span class="lnt"> 54
-</span><span class="lnt"> 55
-</span><span class="lnt"> 56
-</span><span class="lnt"> 57
-</span><span class="lnt"> 58
-</span><span class="lnt"> 59
-</span><span class="lnt"> 60
-</span><span class="lnt"> 61
-</span><span class="lnt"> 62
-</span><span class="lnt"> 63
-</span><span class="lnt"> 64
-</span><span class="lnt"> 65
-</span><span class="lnt"> 66
-</span><span class="lnt"> 67
-</span><span class="lnt"> 68
-</span><span class="lnt"> 69
-</span><span class="lnt"> 70
-</span><span class="lnt"> 71
-</span><span class="lnt"> 72
-</span><span class="lnt"> 73
-</span><span class="lnt"> 74
-</span><span class="lnt"> 75
-</span><span class="lnt"> 76
-</span><span class="lnt"> 77
-</span><span class="lnt"> 78
-</span><span class="lnt"> 79
-</span><span class="lnt"> 80
-</span><span class="lnt"> 81
-</span><span class="lnt"> 82
-</span><span class="lnt"> 83
-</span><span class="lnt"> 84
-</span><span class="lnt"> 85
-</span><span class="lnt"> 86
-</span><span class="lnt"> 87
-</span><span class="lnt"> 88
-</span><span class="lnt"> 89
-</span><span class="lnt"> 90
-</span><span class="lnt"> 91
-</span><span class="lnt"> 92
-</span><span class="lnt"> 93
-</span><span class="lnt"> 94
-</span><span class="lnt"> 95
-</span><span class="lnt"> 96
-</span><span class="lnt"> 97
-</span><span class="lnt"> 98
-</span><span class="lnt"> 99
-</span><span class="lnt">100
-</span><span class="lnt">101
-</span><span class="lnt">102
-</span><span class="lnt">103
-</span><span class="lnt">104
-</span><span class="lnt">105
-</span><span class="lnt">106
-</span><span class="lnt">107
-</span><span class="lnt">108
-</span><span class="lnt">109
-</span><span class="lnt">110
-</span><span class="lnt">111
-</span><span class="lnt">112
-</span><span class="lnt">113
-</span><span class="lnt">114
-</span><span class="lnt">115
-</span><span class="lnt">116
-</span><span class="lnt">117
-</span><span class="lnt">118
-</span><span class="lnt">119
-</span><span class="lnt">120
-</span><span class="lnt">121
-</span><span class="lnt">122
-</span><span class="lnt">123
-</span><span class="lnt">124
-</span><span class="lnt">125
-</span><span class="lnt">126
-</span><span class="lnt">127
-</span><span class="lnt">128
-</span><span class="lnt">129
-</span><span class="lnt">130
-</span><span class="lnt">131
-</span><span class="lnt">132
-</span><span class="lnt">133
-</span><span class="lnt">134
-</span><span class="lnt">135
-</span><span class="lnt">136
-</span><span class="lnt">137
-</span><span class="lnt">138
-</span><span class="lnt">139
-</span><span class="lnt">140
-</span><span class="lnt">141
-</span><span class="lnt">142
-</span><span class="lnt">143
-</span><span class="lnt">144
-</span><span class="lnt">145
-</span><span class="lnt">146
-</span><span class="lnt">147
-</span><span class="lnt">148
-</span><span class="lnt">149
-</span><span class="lnt">150
-</span><span class="lnt">151
-</span><span class="lnt">152
-</span><span class="lnt">153
-</span><span class="lnt">154
-</span><span class="lnt">155
-</span><span class="lnt">156
-</span><span class="lnt">157
-</span><span class="lnt">158
-</span><span class="lnt">159
-</span><span class="lnt">160
-</span><span class="lnt">161
-</span><span class="lnt">162
-</span><span class="lnt">163
-</span><span class="lnt">164
-</span><span class="lnt">165
-</span><span class="lnt">166
-</span><span class="lnt">167
-</span><span class="lnt">168
-</span><span class="lnt">169
-</span><span class="lnt">170
-</span><span class="lnt">171
-</span><span class="lnt">172
-</span><span class="lnt">173
-</span><span class="lnt">174
-</span><span class="lnt">175
-</span><span class="lnt">176
-</span><span class="lnt">177
-</span><span class="lnt">178
-</span><span class="lnt">179
-</span><span class="lnt">180
-</span><span class="lnt">181
-</span><span class="lnt">182
-</span><span class="lnt">183
-</span><span class="lnt">184
-</span><span class="lnt">185
-</span><span class="lnt">186
-</span><span class="lnt">187
-</span><span class="lnt">188
-</span><span class="lnt">189
-</span><span class="lnt">190
-</span><span class="lnt">191
-</span><span class="lnt">192
-</span><span class="lnt">193
-</span><span class="lnt">194
-</span><span class="lnt">195
-</span><span class="lnt">196
-</span><span class="lnt">197
-</span><span class="lnt">198
-</span><span class="lnt">199
-</span><span class="lnt">200
-</span><span class="lnt">201
-</span><span class="lnt">202
-</span><span class="lnt">203
-</span><span class="lnt">204
-</span><span class="lnt">205
-</span><span class="lnt">206
-</span><span class="lnt">207
-</span><span class="lnt">208
-</span><span class="lnt">209
-</span><span class="lnt">210
-</span><span class="lnt">211
-</span><span class="lnt">212
-</span><span class="lnt">213
-</span><span class="lnt">214
-</span><span class="lnt">215
-</span><span class="lnt">216
-</span><span class="lnt">217
-</span><span class="lnt">218
-</span><span class="lnt">219
-</span><span class="lnt">220
-</span><span class="lnt">221
-</span><span class="lnt">222
-</span><span class="lnt">223
-</span><span class="lnt">224
-</span><span class="lnt">225
-</span><span class="lnt">226
-</span><span class="lnt">227
-</span><span class="lnt">228
-</span><span class="lnt">229
-</span><span class="lnt">230
-</span><span class="lnt">231
-</span><span class="lnt">232
-</span><span class="lnt">233
-</span><span class="lnt">234
-</span><span class="lnt">235
-</span><span class="lnt">236
-</span><span class="lnt">237
-</span><span class="lnt">238
-</span><span class="lnt">239
-</span><span class="lnt">240
-</span><span class="lnt">241
-</span><span class="lnt">242
-</span><span class="lnt">243
-</span><span class="lnt">244
-</span><span class="lnt">245
-</span><span class="lnt">246
-</span><span class="lnt">247
-</span><span class="lnt">248
-</span><span class="lnt">249
-</span><span class="lnt">250
-</span><span class="lnt">251
-</span><span class="lnt">252
-</span><span class="lnt">253
-</span><span class="lnt">254
-</span><span class="lnt">255
-</span><span class="lnt">256
-</span><span class="lnt">257
-</span><span class="lnt">258
-</span><span class="lnt">259
-</span><span class="lnt">260
-</span><span class="lnt">261
-</span><span class="lnt">262
-</span><span class="lnt">263
-</span><span class="lnt">264
-</span><span class="lnt">265
-</span><span class="lnt">266
-</span><span class="lnt">267
-</span><span class="lnt">268
-</span><span class="lnt">269
-</span><span class="lnt">270
-</span><span class="lnt">271
-</span><span class="lnt">272
-</span><span class="lnt">273
-</span><span class="lnt">274
-</span><span class="lnt">275
-</span><span class="lnt">276
-</span><span class="lnt">277
-</span><span class="lnt">278
-</span><span class="lnt">279
-</span><span class="lnt">280
-</span><span class="lnt">281
-</span><span class="lnt">282
-</span><span class="lnt">283
-</span><span class="lnt">284
-</span><span class="lnt">285
-</span><span class="lnt">286
-</span><span class="lnt">287
-</span><span class="lnt">288
-</span><span class="lnt">289
-</span><span class="lnt">290
-</span><span class="lnt">291
-</span><span class="lnt">292
-</span><span class="lnt">293
-</span><span class="lnt">294
-</span><span class="lnt">295
-</span><span class="lnt">296
-</span><span class="lnt">297
-</span><span class="lnt">298
-</span><span class="lnt">299
-</span><span class="lnt">300
-</span><span class="lnt">301
-</span><span class="lnt">302
-</span><span class="lnt">303
-</span><span class="lnt">304
-</span><span class="lnt">305
-</span><span class="lnt">306
-</span><span class="lnt">307
-</span><span class="lnt">308
-</span><span class="lnt">309
-</span><span class="lnt">310
-</span><span class="lnt">311
-</span><span class="lnt">312
-</span><span class="lnt">313
-</span><span class="lnt">314
-</span><span class="lnt">315
-</span><span class="lnt">316
-</span><span class="lnt">317
-</span><span class="lnt">318
-</span><span class="lnt">319
-</span><span class="lnt">320
-</span><span class="lnt">321
-</span><span class="lnt">322
-</span><span class="lnt">323
-</span><span class="lnt">324
-</span><span class="lnt">325
-</span><span class="lnt">326
-</span><span class="lnt">327
-</span><span class="lnt">328
-</span><span class="lnt">329
-</span><span class="lnt">330
-</span><span class="lnt">331
-</span><span class="lnt">332
-</span><span class="lnt">333
-</span><span class="lnt">334
-</span><span class="lnt">335
-</span><span class="lnt">336
-</span><span class="lnt">337
-</span><span class="lnt">338
-</span><span class="lnt">339
-</span><span class="lnt">340
-</span><span class="lnt">341
-</span><span class="lnt">342
-</span><span class="lnt">343
-</span><span class="lnt">344
-</span><span class="lnt">345
-</span><span class="lnt">346
-</span><span class="lnt">347
-</span><span class="lnt">348
-</span><span class="lnt">349
-</span><span class="lnt">350
-</span><span class="lnt">351
-</span><span class="lnt">352
-</span><span class="lnt">353
-</span><span class="lnt">354
-</span><span class="lnt">355
-</span><span class="lnt">356
-</span><span class="lnt">357
-</span><span class="lnt">358
-</span><span class="lnt">359
-</span><span class="lnt">360
-</span><span class="lnt">361
-</span><span class="lnt">362
-</span><span class="lnt">363
-</span><span class="lnt">364
-</span><span class="lnt">365
-</span><span class="lnt">366
-</span><span class="lnt">367
-</span><span class="lnt">368
-</span><span class="lnt">369
-</span><span class="lnt">370
-</span><span class="lnt">371
-</span><span class="lnt">372
-</span><span class="lnt">373
-</span><span class="lnt">374
-</span><span class="lnt">375
-</span><span class="lnt">376
-</span><span class="lnt">377
-</span><span class="lnt">378
-</span><span class="lnt">379
-</span><span class="lnt">380
-</span><span class="lnt">381
-</span><span class="lnt">382
-</span><span class="lnt">383
-</span><span class="lnt">384
-</span><span class="lnt">385
-</span><span class="lnt">386
-</span><span class="lnt">387
-</span><span class="lnt">388
-</span><span class="lnt">389
-</span><span class="lnt">390
-</span><span class="lnt">391
-</span><span class="lnt">392
-</span><span class="lnt">393
-</span><span class="lnt">394
-</span><span class="lnt">395
-</span><span class="lnt">396
-</span><span class="lnt">397
-</span><span class="lnt">398
-</span><span class="lnt">399
-</span><span class="lnt">400
-</span><span class="lnt">401
-</span><span class="lnt">402
-</span><span class="lnt">403
-</span><span class="lnt">404
-</span><span class="lnt">405
-</span><span class="lnt">406
-</span><span class="lnt">407
-</span><span class="lnt">408
-</span><span class="lnt">409
-</span><span class="lnt">410
-</span><span class="lnt">411
-</span><span class="lnt">412
-</span><span class="lnt">413
-</span><span class="lnt">414
-</span><span class="lnt">415
-</span><span class="lnt">416
-</span><span class="lnt">417
-</span><span class="lnt">418
-</span><span class="lnt">419
-</span><span class="lnt">420
-</span><span class="lnt">421
-</span><span class="lnt">422
-</span><span class="lnt">423
-</span><span class="lnt">424
-</span><span class="lnt">425
-</span><span class="lnt">426
-</span><span class="lnt">427
-</span><span class="lnt">428
-</span><span class="lnt">429
-</span><span class="lnt">430
-</span><span class="lnt">431
-</span><span class="lnt">432
-</span><span class="lnt">433
-</span><span class="lnt">434
-</span><span class="lnt">435
-</span><span class="lnt">436
-</span><span class="lnt">437
-</span><span class="lnt">438
-</span><span class="lnt">439
-</span><span class="lnt">440
-</span><span class="lnt">441
-</span><span class="lnt">442
-</span><span class="lnt">443
-</span><span class="lnt">444
-</span><span class="lnt">445
-</span><span class="lnt">446
-</span><span class="lnt">447
-</span><span class="lnt">448
-</span><span class="lnt">449
-</span><span class="lnt">450
-</span><span class="lnt">451
-</span><span class="lnt">452
-</span><span class="lnt">453
-</span><span class="lnt">454
-</span><span class="lnt">455
-</span><span class="lnt">456
-</span><span class="lnt">457
-</span><span class="lnt">458
-</span><span class="lnt">459
-</span><span class="lnt">460
-</span><span class="lnt">461
-</span><span class="lnt">462
-</span><span class="lnt">463
-</span><span class="lnt">464
-</span><span class="lnt">465
-</span><span class="lnt">466
-</span><span class="lnt">467
-</span><span class="lnt">468
-</span><span class="lnt">469
-</span><span class="lnt">470
-</span><span class="lnt">471
-</span><span class="lnt">472
-</span><span class="lnt">473
-</span><span class="lnt">474
-</span><span class="lnt">475
-</span><span class="lnt">476
-</span><span class="lnt">477
-</span><span class="lnt">478
-</span><span class="lnt">479
-</span><span class="lnt">480
-</span><span class="lnt">481
-</span><span class="lnt">482
-</span><span class="lnt">483
-</span><span class="lnt">484
-</span><span class="lnt">485
-</span><span class="lnt">486
-</span><span class="lnt">487
-</span><span class="lnt">488
-</span><span class="lnt">489
-</span><span class="lnt">490
-</span><span class="lnt">491
-</span><span class="lnt">492
-</span><span class="lnt">493
-</span><span class="lnt">494
-</span><span class="lnt">495
-</span><span class="lnt">496
-</span><span class="lnt">497
-</span><span class="lnt">498
-</span><span class="lnt">499
-</span><span class="lnt">500
-</span><span class="lnt">501
-</span><span class="lnt">502
-</span><span class="lnt">503
-</span><span class="lnt">504
-</span><span class="lnt">505
-</span><span class="lnt">506
-</span><span class="lnt">507
-</span><span class="lnt">508
-</span><span class="lnt">509
-</span><span class="lnt">510
-</span><span class="lnt">511
-</span><span class="lnt">512
-</span><span class="lnt">513
-</span><span class="lnt">514
-</span><span class="lnt">515
-</span><span class="lnt">516
-</span><span class="lnt">517
-</span><span class="lnt">518
-</span><span class="lnt">519
-</span><span class="lnt">520
-</span><span class="lnt">521
-</span><span class="lnt">522
-</span><span class="lnt">523
-</span><span class="lnt">524
-</span><span class="lnt">525
-</span><span class="lnt">526
-</span><span class="lnt">527
-</span><span class="lnt">528
-</span><span class="lnt">529
-</span><span class="lnt">530
-</span><span class="lnt">531
-</span><span class="lnt">532
-</span><span class="lnt">533
-</span><span class="lnt">534
-</span><span class="lnt">535
-</span><span class="lnt">536
-</span><span class="lnt">537
-</span><span class="lnt">538
-</span><span class="lnt">539
-</span><span class="lnt">540
-</span><span class="lnt">541
-</span><span class="lnt">542
-</span><span class="lnt">543
-</span><span class="lnt">544
-</span><span class="lnt">545
-</span><span class="lnt">546
-</span><span class="lnt">547
-</span><span class="lnt">548
-</span><span class="lnt">549
-</span><span class="lnt">550
-</span><span class="lnt">551
-</span><span class="lnt">552
-</span><span class="lnt">553
-</span><span class="lnt">554
-</span><span class="lnt">555
-</span><span class="lnt">556
-</span><span class="lnt">557
-</span><span class="lnt">558
-</span><span class="lnt">559
-</span><span class="lnt">560
-</span><span class="lnt">561
-</span><span class="lnt">562
-</span><span class="lnt">563
-</span><span class="lnt">564
-</span><span class="lnt">565
-</span><span class="lnt">566
-</span><span class="lnt">567
-</span><span class="lnt">568
-</span><span class="lnt">569
-</span><span class="lnt">570
-</span><span class="lnt">571
-</span><span class="lnt">572
-</span><span class="lnt">573
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;linux/kprobes.h&gt;</span><span class="cp">
 </span><span class="cp"></span><span class="kt">int</span> <span class="nf">register_kprobe</span><span class="p">(</span><span class="k">struct</span> <span class="n">kprobe</span> <span class="o">*</span><span class="n">kp</span><span class="p">);</span>
-<span class="err">```</span><span class="n">c</span>
-<span class="o">&lt;!--</span>
-<span class="n">Sets</span> <span class="n">a</span> <span class="n">breakpoint</span> <span class="n">at</span> <span class="n">the</span> <span class="n">address</span> <span class="n">kp</span><span class="o">-&gt;</span><span class="n">addr</span><span class="p">.</span>  <span class="n">When</span> <span class="n">the</span> <span class="n">breakpoint</span> <span class="n">is</span>
-<span class="n">hit</span><span class="p">,</span> <span class="n">Kprobes</span> <span class="n">calls</span> <span class="n">kp</span><span class="o">-&gt;</span><span class="n">pre_handler</span><span class="p">.</span>  <span class="n">After</span> <span class="n">the</span> <span class="n">probed</span> <span class="n">instruction</span>
-<span class="n">is</span> <span class="n">single</span><span class="o">-</span><span class="n">stepped</span><span class="p">,</span> <span class="n">Kprobe</span> <span class="n">calls</span> <span class="n">kp</span><span class="o">-&gt;</span><span class="n">post_handler</span><span class="p">.</span>  <span class="n">If</span> <span class="n">a</span> <span class="n">fault</span>
-<span class="n">occurs</span> <span class="n">during</span> <span class="n">execution</span> <span class="n">of</span> <span class="n">kp</span><span class="o">-&gt;</span><span class="n">pre_handler</span> <span class="n">or</span> <span class="n">kp</span><span class="o">-&gt;</span><span class="n">post_handler</span><span class="p">,</span>
-<span class="n">or</span> <span class="n">during</span> <span class="n">single</span><span class="o">-</span><span class="n">stepping</span> <span class="n">of</span> <span class="n">the</span> <span class="n">probed</span> <span class="n">instruction</span><span class="p">,</span> <span class="n">Kprobes</span> <span class="n">calls</span>
-<span class="n">kp</span><span class="o">-&gt;</span><span class="n">fault_handler</span><span class="p">.</span>  <span class="n">Any</span> <span class="n">or</span> <span class="n">all</span> <span class="n">handlers</span> <span class="n">can</span> <span class="n">be</span> <span class="nb">NULL</span><span class="p">.</span> <span class="n">If</span> <span class="n">kp</span><span class="o">-&gt;</span><span class="n">flags</span>
-<span class="n">is</span> <span class="n">set</span> <span class="n">KPROBE_FLAG_DISABLED</span><span class="p">,</span> <span class="n">that</span> <span class="n">kp</span> <span class="n">will</span> <span class="n">be</span> <span class="n">registered</span> <span class="n">but</span> <span class="n">disabled</span><span class="p">,</span>
-<span class="n">so</span><span class="p">,</span> <span class="n">its</span> <span class="n">handlers</span> <span class="n">aren</span><span class="err">’</span><span class="n">t</span> <span class="n">hit</span> <span class="n">until</span> <span class="n">calling</span> <span class="n">enable_kprobe</span><span class="p">(</span><span class="n">kp</span><span class="p">).</span>
-<span class="o">--&gt;</span>
-<span class="err">在</span> <span class="err">`</span><span class="n">kp</span><span class="o">-&gt;</span><span class="n">addr</span><span class="err">`</span> <span class="err">地址设置一个断点。命中断点时，</span><span class="n">Kprobes</span> <span class="err">调用</span> <span class="err">`</span><span class="n">kp</span><span class="o">-&gt;</span><span class="n">pre_handler</span><span class="err">`。在探测的指令单步执行后，</span><span class="n">Kprobe</span> <span class="err">调用</span> <span class="err">`</span><span class="n">kp</span><span class="o">-&gt;</span><span class="n">post_handler</span><span class="err">`。如果一个错误发生，在执行</span> <span class="err">`</span><span class="n">kp</span><span class="o">-&gt;</span><span class="n">pre_handler</span><span class="err">`</span> <span class="err">或</span> <span class="err">`</span><span class="n">kp</span><span class="o">-&gt;</span><span class="n">post_handler</span><span class="err">`</span> <span class="err">期间，又或者是在单步执行被探测指令期间，</span><span class="n">Kprobes</span> <span class="err">会调用</span> <span class="err">`</span><span class="n">kp</span><span class="o">-&gt;</span><span class="n">fault_handler</span><span class="err">`。所有回调函数都可以是</span> <span class="err">`</span><span class="nb">NULL</span><span class="err">`。如果</span> <span class="err">`</span><span class="n">kp</span><span class="o">-&gt;</span><span class="n">flags</span><span class="err">`</span> <span class="err">设置为</span>  <span class="err">`</span><span class="n">KPROBE_FLAG_DISABLED</span><span class="err">`</span> <span class="err">，`</span><span class="n">kp</span><span class="err">`</span> <span class="err">将会被注册且处于禁用状态。所以</span> <span class="err">`</span><span class="n">kp</span><span class="err">`</span> <span class="err">的回调函数在调用</span> <span class="err">`</span><span class="n">enable_kprobe</span><span class="p">(</span><span class="n">kp</span><span class="p">)</span><span class="err">`</span> <span class="err">之前不会被调用。</span>
+</code></pre></td></tr></table>
+</div>
+</div><!--
+Sets a breakpoint at the address kp->addr.  When the breakpoint is
+hit, Kprobes calls kp->pre_handler.  After the probed instruction
+is single-stepped, Kprobe calls kp->post_handler.  If a fault
+occurs during execution of kp->pre_handler or kp->post_handler,
+or during single-stepping of the probed instruction, Kprobes calls
+kp->fault_handler.  Any or all handlers can be NULL. If kp->flags
+is set KPROBE_FLAG_DISABLED, that kp will be registered but disabled,
+so, its handlers aren’t hit until calling enable_kprobe(kp).
+-->
+<p>在 <code>kp-&gt;addr</code> 地址设置一个断点。命中断点时，Kprobes 调用 <code>kp-&gt;pre_handler</code>。在探测的指令单步执行后，Kprobe 调用 <code>kp-&gt;post_handler</code>。如果一个错误发生，在执行 <code>kp-&gt;pre_handler</code> 或 <code>kp-&gt;post_handler</code> 期间，又或者是在单步执行被探测指令期间，Kprobes 会调用 <code>kp-&gt;fault_handler</code>。所有回调函数都可以是 <code>NULL</code>。如果 <code>kp-&gt;flags</code> 设置为  <code>KPROBE_FLAG_DISABLED</code> ，<code>kp</code> 将会被注册且处于禁用状态。所以 <code>kp</code> 的回调函数在调用 <code>enable_kprobe(kp)</code> 之前不会被调用。</p>
+<!--
+.. note
+	1. With the introduction of the “symbol_name” field to struct kprobe, the probepoint address resolution will now be taken care of by the kernel. The following will now work:
 
-<span class="o">&lt;!--</span>
-<span class="p">..</span> <span class="n">note</span>
-	<span class="mf">1.</span> <span class="n">With</span> <span class="n">the</span> <span class="n">introduction</span> <span class="n">of</span> <span class="n">the</span> <span class="err">“</span><span class="n">symbol_name</span><span class="err">”</span> <span class="n">field</span> <span class="n">to</span> <span class="k">struct</span> <span class="n">kprobe</span><span class="p">,</span> <span class="n">the</span> <span class="n">probepoint</span> <span class="n">address</span> <span class="n">resolution</span> <span class="n">will</span> <span class="n">now</span> <span class="n">be</span> <span class="n">taken</span> <span class="n">care</span> <span class="n">of</span> <span class="n">by</span> <span class="n">the</span> <span class="n">kernel</span><span class="p">.</span> <span class="n">The</span> <span class="n">following</span> <span class="n">will</span> <span class="n">now</span> <span class="nl">work</span><span class="p">:</span>
+	kp.symbol_name = "symbol_name";
 
-	<span class="n">kp</span><span class="p">.</span><span class="n">symbol_name</span> <span class="o">=</span> <span class="err">“</span><span class="n">symbol_name</span><span class="err">”</span><span class="p">;</span>
+	(64-bit powerpc `intricacies` such as function descriptors are handled `transparently`)
+	2. Use the “offset” field of struct kprobe if the offset into the symbol
+	to install a probepoint is known. This field is used to calculate the
+	probepoint.
+	3. Specify either the kprobe "symbol_name" OR the "addr". If both are
+	specified, kprobe registration will fail with -EINVAL.
+	4. With CISC architectures (such as i386 and x86_64), the kprobes code
+	does not validate if the kprobe.addr is at an instruction `boundary`.
+	Use “offset” with `caution`.
 
-	<span class="p">(</span><span class="mi">64</span><span class="o">-</span><span class="n">bit</span> <span class="n">powerpc</span> <span class="err">`</span><span class="n">intricacies</span><span class="err">`</span> <span class="n">such</span> <span class="n">as</span> <span class="n">function</span> <span class="n">descriptors</span> <span class="n">are</span> <span class="n">handled</span> <span class="err">`</span><span class="n">transparently</span><span class="err">`</span><span class="p">)</span>
-	<span class="mf">2.</span> <span class="n">Use</span> <span class="n">the</span> <span class="err">“</span><span class="n">offset</span><span class="err">”</span> <span class="n">field</span> <span class="n">of</span> <span class="k">struct</span> <span class="n">kprobe</span> <span class="k">if</span> <span class="n">the</span> <span class="n">offset</span> <span class="n">into</span> <span class="n">the</span> <span class="n">symbol</span>
-	<span class="n">to</span> <span class="n">install</span> <span class="n">a</span> <span class="n">probepoint</span> <span class="n">is</span> <span class="n">known</span><span class="p">.</span> <span class="n">This</span> <span class="n">field</span> <span class="n">is</span> <span class="n">used</span> <span class="n">to</span> <span class="n">calculate</span> <span class="n">the</span>
-	<span class="n">probepoint</span><span class="p">.</span>
-	<span class="mf">3.</span> <span class="n">Specify</span> <span class="n">either</span> <span class="n">the</span> <span class="n">kprobe</span> <span class="err">“</span><span class="n">symbol_name</span><span class="err">”</span> <span class="n">OR</span> <span class="n">the</span> <span class="err">“</span><span class="n">addr</span><span class="err">”</span><span class="p">.</span> <span class="n">If</span> <span class="n">both</span> <span class="n">are</span>
-	<span class="n">specified</span><span class="p">,</span> <span class="n">kprobe</span> <span class="n">registration</span> <span class="n">will</span> <span class="n">fail</span> <span class="n">with</span> <span class="o">-</span><span class="n">EINVAL</span><span class="p">.</span>
-	<span class="mf">4.</span> <span class="n">With</span> <span class="n">CISC</span> <span class="n">architectures</span> <span class="p">(</span><span class="n">such</span> <span class="n">as</span> <span class="n">i386</span> <span class="n">and</span> <span class="n">x86_64</span><span class="p">),</span> <span class="n">the</span> <span class="n">kprobes</span> <span class="n">code</span>
-	<span class="n">does</span> <span class="n">not</span> <span class="n">validate</span> <span class="k">if</span> <span class="n">the</span> <span class="n">kprobe</span><span class="p">.</span><span class="n">addr</span> <span class="n">is</span> <span class="n">at</span> <span class="n">an</span> <span class="n">instruction</span> <span class="err">`</span><span class="n">boundary</span><span class="err">`</span><span class="p">.</span>
-	<span class="n">Use</span> <span class="err">“</span><span class="n">offset</span><span class="err">”</span> <span class="n">with</span> <span class="err">`</span><span class="n">caution</span><span class="err">`</span><span class="p">.</span>
-
-<span class="n">register_kprobe</span><span class="p">()</span> <span class="n">returns</span> <span class="mi">0</span> <span class="n">on</span> <span class="n">success</span><span class="p">,</span> <span class="n">or</span> <span class="n">a</span> <span class="n">negative</span> <span class="n">errno</span> <span class="n">otherwise</span><span class="p">.</span>
-<span class="o">--&gt;</span>
-<span class="err">注意：</span>
-	<span class="mf">1.</span> <span class="err">通过引入</span> <span class="err">`</span><span class="n">symbol_name</span><span class="err">`</span> <span class="err">字段来构造</span> <span class="n">kprobe</span><span class="err">，探测点地址解析将会由内核来处理。现在可以使用以下内容：</span>
-
-	<span class="err">`</span><span class="n">kp</span><span class="p">.</span><span class="n">symbol_name</span> <span class="o">=</span> <span class="err">“</span><span class="n">symbol_name</span><span class="err">”</span><span class="p">;</span><span class="err">`</span>
-
-	<span class="err">（</span><span class="mi">64</span> <span class="err">位</span> <span class="n">powepc</span> <span class="err">错综复杂，例如透明地处理函数描述符）</span>
-	<span class="mf">2.</span> <span class="err">如果在符号中用于安装</span> <span class="n">probepoint</span> <span class="err">的偏移量是已知的，使用</span> <span class="n">kprobes</span> <span class="err">结构体的</span> <span class="err">`</span><span class="n">offset</span><span class="err">`</span> <span class="err">字段。这个字段用于计算探测点。</span>
-	<span class="mf">3.</span> <span class="n">kprobe</span> <span class="err">的</span> <span class="err">`</span><span class="n">symbol_name</span><span class="err">`</span> <span class="err">或者</span> <span class="err">`</span><span class="n">addr</span><span class="err">`</span> <span class="err">字段都被指定，</span><span class="n">kprobe</span> <span class="err">注册会失败且返回</span> <span class="err">`</span><span class="n">EINVAL</span><span class="err">`。</span>
-	<span class="mf">4.</span> <span class="err">使用</span> <span class="n">CISC</span> <span class="err">架构（如：</span><span class="n">i386</span><span class="err">，</span><span class="n">x86_64</span><span class="err">），</span><span class="n">kprobes</span> <span class="err">代码不会验证，如果</span> <span class="err">`</span><span class="n">kprobe</span><span class="p">.</span><span class="n">addr</span><span class="err">`</span> <span class="err">在指令边界。谨慎使用</span> <span class="err">`</span><span class="n">offset</span><span class="err">`。</span>
-
-<span class="err">`</span><span class="n">register_kprobe</span><span class="p">()</span><span class="err">`</span> <span class="err">函数成功返回</span> <span class="mi">0</span><span class="err">，其他情况返回一个负的</span> <span class="err">`</span><span class="n">errno</span><span class="err">`。</span>
-
-<span class="o">&lt;!--</span> <span class="n">User</span><span class="err">’</span><span class="n">s</span> <span class="n">pre</span><span class="o">-</span><span class="n">handler</span> <span class="p">(</span><span class="n">kp</span><span class="o">-&gt;</span><span class="n">pre_handler</span><span class="p">)</span><span class="o">:</span> <span class="o">--&gt;</span>
-<span class="err">用户的</span> <span class="n">pre</span><span class="o">-</span><span class="n">handler</span><span class="err">（`</span><span class="n">kp</span><span class="o">-&gt;</span><span class="n">pre_handler</span><span class="err">`）函数原型</span><span class="o">:</span>
-<span class="err">```</span><span class="n">c</span>
-<span class="cp">#include</span> <span class="cpf">&lt;linux/kprobes.h&gt;</span><span class="cp">
+register_kprobe() returns 0 on success, or a negative errno otherwise.
+-->
+<p>注意：</p>
+<ol>
+<li>
+<p>通过引入 <code>symbol_name</code> 字段来构造 kprobe，探测点地址解析将会由内核来处理。可以使用以下内容：</p>
+<p><code>kp.symbol_name = &quot;symbol_name&quot;;</code></p>
+<p>（64 位 powepc 错综复杂，例如透明地处理函数描述符）</p>
+</li>
+<li>
+<p>如果在符号中用于安装探测点的偏移量是已知的，请使用 kprobes 结构体的 <code>offset</code> 字段。这个字段用于计算探测点。</p>
+</li>
+<li>
+<p>kprobe 的 <code>symbol_name</code> 或者 <code>addr</code> 字段都被指定，kprobe 注册会失败且返回 <code>EINVAL</code>。</p>
+</li>
+<li>
+<p>使用 CISC 架构（如：i386，x86_64），kprobes 代码不会验证，如果 <code>kprobe.addr</code> 在指令边界。谨慎使用 <code>offset</code>。</p>
+</li>
+</ol>
+<p><code>register_kprobe()</code> 函数成功返回 0，其他情况返回一个负的 <code>errno</code>。</p>
+<p>用户的 pre-handler（<code>kp-&gt;pre_handler</code>）函数原型:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;linux/kprobes.h&gt;</span><span class="cp">
 </span><span class="cp">#include</span> <span class="cpf">&lt;linux/ptrace.h&gt;</span><span class="cp">
-</span><span class="cp"></span><span class="kt">int</span> <span class="n">pre_handler</span><span class="p">(</span><span class="k">struct</span> <span class="n">kprobe</span> <span class="o">*</span><span class="n">p</span><span class="p">,</span> <span class="k">struct</span> <span class="n">pt_regs</span> <span class="o">*</span><span class="n">regs</span><span class="p">);</span>
-<span class="err">```</span><span class="n">c</span>
-<span class="o">&lt;!--</span>
-<span class="n">Called</span> <span class="n">with</span> <span class="n">p</span> <span class="n">pointing</span> <span class="n">to</span> <span class="n">the</span> <span class="n">kprobe</span> <span class="n">associated</span> <span class="n">with</span> <span class="n">the</span> <span class="n">breakpoint</span><span class="p">,</span>
-<span class="n">and</span> <span class="n">regs</span> <span class="n">pointing</span> <span class="n">to</span> <span class="n">the</span> <span class="k">struct</span> <span class="n">containing</span> <span class="n">the</span> <span class="n">registers</span> <span class="n">saved</span> <span class="n">when</span>
-<span class="n">the</span> <span class="n">breakpoint</span> <span class="n">was</span> <span class="n">hit</span><span class="p">.</span>  <span class="n">Return</span> <span class="mi">0</span> <span class="n">here</span> <span class="n">unless</span> <span class="n">you</span><span class="err">’</span><span class="n">re</span> <span class="n">a</span> <span class="n">Kprobes</span> <span class="n">geek</span><span class="p">.</span>
-<span class="o">--&gt;</span>
-<span class="err">用指向与断点关联的</span> <span class="n">kprobe</span> <span class="err">指针</span> <span class="err">`</span><span class="n">p</span><span class="err">`</span> <span class="err">以及命中断点时保存的寄存器指针</span> <span class="err">`</span><span class="n">regs</span><span class="err">`</span> <span class="err">调用。</span>
-
-<span class="o">&lt;!--</span> <span class="n">User</span><span class="err">’</span><span class="n">s</span> <span class="n">post</span><span class="o">-</span><span class="n">handler</span> <span class="p">(</span><span class="n">kp</span><span class="o">-&gt;</span><span class="n">post_handler</span><span class="p">)</span><span class="o">:</span> <span class="o">--&gt;</span>
-<span class="err">用户的</span> <span class="n">post</span><span class="o">-</span><span class="n">handler</span> <span class="err">（`</span><span class="n">kp</span><span class="o">-&gt;</span><span class="n">post_handler</span><span class="err">`）函数原型：</span>
-<span class="err">```</span><span class="n">c</span>
-<span class="cp">#include</span> <span class="cpf">&lt;linux/kprobes.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">pre_handler</span><span class="p">(</span><span class="k">struct</span> <span class="n">kprobe</span> <span class="o">*</span><span class="n">p</span><span class="p">,</span> <span class="k">struct</span> <span class="n">pt_regs</span> <span class="o">*</span><span class="n">regs</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><!--
+Called with p pointing to the kprobe associated with the breakpoint,
+and regs pointing to the struct containing the registers saved when
+the breakpoint was hit.  Return 0 here unless you’re a Kprobes geek.
+-->
+<p>用指向与断点关联的 kprobe 指针 <code>p</code> 以及命中断点时保存的寄存器指针 <code>regs</code> 调用。</p>
+<!-- User’s post-handler (kp->post_handler): -->
+<p>用户的 post-handler （<code>kp-&gt;post_handler</code>）函数原型：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;linux/kprobes.h&gt;</span><span class="cp">
 </span><span class="cp">#include</span> <span class="cpf">&lt;linux/ptrace.h&gt;</span><span class="cp">
-</span><span class="cp"></span><span class="kt">void</span> <span class="n">post_handler</span><span class="p">(</span><span class="k">struct</span> <span class="n">kprobe</span> <span class="o">*</span><span class="n">p</span><span class="p">,</span> <span class="k">struct</span> <span class="n">pt_regs</span> <span class="o">*</span><span class="n">regs</span><span class="p">,</span>
+</span><span class="cp"></span><span class="kt">void</span> <span class="nf">post_handler</span><span class="p">(</span><span class="k">struct</span> <span class="n">kprobe</span> <span class="o">*</span><span class="n">p</span><span class="p">,</span> <span class="k">struct</span> <span class="n">pt_regs</span> <span class="o">*</span><span class="n">regs</span><span class="p">,</span>
 		  <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">flags</span><span class="p">);</span>
-<span class="err">```</span><span class="n">c</span>
-<span class="o">&lt;!--</span>
-<span class="n">p</span> <span class="n">and</span> <span class="n">regs</span> <span class="n">are</span> <span class="n">as</span> <span class="n">described</span> <span class="k">for</span> <span class="n">the</span> <span class="n">pre_handler</span><span class="p">.</span>  <span class="n">flags</span> <span class="n">always</span> <span class="n">seems</span> <span class="n">to</span> <span class="n">be</span> <span class="n">zero</span><span class="p">.</span>
-<span class="o">--&gt;</span>
-<span class="err">`</span><span class="n">p</span><span class="err">`</span> <span class="err">和</span> <span class="err">`</span><span class="n">regs</span><span class="err">`</span> <span class="err">同</span>  <span class="err">`</span><span class="n">pre_handler</span><span class="err">`</span> <span class="err">所述。`</span><span class="n">flags</span><span class="err">`</span> <span class="err">看起来一直是</span> <span class="mi">0</span><span class="err">。</span>
-
-<span class="o">&lt;!--</span>
-<span class="n">User</span><span class="err">’</span><span class="n">s</span> <span class="n">fault</span><span class="o">-</span><span class="n">handler</span> <span class="p">(</span><span class="n">kp</span><span class="o">-&gt;</span><span class="n">fault_handler</span><span class="p">)</span><span class="o">:</span>
-<span class="o">--&gt;</span>
-<span class="err">用户的</span> <span class="n">fault</span><span class="o">-</span><span class="n">handler</span> <span class="err">（`</span><span class="n">kp</span><span class="o">-&gt;</span><span class="n">fault_handler</span><span class="err">`）函数原型：</span>
-<span class="err">```</span><span class="n">c</span>
-<span class="cp">#include</span> <span class="cpf">&lt;linux/kprobes.h&gt;</span><span class="cp">
+</code></pre></td></tr></table>
+</div>
+</div><!--
+p and regs are as described for the pre_handler.  flags always seems to be zero.
+-->
+<p><code>p</code> 和 <code>regs</code> 同  <code>pre_handler</code> 所述。<code>flags</code> 看起来一直是 0。</p>
+<!--
+User’s fault-handler (kp->fault_handler):
+-->
+<p>用户的 fault-handler （<code>kp-&gt;fault_handler</code>）函数原型：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;linux/kprobes.h&gt;</span><span class="cp">
 </span><span class="cp">#include</span> <span class="cpf">&lt;linux/ptrace.h&gt;</span><span class="cp">
-</span><span class="cp"></span><span class="kt">int</span> <span class="n">fault_handler</span><span class="p">(</span><span class="k">struct</span> <span class="n">kprobe</span> <span class="o">*</span><span class="n">p</span><span class="p">,</span> <span class="k">struct</span> <span class="n">pt_regs</span> <span class="o">*</span><span class="n">regs</span><span class="p">,</span> <span class="kt">int</span> <span class="n">trapnr</span><span class="p">);</span>
-<span class="err">```</span><span class="n">c</span>
-<span class="o">&lt;!--</span>
-<span class="n">p</span> <span class="n">and</span> <span class="n">regs</span> <span class="n">are</span> <span class="n">as</span> <span class="n">described</span> <span class="k">for</span> <span class="n">the</span> <span class="n">pre_handler</span><span class="p">.</span>  <span class="n">trapnr</span> <span class="n">is</span> <span class="n">the</span>
-<span class="n">architecture</span><span class="o">-</span><span class="n">specific</span> <span class="n">trap</span> <span class="n">number</span> <span class="n">associated</span> <span class="n">with</span> <span class="n">the</span> <span class="n">fault</span> <span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">g</span><span class="p">.,</span>
-<span class="n">on</span> <span class="n">i386</span><span class="p">,</span> <span class="mi">13</span> <span class="k">for</span> <span class="n">a</span> <span class="n">general</span> <span class="n">protection</span> <span class="n">fault</span> <span class="n">or</span> <span class="mi">14</span> <span class="k">for</span> <span class="n">a</span> <span class="n">page</span> <span class="n">fault</span><span class="p">).</span>
-<span class="n">Returns</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">it</span> <span class="n">successfully</span> <span class="n">handled</span> <span class="n">the</span> <span class="n">exception</span><span class="p">.</span>
-<span class="o">--&gt;</span>
-<span class="err">`</span><span class="n">p</span><span class="err">`</span> <span class="err">和</span> <span class="err">`</span><span class="n">regs</span><span class="err">`</span> <span class="err">同</span> <span class="err">`</span><span class="n">pre_handler</span><span class="err">`</span> <span class="err">所述</span> <span class="err">。</span> <span class="err">`</span><span class="n">trapnr</span><span class="err">`</span> <span class="err">是故障相关的特定架构下的</span> <span class="n">trap</span> <span class="err">号（例如：在</span> <span class="n">i386</span> <span class="err">上，</span> <span class="mi">13</span> <span class="err">为普通防护故障，</span><span class="mi">14</span> <span class="err">为页面故障）。如果成功的处理了异常返回</span> <span class="mi">1</span><span class="err">。</span>
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">fault_handler</span><span class="p">(</span><span class="k">struct</span> <span class="n">kprobe</span> <span class="o">*</span><span class="n">p</span><span class="p">,</span> <span class="k">struct</span> <span class="n">pt_regs</span> <span class="o">*</span><span class="n">regs</span><span class="p">,</span> <span class="kt">int</span> <span class="n">trapnr</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><!--
+p and regs are as described for the pre_handler.  trapnr is the
+architecture-specific trap number associated with the fault (e.g.,
+on i386, 13 for a general protection fault or 14 for a page fault).
+Returns 1 if it successfully handled the exception.
+-->
+<p><code>p</code> 和 <code>regs</code> 同 <code>pre_handler</code> 所述 。 <code>trapnr</code> 是故障相关的特定架构下的 trap 号（例如：在 i386 上， 13 为普通防护故障，14 为页面故障）。如果成功的处理了异常返回 1。</p>
+<h3 id="register_kretprobe">register_kretprobe</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;linux/kprobes.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">register_kretprobe</span><span class="p">(</span><span class="k">struct</span> <span class="n">kretprobe</span> <span class="o">*</span><span class="n">rp</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><!--
+Establishes a return probe for the function whose address is
+rp->kp.addr.  When that function returns, Kprobes calls rp->handler.
+You must set rp->maxactive `appropriately` before you call
+register_kretprobe(); see “How Does a Return Probe Work?” for details.
 
-<span class="cp">## register_kretprobe
-</span><span class="cp"></span><span class="err">```</span><span class="n">c</span>
-<span class="cp">#include</span> <span class="cpf">&lt;linux/kprobes.h&gt;</span><span class="cp">
-</span><span class="cp"></span><span class="kt">int</span> <span class="n">register_kretprobe</span><span class="p">(</span><span class="k">struct</span> <span class="n">kretprobe</span> <span class="o">*</span><span class="n">rp</span><span class="p">);</span>
-<span class="err">```</span><span class="n">c</span>
-<span class="o">&lt;!--</span>
-<span class="n">Establishes</span> <span class="n">a</span> <span class="k">return</span> <span class="n">probe</span> <span class="k">for</span> <span class="n">the</span> <span class="n">function</span> <span class="n">whose</span> <span class="n">address</span> <span class="n">is</span>
-<span class="n">rp</span><span class="o">-&gt;</span><span class="n">kp</span><span class="p">.</span><span class="n">addr</span><span class="p">.</span>  <span class="n">When</span> <span class="n">that</span> <span class="n">function</span> <span class="n">returns</span><span class="p">,</span> <span class="n">Kprobes</span> <span class="n">calls</span> <span class="n">rp</span><span class="o">-&gt;</span><span class="n">handler</span><span class="p">.</span>
-<span class="n">You</span> <span class="n">must</span> <span class="n">set</span> <span class="n">rp</span><span class="o">-&gt;</span><span class="n">maxactive</span> <span class="err">`</span><span class="n">appropriately</span><span class="err">`</span> <span class="n">before</span> <span class="n">you</span> <span class="n">call</span>
-<span class="n">register_kretprobe</span><span class="p">();</span> <span class="n">see</span> <span class="err">“</span><span class="n">How</span> <span class="n">Does</span> <span class="n">a</span> <span class="n">Return</span> <span class="n">Probe</span> <span class="n">Work</span><span class="o">?</span><span class="err">”</span> <span class="k">for</span> <span class="n">details</span><span class="p">.</span>
-
-<span class="n">register_kretprobe</span><span class="p">()</span> <span class="n">returns</span> <span class="mi">0</span> <span class="n">on</span> <span class="n">success</span><span class="p">,</span> <span class="n">or</span> <span class="n">a</span> <span class="n">negative</span> <span class="n">errno</span> <span class="n">otherwise</span><span class="p">.</span>
-<span class="o">--&gt;</span>
-<span class="err">为</span> <span class="err">`</span><span class="n">rp</span><span class="o">-&gt;</span><span class="n">kp</span><span class="p">.</span><span class="n">addr</span><span class="err">`</span> <span class="err">地址的函数建立一个</span> <span class="k">return</span> <span class="err">探针。在函数返回时，</span><span class="n">kprobes</span> <span class="err">调用</span> <span class="err">`</span><span class="n">rp</span><span class="o">-&gt;</span><span class="n">handler</span><span class="err">`</span> <span class="err">。在调用</span> <span class="err">`</span><span class="n">register_kretprobe</span><span class="p">()</span><span class="err">`</span> <span class="err">之前必须设置合适的</span> <span class="err">`</span><span class="n">rp</span><span class="o">-&gt;</span><span class="n">maxactive</span><span class="err">`，细节参考</span> <span class="err">“</span><span class="n">Return</span> <span class="n">Probe</span> <span class="err">如何工作？”</span> <span class="err">。</span>
-
-<span class="err">`</span><span class="n">register_kretprobe</span><span class="p">()</span><span class="err">`</span> <span class="err">成功返回</span> <span class="mi">0</span><span class="err">，其他情况返回一个负的</span> <span class="err">`</span><span class="n">errno</span><span class="err">`。</span>
-
-<span class="o">&lt;!--</span>
-<span class="n">User</span><span class="err">’</span><span class="n">s</span> <span class="k">return</span><span class="o">-</span><span class="n">probe</span> <span class="n">handler</span> <span class="p">(</span><span class="n">rp</span><span class="o">-&gt;</span><span class="n">handler</span><span class="p">)</span><span class="o">:</span>
-<span class="o">--&gt;</span>
-<span class="err">用户的</span> <span class="k">return</span> <span class="err">探针回调函数（`</span><span class="n">rp</span><span class="o">-&gt;</span><span class="n">handler</span><span class="err">`）原型：</span>
-<span class="err">```</span><span class="n">c</span>
-<span class="cp">#include</span> <span class="cpf">&lt;linux/kprobes.h&gt;</span><span class="cp">
+register_kretprobe() returns 0 on success, or a negative errno otherwise.
+-->
+<p>为 <code>rp-&gt;kp.addr</code> 地址的函数建立一个 return 探针。在函数返回时，kprobes 调用 <code>rp-&gt;handler</code> 。在调用 <code>register_kretprobe()</code> 之前必须设置合适的 <code>rp-&gt;maxactive</code>，细节参考 “Return Probe 如何工作？” 。</p>
+<p><code>register_kretprobe()</code> 成功返回 0，其他情况返回一个负的 <code>errno</code>。</p>
+<!--
+User’s return-probe handler (rp->handler):
+-->
+<p>用户的 return 探针回调函数（<code>rp-&gt;handler</code>）原型：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;linux/kprobes.h&gt;</span><span class="cp">
 </span><span class="cp">#include</span> <span class="cpf">&lt;linux/ptrace.h&gt;</span><span class="cp">
-</span><span class="cp"></span><span class="kt">int</span> <span class="n">kretprobe_handler</span><span class="p">(</span><span class="k">struct</span> <span class="n">kretprobe_instance</span> <span class="o">*</span><span class="n">ri</span><span class="p">,</span>
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">kretprobe_handler</span><span class="p">(</span><span class="k">struct</span> <span class="n">kretprobe_instance</span> <span class="o">*</span><span class="n">ri</span><span class="p">,</span>
 		      <span class="k">struct</span> <span class="n">pt_regs</span> <span class="o">*</span><span class="n">regs</span><span class="p">);</span>
-<span class="err">```</span><span class="n">c</span>
-<span class="o">&lt;!--</span>
-<span class="n">regs</span> <span class="n">is</span> <span class="n">as</span> <span class="n">described</span> <span class="k">for</span> <span class="n">kprobe</span><span class="p">.</span><span class="n">pre_handler</span><span class="p">.</span>  <span class="n">ri</span> <span class="n">points</span> <span class="n">to</span> <span class="n">the</span>
-<span class="n">kretprobe_instance</span> <span class="n">object</span><span class="p">,</span> <span class="n">of</span> <span class="n">which</span> <span class="n">the</span> <span class="n">following</span> <span class="n">fields</span> <span class="n">may</span> <span class="n">be</span> <span class="n">of</span> <span class="nl">interest</span><span class="p">:</span>
+</code></pre></td></tr></table>
+</div>
+</div><!--
+regs is as described for kprobe.pre_handler.  ri points to the
+kretprobe_instance object, of which the following fields may be of interest:
 
-	<span class="o">*</span> <span class="nl">ret_addr</span><span class="p">:</span> <span class="n">the</span> <span class="k">return</span> <span class="n">address</span>
-	<span class="o">*</span> <span class="nl">rp</span><span class="p">:</span> <span class="n">points</span> <span class="n">to</span> <span class="n">the</span> <span class="n">corresponding</span> <span class="n">kretprobe</span> <span class="n">object</span>
-	<span class="o">*</span> <span class="nl">task</span><span class="p">:</span> <span class="n">points</span> <span class="n">to</span> <span class="n">the</span> <span class="n">corresponding</span> <span class="n">task</span> <span class="k">struct</span>
-	<span class="o">*</span> <span class="nl">data</span><span class="p">:</span> <span class="n">points</span> <span class="n">to</span> <span class="n">per</span> <span class="k">return</span><span class="o">-</span><span class="n">instance</span> <span class="n">private</span> <span class="n">data</span><span class="p">;</span> <span class="n">see</span> <span class="err">“</span><span class="n">Kretprobe</span>
-	<span class="n">entry</span><span class="o">-</span><span class="n">handler</span><span class="err">”</span> <span class="k">for</span> <span class="n">details</span><span class="p">.</span>
-<span class="o">--&gt;</span>
-<span class="err">`</span><span class="n">regs</span><span class="err">`</span> <span class="err">同</span> <span class="n">kprobe</span><span class="p">.</span><span class="n">pre_handler</span> <span class="err">描述那样。`</span><span class="n">ri</span><span class="err">`</span> <span class="err">指向</span> <span class="err">`</span><span class="n">kretprobe_instance</span><span class="err">`</span> <span class="err">对象，其中可能涉及以下字段：</span>
+	* ret_addr: the return address
+	* rp: points to the corresponding kretprobe object
+	* task: points to the corresponding task struct
+	* data: points to per return-instance private data; see “Kretprobe
+	entry-handler” for details.
+-->
+<p><code>regs</code> 同 kprobe.pre_handler 描述那样。<code>ri</code> 指向 <code>kretprobe_instance</code> 对象，其中可能涉及以下字段：</p>
+<ul>
+<li>ret_addr：返回地址</li>
+<li>rp：指向相关的 kretprobe 对象</li>
+<li>task：指向相关的 task 结构体</li>
+<li>data：指向每个 return-instace 私有数据，细节参考 “kretprobe entry-handler”。</li>
+</ul>
+<!--
+The regs_return_value(regs) macro provides a simple abstraction to
+`extract` the return value from the `appropriate` register as defined by
+the architecture’s ABI.
 
-	<span class="o">*</span> <span class="n">ret_addr</span><span class="err">：返回地址</span>
-	<span class="o">*</span> <span class="n">rp</span><span class="err">：指向相关的</span> <span class="n">kretprobe</span> <span class="err">对象</span>
-	<span class="o">*</span> <span class="n">task</span><span class="err">：指向相关的</span> <span class="n">task</span> <span class="err">结构体</span>
-	<span class="o">*</span> <span class="n">data</span><span class="err">：指向每个</span> <span class="k">return</span><span class="o">-</span><span class="n">instace</span> <span class="err">私有数据，细节参考</span> <span class="err">“</span><span class="n">kretprobe</span> <span class="n">entry</span><span class="o">-</span><span class="n">handler</span><span class="err">”。</span>
-
-<span class="o">&lt;!--</span>
-<span class="n">The</span> <span class="n">regs_return_value</span><span class="p">(</span><span class="n">regs</span><span class="p">)</span> <span class="n">macro</span> <span class="n">provides</span> <span class="n">a</span> <span class="n">simple</span> <span class="n">abstraction</span> <span class="n">to</span>
-<span class="err">`</span><span class="n">extract</span><span class="err">`</span> <span class="n">the</span> <span class="k">return</span> <span class="n">value</span> <span class="n">from</span> <span class="n">the</span> <span class="err">`</span><span class="n">appropriate</span><span class="err">`</span> <span class="k">register</span> <span class="n">as</span> <span class="n">defined</span> <span class="n">by</span>
-<span class="n">the</span> <span class="n">architecture</span><span class="err">’</span><span class="n">s</span> <span class="n">ABI</span><span class="p">.</span>
-
-<span class="n">The</span> <span class="n">handler</span><span class="err">’</span><span class="n">s</span> <span class="k">return</span> <span class="n">value</span> <span class="n">is</span> <span class="n">currently</span> <span class="n">ignored</span><span class="p">.</span>
-<span class="o">--&gt;</span>
-<span class="err">`</span><span class="n">regs_return_value</span><span class="p">(</span><span class="n">regs</span><span class="p">)</span><span class="err">`</span> <span class="err">宏提供一个简单的抽象方法，从架构的</span> <span class="n">ABI</span> <span class="err">定义的合适的寄存器中提取返回值。</span>
-
-<span class="err">目前，回调函数的返回值是被忽略的。</span>
-
-<span class="cp">## unregister_*probe
-</span><span class="cp"></span><span class="err">```</span><span class="n">c</span>
-	<span class="cp">#include</span> <span class="cpf">&lt;linux/kprobes.h&gt;</span><span class="cp">
-</span><span class="cp"></span>	<span class="kt">void</span> <span class="n">unregister_kprobe</span><span class="p">(</span><span class="k">struct</span> <span class="n">kprobe</span> <span class="o">*</span><span class="n">kp</span><span class="p">);</span>
+The handler’s return value is currently ignored.
+-->
+<p><code>regs_return_value(regs)</code> 宏提供一个简单的抽象方法，从架构的 ABI 定义的合适的寄存器中提取返回值。</p>
+<p>目前，回调函数的返回值是被忽略的。</p>
+<h3 id="unregister_probe">unregister_*probe</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c">	<span class="cp">#include</span> <span class="cpf">&lt;linux/kprobes.h&gt;</span><span class="cp">
+</span><span class="cp"></span>	<span class="kt">void</span> <span class="nf">unregister_kprobe</span><span class="p">(</span><span class="k">struct</span> <span class="n">kprobe</span> <span class="o">*</span><span class="n">kp</span><span class="p">);</span>
 	<span class="kt">void</span> <span class="nf">unregister_kretprobe</span><span class="p">(</span><span class="k">struct</span> <span class="n">kretprobe</span> <span class="o">*</span><span class="n">rp</span><span class="p">);</span>
-<span class="err">```</span><span class="n">c</span>
-<span class="o">&lt;!--</span>
-<span class="n">Removes</span> <span class="n">the</span> <span class="n">specified</span> <span class="n">probe</span><span class="p">.</span>  <span class="n">The</span> <span class="n">unregister</span> <span class="n">function</span> <span class="n">can</span> <span class="n">be</span> <span class="n">called</span>
-<span class="n">at</span> <span class="n">any</span> <span class="n">time</span> <span class="n">after</span> <span class="n">the</span> <span class="n">probe</span> <span class="n">has</span> <span class="n">been</span> <span class="n">registered</span><span class="p">.</span>
+</code></pre></td></tr></table>
+</div>
+</div><!--
+Removes the specified probe.  The unregister function can be called
+at any time after the probe has been registered.
 
-<span class="p">..</span> <span class="n">note</span>
+.. note
 
-	<span class="n">If</span> <span class="n">the</span> <span class="n">functions</span> <span class="n">find</span> <span class="n">an</span> <span class="n">incorrect</span> <span class="n">probe</span> <span class="p">(</span><span class="n">ex</span><span class="p">.</span> <span class="n">an</span> <span class="n">unregistered</span> <span class="n">probe</span><span class="p">),</span>
-	<span class="n">they</span> <span class="n">clear</span> <span class="n">the</span> <span class="n">addr</span> <span class="n">field</span> <span class="n">of</span> <span class="n">the</span> <span class="n">probe</span><span class="p">.</span>
-<span class="o">--&gt;</span>
-<span class="err">移除探针。注销函数可以在探针被注册后调用。</span>
-
-<span class="err">注意：</span>
-	<span class="err">如果这些发现一个不正确的探针（不包括未注册的探针），它们会清除探针的</span> <span class="err">`</span><span class="n">addr</span><span class="err">`</span> <span class="err">字段。</span>
-
-<span class="cp">## register_*probes
-</span><span class="cp"></span><span class="err">```</span><span class="n">cc</span>
-<span class="cp">#include</span> <span class="cpf">&lt;linux/kprobes.h&gt;</span><span class="cp">
-</span><span class="cp"></span><span class="kt">int</span> <span class="n">register_kprobes</span><span class="p">(</span><span class="k">struct</span> <span class="n">kprobe</span> <span class="o">**</span><span class="n">kps</span><span class="p">,</span> <span class="kt">int</span> <span class="n">num</span><span class="p">);</span>
+	If the functions find an incorrect probe (ex. an unregistered probe),
+	they clear the addr field of the probe.
+-->
+<p>移除探针。注销函数可以在探针被注册后调用。</p>
+<p>注意：<br />
+如果这些发现一个不正确的探针（不包括未注册的探针），它们会清除探针的 <code>addr</code> 字段。</p>
+<h3 id="register_probes">register_*probes</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;linux/kprobes.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">register_kprobes</span><span class="p">(</span><span class="k">struct</span> <span class="n">kprobe</span> <span class="o">**</span><span class="n">kps</span><span class="p">,</span> <span class="kt">int</span> <span class="n">num</span><span class="p">);</span>
 <span class="kt">int</span> <span class="nf">register_kretprobes</span><span class="p">(</span><span class="k">struct</span> <span class="n">kretprobe</span> <span class="o">**</span><span class="n">rps</span><span class="p">,</span> <span class="kt">int</span> <span class="n">num</span><span class="p">);</span>
-<span class="err">```</span><span class="n">c</span>
-<span class="o">&lt;!--</span>
-<span class="n">Registers</span> <span class="n">each</span> <span class="n">of</span> <span class="n">the</span> <span class="n">num</span> <span class="n">probes</span> <span class="n">in</span> <span class="n">the</span> <span class="n">specified</span> <span class="n">array</span><span class="p">.</span>  <span class="n">If</span> <span class="n">any</span>
-<span class="n">error</span> <span class="n">occurs</span> <span class="n">during</span> <span class="n">registration</span><span class="p">,</span> <span class="n">all</span> <span class="n">probes</span> <span class="n">in</span> <span class="n">the</span> <span class="n">array</span><span class="p">,</span> <span class="n">up</span> <span class="n">to</span>
-<span class="n">the</span> <span class="n">bad</span> <span class="n">probe</span><span class="p">,</span> <span class="n">are</span> <span class="n">safely</span> <span class="n">unregistered</span> <span class="n">before</span> <span class="n">the</span> <span class="n">register_</span><span class="o">*</span><span class="n">probes</span>
-<span class="n">function</span> <span class="n">returns</span><span class="p">.</span>
+</code></pre></td></tr></table>
+</div>
+</div><!--
+Registers each of the num probes in the specified array.  If any
+error occurs during registration, all probes in the array, up to
+the bad probe, are safely unregistered before the register_*probes
+function returns.
 
-	<span class="o">*</span> <span class="n">kps</span><span class="o">/</span><span class="nl">rps</span><span class="p">:</span> <span class="n">an</span> <span class="n">array</span> <span class="n">of</span> <span class="n">pointers</span> <span class="n">to</span> <span class="err">`</span><span class="o">*</span><span class="n">probe</span><span class="err">`</span> <span class="n">data</span> <span class="n">structures</span>
-	<span class="o">*</span> <span class="nl">num</span><span class="p">:</span> <span class="n">the</span> <span class="n">number</span> <span class="n">of</span> <span class="n">the</span> <span class="n">array</span> <span class="n">entries</span><span class="p">.</span>
+	* kps/rps: an array of pointers to `*probe` data structures
+	* num: the number of the array entries.
 
-<span class="p">..</span> <span class="n">note</span>
+.. note
 
-	<span class="n">You</span> <span class="n">have</span> <span class="n">to</span> <span class="n">allocate</span><span class="p">(</span><span class="n">or</span> <span class="n">define</span><span class="p">)</span> <span class="n">an</span> <span class="n">array</span> <span class="n">of</span> <span class="n">pointers</span> <span class="n">and</span> <span class="n">set</span> <span class="n">all</span>
-	<span class="n">of</span> <span class="n">the</span> <span class="n">array</span> <span class="n">entries</span> <span class="n">before</span> <span class="n">using</span> <span class="n">these</span> <span class="n">functions</span><span class="p">.</span>
-<span class="o">--&gt;</span>
-<span class="err">注册数组中</span> <span class="err">`</span><span class="n">num</span><span class="err">`</span> <span class="err">个探针。如果在注册期间发生错误，在</span> <span class="err">`</span><span class="n">register_</span><span class="o">*</span><span class="n">probes</span><span class="err">`</span> <span class="err">函数返回之前会安全地注销数组中已注册的探针，直到发生错误的探针为止。</span>
-
-	<span class="o">*</span> <span class="err">`</span><span class="n">kps</span><span class="o">/</span><span class="n">rps</span><span class="err">`：指向</span> <span class="err">`</span><span class="o">*</span><span class="n">probe</span><span class="err">`</span> <span class="err">数据结构的指针数组</span>
-	<span class="o">*</span> <span class="err">`</span><span class="n">num</span><span class="err">`：数组的大小</span>
-
-<span class="err">注意：</span>
-	<span class="err">必须分配（或定义）指针数组，且在使用这些函数之前设置数组的所有元素。</span>
-
-<span class="cp">## unregister_*probes
-</span><span class="cp"></span><span class="err">```</span><span class="n">c</span>
-<span class="cp">#include</span> <span class="cpf">&lt;linux/kprobes.h&gt;</span><span class="cp">
-</span><span class="cp"></span><span class="kt">void</span> <span class="n">unregister_kprobes</span><span class="p">(</span><span class="k">struct</span> <span class="n">kprobe</span> <span class="o">**</span><span class="n">kps</span><span class="p">,</span> <span class="kt">int</span> <span class="n">num</span><span class="p">);</span>
+	You have to allocate(or define) an array of pointers and set all
+	of the array entries before using these functions.
+-->
+<p>注册数组中 <code>num</code> 个探针。如果在注册期间发生错误，在 <code>register_*probes</code> 函数返回之前会安全地注销数组中已注册的探针，直到发生错误的探针为止。</p>
+<ul>
+<li><code>kps/rps</code>：指向 <code>*probe</code> 数据结构的指针数组</li>
+<li><code>num</code>：数组的大小</li>
+</ul>
+<p>注意：<br />
+必须分配（或定义）指针数组，且在使用这些函数之前设置数组的所有元素。</p>
+<h3 id="unregister_probes">unregister_*probes</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;linux/kprobes.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">void</span> <span class="nf">unregister_kprobes</span><span class="p">(</span><span class="k">struct</span> <span class="n">kprobe</span> <span class="o">**</span><span class="n">kps</span><span class="p">,</span> <span class="kt">int</span> <span class="n">num</span><span class="p">);</span>
 <span class="kt">void</span> <span class="nf">unregister_kretprobes</span><span class="p">(</span><span class="k">struct</span> <span class="n">kretprobe</span> <span class="o">**</span><span class="n">rps</span><span class="p">,</span> <span class="kt">int</span> <span class="n">num</span><span class="p">);</span>
-<span class="err">```</span><span class="n">c</span>
-<span class="o">&lt;!--</span>
-<span class="n">Removes</span> <span class="n">each</span> <span class="n">of</span> <span class="n">the</span> <span class="n">num</span> <span class="n">probes</span> <span class="n">in</span> <span class="n">the</span> <span class="n">specified</span> <span class="n">array</span> <span class="n">at</span> <span class="n">once</span><span class="p">.</span>
+</code></pre></td></tr></table>
+</div>
+</div><!--
+Removes each of the num probes in the specified array at once.
 
-<span class="p">..</span> <span class="n">note</span>
+.. note
 
-	<span class="n">If</span> <span class="n">the</span> <span class="n">functions</span> <span class="n">find</span> <span class="n">some</span> <span class="n">incorrect</span> <span class="n">probes</span> <span class="p">(</span><span class="n">ex</span><span class="p">.</span> <span class="n">unregistered</span>
-	<span class="n">probes</span><span class="p">)</span> <span class="n">in</span> <span class="n">the</span> <span class="n">specified</span> <span class="n">array</span><span class="p">,</span> <span class="n">they</span> <span class="n">clear</span> <span class="n">the</span> <span class="n">addr</span> <span class="n">field</span> <span class="n">of</span> <span class="n">those</span>
-	<span class="n">incorrect</span> <span class="n">probes</span><span class="p">.</span> <span class="n">However</span><span class="p">,</span> <span class="n">other</span> <span class="n">probes</span> <span class="n">in</span> <span class="n">the</span> <span class="n">array</span> <span class="n">are</span>
-	<span class="n">unregistered</span> <span class="n">correctly</span><span class="p">.</span>
-<span class="o">--&gt;</span>
-<span class="err">一次性移除指定数组中</span> <span class="err">`</span><span class="n">num</span><span class="err">`</span> <span class="err">个探针。</span>
-
-<span class="err">注意：</span>
-	<span class="err">如果这些函数在数组中发现一些不正确的探针（比如：未注册的探针），会清除那些不正确探针的</span> <span class="err">`</span><span class="n">addr</span><span class="err">`</span> <span class="err">字段。数组中其他的探针会被注销掉。</span>
-
-<span class="cp">## disable_*probe
-</span><span class="cp"></span><span class="err">```</span><span class="n">c</span>
-<span class="cp">#include</span> <span class="cpf">&lt;linux/kprobes.h&gt;</span><span class="cp">
-</span><span class="cp"></span><span class="kt">int</span> <span class="n">disable_kprobe</span><span class="p">(</span><span class="k">struct</span> <span class="n">kprobe</span> <span class="o">*</span><span class="n">kp</span><span class="p">);</span>
+	If the functions find some incorrect probes (ex. unregistered
+	probes) in the specified array, they clear the addr field of those
+	incorrect probes. However, other probes in the array are
+	unregistered correctly.
+-->
+<p>一次性移除指定数组中 <code>num</code> 个探针。</p>
+<p>注意：<br />
+如果这些函数在数组中发现一些不正确的探针（比如：未注册的探针），会清除那些不正确探针的 <code>addr</code> 字段。数组中其他的探针会被注销掉。</p>
+<h3 id="disable_probe">disable_*probe</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;linux/kprobes.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">disable_kprobe</span><span class="p">(</span><span class="k">struct</span> <span class="n">kprobe</span> <span class="o">*</span><span class="n">kp</span><span class="p">);</span>
 <span class="kt">int</span> <span class="nf">disable_kretprobe</span><span class="p">(</span><span class="k">struct</span> <span class="n">kretprobe</span> <span class="o">*</span><span class="n">rp</span><span class="p">);</span>
-<span class="err">```</span><span class="n">c</span>
-<span class="o">&lt;!--</span>
-<span class="n">Temporarily</span> <span class="n">disables</span> <span class="n">the</span> <span class="n">specified</span> <span class="err">`</span><span class="o">*</span><span class="n">probe</span><span class="err">`</span><span class="p">.</span> <span class="n">You</span> <span class="n">can</span> <span class="n">enable</span> <span class="n">it</span> <span class="n">again</span> <span class="n">by</span> <span class="n">using</span> <span class="n">enable_</span><span class="o">*</span><span class="n">probe</span><span class="p">().</span> <span class="n">You</span> <span class="n">must</span> <span class="n">specify</span> <span class="n">the</span> <span class="n">probe</span> <span class="n">which</span> <span class="n">has</span> <span class="n">been</span> <span class="n">registered</span><span class="p">.</span>
-<span class="o">--&gt;</span>
-<span class="err">临时地禁用某个探针。调用</span> <span class="err">`</span><span class="n">enable_</span><span class="o">*</span><span class="n">probe</span><span class="p">()</span><span class="err">`</span> <span class="err">函数可再次启用。必须是已经注册的探针。</span>
-
-<span class="cp">## enable_*probe
-</span><span class="cp"></span><span class="err">```</span><span class="n">c</span>
-<span class="cp">#include</span> <span class="cpf">&lt;linux/kprobes.h&gt;</span><span class="cp">
-</span><span class="cp"></span><span class="kt">int</span> <span class="n">enable_kprobe</span><span class="p">(</span><span class="k">struct</span> <span class="n">kprobe</span> <span class="o">*</span><span class="n">kp</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><!--
+Temporarily disables the specified `*probe`. You can enable it again by using enable_*probe(). You must specify the probe which has been registered.
+-->
+<p>临时地禁用某个探针。调用 <code>enable_*probe()</code> 函数可再次启用。必须是已经注册的探针。</p>
+<h3 id="enable_probe">enable_*probe</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;linux/kprobes.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">enable_kprobe</span><span class="p">(</span><span class="k">struct</span> <span class="n">kprobe</span> <span class="o">*</span><span class="n">kp</span><span class="p">);</span>
 <span class="kt">int</span> <span class="nf">enable_kretprobe</span><span class="p">(</span><span class="k">struct</span> <span class="n">kretprobe</span> <span class="o">*</span><span class="n">rp</span><span class="p">);</span>
-<span class="err">```</span><span class="n">c</span>
-<span class="n">Enables</span> <span class="err">`</span><span class="o">*</span><span class="n">probe</span><span class="err">`</span> <span class="n">which</span> <span class="n">has</span> <span class="n">been</span> <span class="n">disabled</span> <span class="n">by</span> <span class="n">disable_</span><span class="o">*</span><span class="n">probe</span><span class="p">().</span> <span class="n">You</span> <span class="n">must</span> <span class="n">specify</span> <span class="n">the</span> <span class="n">probe</span> <span class="n">which</span> <span class="n">has</span> <span class="n">been</span> <span class="n">registered</span><span class="p">.</span>
-<span class="err">通过</span> <span class="err">`</span><span class="n">disable_</span><span class="o">*</span><span class="n">probe</span><span class="p">()</span><span class="err">`</span> <span class="err">启用已经被禁用的</span> <span class="err">`</span><span class="o">*</span><span class="n">probe</span><span class="err">`。必须指定已经注册的</span> <span class="n">probe</span><span class="err">。</span>
-
-<span class="o">&lt;!--</span>
-<span class="cp"># Kprobes Features and Limitations
-</span><span class="cp"></span><span class="n">Kprobes</span> <span class="n">allows</span> <span class="n">multiple</span> <span class="n">probes</span> <span class="n">at</span> <span class="n">the</span> <span class="n">same</span> <span class="n">address</span><span class="p">.</span> <span class="n">Also</span><span class="p">,</span>
-<span class="n">a</span> <span class="n">probepoint</span> <span class="k">for</span> <span class="n">which</span> <span class="n">there</span> <span class="n">is</span> <span class="n">a</span> <span class="n">post_handler</span> <span class="n">cannot</span> <span class="n">be</span> <span class="n">optimized</span><span class="p">.</span>
-<span class="n">So</span> <span class="k">if</span> <span class="n">you</span> <span class="n">install</span> <span class="n">a</span> <span class="n">kprobe</span> <span class="n">with</span> <span class="n">a</span> <span class="n">post_handler</span><span class="p">,</span> <span class="n">at</span> <span class="n">an</span> <span class="n">optimized</span>
-<span class="n">probepoint</span><span class="p">,</span> <span class="n">the</span> <span class="n">probepoint</span> <span class="n">will</span> <span class="n">be</span> <span class="n">unoptimized</span> <span class="n">automatically</span><span class="p">.</span>
-<span class="o">--&gt;</span>
-<span class="cp"># Kprobes 特性与限制
-</span><span class="cp"></span><span class="n">kprobes</span> <span class="err">允许在同一个地址插入多个探针。此外，带有</span> <span class="err">`</span><span class="n">post_handler</span><span class="err">`</span> <span class="err">的探测点无法被优化。所以，如果在已优化的探测点插入带有</span> <span class="err">`</span><span class="n">post_handler</span><span class="err">`</span> <span class="err">回调函数的</span> <span class="n">kprobe</span> <span class="err">探针，探测点会自动地变成未优化的。</span>
-
-<span class="o">&lt;!--</span>
-<span class="n">In</span> <span class="n">general</span><span class="p">,</span> <span class="n">you</span> <span class="n">can</span> <span class="n">install</span> <span class="n">a</span> <span class="n">probe</span> <span class="n">anywhere</span> <span class="n">in</span> <span class="n">the</span> <span class="n">kernel</span><span class="p">.</span>
-<span class="n">In</span> <span class="n">particular</span><span class="p">,</span> <span class="n">you</span> <span class="n">can</span> <span class="n">probe</span> <span class="n">interrupt</span> <span class="n">handlers</span><span class="p">.</span>  <span class="n">Known</span> <span class="n">exceptions</span>
-<span class="n">are</span> <span class="n">discussed</span> <span class="n">in</span> <span class="n">this</span> <span class="n">section</span><span class="p">.</span>
-<span class="o">--&gt;</span>
-<span class="err">通常，可以在内核的任意位置插入探针。特别的是，它可以探测中断处理函数。本节讨论了已知的异常。</span>
-
-<span class="o">&lt;!--</span>
-<span class="n">The</span> <span class="n">register_</span><span class="o">*</span><span class="n">probe</span> <span class="n">functions</span> <span class="n">will</span> <span class="k">return</span> <span class="o">-</span><span class="n">EINVAL</span> <span class="k">if</span> <span class="n">you</span> <span class="n">attempt</span>
-<span class="n">to</span> <span class="n">install</span> <span class="n">a</span> <span class="n">probe</span> <span class="n">in</span> <span class="n">the</span> <span class="n">code</span> <span class="n">that</span> <span class="n">implements</span> <span class="n">Kprobes</span> <span class="p">(</span><span class="n">mostly</span>
-<span class="n">kernel</span><span class="o">/</span><span class="n">kprobes</span><span class="p">.</span><span class="n">c</span> <span class="n">and</span> <span class="err">`</span><span class="n">arch</span><span class="cm">/*/kernel/kprobes.c`, but also functions such
-</span><span class="cm">as do_page_fault and notifier_call_chain).
-</span><span class="cm">--&gt;
-</span><span class="cm">如果试图在实现 Kprobes 的代码中插入一个探针，`register_*probe` 函数将返回 `-EINVAL`。（在 `kernel/kprobes.c` 和 `arch/*/</span><span class="n">kernel</span><span class="o">/</span><span class="n">kprobes</span><span class="p">.</span><span class="n">c</span><span class="err">`</span> <span class="err">文件中，还有像</span> <span class="err">`</span><span class="n">do_page_fault</span><span class="err">`</span> <span class="err">和</span> <span class="err">`</span><span class="n">notifier_call_chain</span><span class="err">`</span> <span class="err">这类的函数）。</span>
-
-<span class="o">&lt;!--</span>
-<span class="n">If</span> <span class="n">you</span> <span class="n">install</span> <span class="n">a</span> <span class="n">probe</span> <span class="n">in</span> <span class="n">an</span> <span class="kr">inline</span><span class="o">-</span><span class="n">able</span> <span class="n">function</span><span class="p">,</span> <span class="n">Kprobes</span> <span class="n">makes</span>
-<span class="n">no</span> <span class="n">attempt</span> <span class="n">to</span> <span class="err">`</span><span class="n">chase</span> <span class="n">down</span><span class="err">`</span> <span class="n">all</span> <span class="kr">inline</span> <span class="n">instances</span> <span class="n">of</span> <span class="n">the</span> <span class="n">function</span> <span class="n">and</span>
-<span class="n">install</span> <span class="n">probes</span> <span class="n">there</span><span class="p">.</span>  <span class="n">gcc</span> <span class="n">may</span> <span class="kr">inline</span> <span class="n">a</span> <span class="n">function</span> <span class="n">without</span> <span class="n">being</span> <span class="n">asked</span><span class="p">,</span>
-<span class="n">so</span> <span class="n">keep</span> <span class="n">this</span> <span class="n">in</span> <span class="n">mind</span> <span class="k">if</span> <span class="n">you</span><span class="err">’</span><span class="n">re</span> <span class="n">not</span> <span class="n">seeing</span> <span class="n">the</span> <span class="n">probe</span> <span class="n">hits</span> <span class="n">you</span> <span class="n">expect</span><span class="p">.</span>
-<span class="o">--&gt;</span>
-<span class="err">如果在可内联的函数中插入探针，</span><span class="n">Kprobes</span> <span class="err">并不会给所有内联实例插入探针。如果没有命中期望的探针，记住一点，</span> <span class="n">gcc</span> <span class="err">可能会自动内联一个函数。</span>
-
-<span class="o">&lt;!--</span>
-<span class="n">A</span> <span class="n">probe</span> <span class="n">handler</span> <span class="n">can</span> <span class="n">modify</span> <span class="n">the</span> <span class="n">environment</span> <span class="n">of</span> <span class="n">the</span> <span class="n">probed</span> <span class="n">function</span>
-<span class="o">--</span> <span class="n">e</span><span class="p">.</span><span class="n">g</span><span class="p">.,</span> <span class="n">by</span> <span class="n">modifying</span> <span class="n">kernel</span> <span class="n">data</span> <span class="n">structures</span><span class="p">,</span> <span class="n">or</span> <span class="n">by</span> <span class="n">modifying</span> <span class="n">the</span>
-<span class="n">contents</span> <span class="n">of</span> <span class="n">the</span> <span class="n">pt_regs</span> <span class="k">struct</span> <span class="p">(</span><span class="n">which</span> <span class="n">are</span> <span class="n">restored</span> <span class="n">to</span> <span class="n">the</span> <span class="n">registers</span>
-<span class="n">upon</span> <span class="k">return</span> <span class="n">from</span> <span class="n">the</span> <span class="n">breakpoint</span><span class="p">).</span>  <span class="n">So</span> <span class="n">Kprobes</span> <span class="n">can</span> <span class="n">be</span> <span class="n">used</span><span class="p">,</span> <span class="k">for</span> <span class="n">example</span><span class="p">,</span>
-<span class="n">to</span> <span class="n">install</span> <span class="n">a</span> <span class="n">bug</span> <span class="n">fix</span> <span class="n">or</span> <span class="n">to</span> <span class="n">inject</span> <span class="n">faults</span> <span class="k">for</span> <span class="n">testing</span><span class="p">.</span>  <span class="n">Kprobes</span><span class="p">,</span> <span class="n">of</span>
-<span class="n">course</span><span class="p">,</span> <span class="n">has</span> <span class="n">no</span> <span class="n">way</span> <span class="n">to</span> <span class="err">`</span><span class="n">distinguish</span><span class="err">`</span> <span class="n">the</span> <span class="err">`</span><span class="n">deliberately</span><span class="err">`</span> <span class="n">injected</span> <span class="n">faults</span>
-<span class="n">from</span> <span class="n">the</span> <span class="n">accidental</span> <span class="n">ones</span><span class="p">.</span>  <span class="n">Don</span><span class="err">&#39;</span><span class="n">t</span> <span class="n">drink</span> <span class="n">and</span> <span class="n">probe</span><span class="p">.</span>
-<span class="o">--&gt;</span>
-<span class="err">探针回调函数可以修改被检测函数的环境</span> <span class="o">--</span> <span class="err">例如，改变内核数据结构或者</span> <span class="err">`</span><span class="n">pt_regs</span><span class="err">`</span> <span class="err">数据结构的内容（从断点返回时恢复到寄存器中）。因此，</span><span class="n">Kprobes</span> <span class="err">可用于安装</span> <span class="n">bug</span> <span class="err">修复或测试时注入错误。当然，</span> <span class="n">Kprobes</span> <span class="err">是没有办法把故意地注入的错误与意外的错误区分开。不要喝大了搞事情。</span>
-
-<span class="o">&lt;!--</span>
-<span class="n">Kprobes</span> <span class="n">makes</span> <span class="n">no</span> <span class="n">attempt</span> <span class="n">to</span> <span class="n">prevent</span> <span class="n">probe</span> <span class="n">handlers</span> <span class="n">from</span> <span class="n">stepping</span> <span class="n">on</span>
-<span class="n">each</span> <span class="n">other</span> <span class="err">—</span> <span class="n">e</span><span class="p">.</span><span class="n">g</span><span class="p">.,</span> <span class="n">probing</span> <span class="n">printk</span><span class="p">()</span> <span class="n">and</span> <span class="n">then</span> <span class="n">calling</span> <span class="n">printk</span><span class="p">()</span> <span class="n">from</span> <span class="n">a</span>
-<span class="n">probe</span> <span class="n">handler</span><span class="p">.</span>  <span class="n">If</span> <span class="n">a</span> <span class="n">probe</span> <span class="n">handler</span> <span class="n">hits</span> <span class="n">a</span> <span class="n">probe</span><span class="p">,</span> <span class="n">that</span> <span class="n">second</span> <span class="n">probe</span><span class="err">’</span><span class="n">s</span>
-<span class="n">handlers</span> <span class="n">won</span><span class="err">’</span><span class="n">t</span> <span class="n">be</span> <span class="n">run</span> <span class="n">in</span> <span class="n">that</span> <span class="n">instance</span><span class="p">,</span> <span class="n">and</span> <span class="n">the</span> <span class="n">kprobe</span><span class="p">.</span><span class="n">nmissed</span> <span class="n">member</span>
-<span class="n">of</span> <span class="n">the</span> <span class="n">second</span> <span class="n">probe</span> <span class="n">will</span> <span class="n">be</span> <span class="n">incremented</span><span class="p">.</span>
-<span class="o">--&gt;</span>
-<span class="n">Kprobes</span> <span class="err">不会阻止探针回调函数之间的相互作用</span> <span class="o">--</span> <span class="err">比如，先给</span> <span class="err">`</span><span class="n">printk</span><span class="p">()</span><span class="err">`</span> <span class="err">函数插入探针，接着又从另一个探针回调函数中调用</span> <span class="err">`</span><span class="n">printk</span><span class="p">()</span><span class="err">`</span> <span class="err">函数。如果探针回调函数命中一个探针，那么这第二个探针的回调函数不会执行，将只会累加探针的</span> <span class="err">`</span><span class="n">kprobe</span><span class="p">.</span><span class="n">nmissed</span><span class="err">`</span> <span class="err">值。</span>
-
-<span class="o">&lt;!--</span>
-<span class="n">As</span> <span class="n">of</span> <span class="n">Linux</span> <span class="n">v2</span><span class="mf">.6.15</span><span class="o">-</span><span class="n">rc1</span><span class="p">,</span> <span class="n">multiple</span> <span class="n">handlers</span> <span class="p">(</span><span class="n">or</span> <span class="n">multiple</span> <span class="n">instances</span> <span class="n">of</span>
-<span class="n">the</span> <span class="n">same</span> <span class="n">handler</span><span class="p">)</span> <span class="n">may</span> <span class="n">run</span> <span class="n">concurrently</span> <span class="n">on</span> <span class="n">different</span> <span class="n">CPUs</span><span class="p">.</span>
-<span class="o">--&gt;</span>
-<span class="err">自</span> <span class="n">Linux</span> <span class="n">v2</span><span class="mf">.6.15</span><span class="o">-</span><span class="n">rc1</span> <span class="err">开始，多个回调函数（或者相同回调函数的多个实例）可以同时在不同的</span> <span class="n">CPU</span> <span class="err">上运行。</span>
-
-<span class="o">&lt;!--</span>
-<span class="n">Kprobes</span> <span class="n">does</span> <span class="n">not</span> <span class="n">use</span> <span class="err">`</span><span class="n">mutexes</span><span class="err">`</span> <span class="n">or</span> <span class="n">allocate</span> <span class="n">memory</span> <span class="n">except</span> <span class="n">during</span>
-<span class="n">registration</span> <span class="n">and</span> <span class="n">unregistration</span><span class="p">.</span>
-<span class="o">--&gt;</span>
-<span class="err">除了注册和注销探针之外，</span><span class="n">Kprobes</span> <span class="err">不会用互斥锁或分配内存。</span>
-
-<span class="o">&lt;!--</span>
-<span class="n">Probe</span> <span class="n">handlers</span> <span class="n">are</span> <span class="n">run</span> <span class="n">with</span> <span class="n">preemption</span> <span class="n">disabled</span> <span class="n">or</span> <span class="n">interrupt</span> <span class="n">disabled</span><span class="p">,</span>
-<span class="n">which</span> <span class="n">depends</span> <span class="n">on</span> <span class="n">the</span> <span class="n">architecture</span> <span class="n">and</span> <span class="n">optimization</span> <span class="n">state</span><span class="p">.</span>  <span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">g</span><span class="p">.,</span>
-<span class="n">kretprobe</span> <span class="n">handlers</span> <span class="n">and</span> <span class="n">optimized</span> <span class="n">kprobe</span> <span class="n">handlers</span> <span class="n">run</span> <span class="n">without</span> <span class="n">interrupt</span>
-<span class="n">disabled</span> <span class="n">on</span> <span class="n">x86</span><span class="o">/</span><span class="n">x86</span><span class="o">-</span><span class="mi">64</span><span class="p">).</span>  <span class="n">In</span> <span class="n">any</span> <span class="k">case</span><span class="p">,</span> <span class="n">your</span> <span class="n">handler</span> <span class="n">should</span> <span class="n">not</span> <span class="n">yield</span>
-<span class="n">the</span> <span class="n">CPU</span> <span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">g</span><span class="p">.,</span> <span class="n">by</span> <span class="n">attempting</span> <span class="n">to</span> <span class="err">`</span><span class="n">acquire</span><span class="err">`</span> <span class="n">a</span> <span class="err">`</span><span class="n">semaphore</span><span class="err">`</span><span class="p">,</span> <span class="n">or</span> <span class="n">waiting</span> <span class="n">I</span><span class="o">/</span><span class="n">O</span><span class="p">).</span>
-<span class="o">--&gt;</span>
-<span class="err">探针回调函数在禁用抢占或者禁用中断的情况下运行，这取决于架构以及优化状态（例如，</span><span class="n">kretprobe</span> <span class="err">和优化的</span> <span class="n">kprobe</span> <span class="err">回调函数在</span> <span class="n">x86</span><span class="o">/</span><span class="n">x86</span><span class="o">-</span><span class="mi">64</span> <span class="err">上运行时没有禁用中断）。不管如何，你的回调函数都不应该让出</span> <span class="n">CPU</span> <span class="err">（比如，试图获取信号量或等待</span> <span class="n">I</span><span class="o">/</span><span class="n">O</span><span class="err">）。</span>
-
-<span class="o">&lt;!--</span>
-<span class="n">Since</span> <span class="n">a</span> <span class="k">return</span> <span class="n">probe</span> <span class="n">is</span> <span class="n">implemented</span> <span class="n">by</span> <span class="n">replacing</span> <span class="n">the</span> <span class="k">return</span>
-<span class="n">address</span> <span class="n">with</span> <span class="n">the</span> <span class="n">trampoline</span><span class="err">&#39;</span><span class="n">s</span> <span class="n">address</span><span class="p">,</span> <span class="n">stack</span> <span class="err">`</span><span class="n">backtraces</span><span class="err">`</span> <span class="n">and</span> <span class="n">calls</span>
-<span class="n">to</span> <span class="n">__builtin_return_address</span><span class="p">()</span> <span class="n">will</span> <span class="n">typically</span> <span class="n">yield</span> <span class="n">the</span> <span class="n">trampoline</span><span class="err">’</span><span class="n">s</span>
-<span class="n">address</span> <span class="n">instead</span> <span class="n">of</span> <span class="n">the</span> <span class="n">real</span> <span class="k">return</span> <span class="n">address</span> <span class="k">for</span> <span class="n">kretprobed</span> <span class="n">functions</span><span class="p">.</span>
-<span class="p">(</span><span class="n">As</span> <span class="n">far</span> <span class="n">as</span> <span class="n">we</span> <span class="n">can</span> <span class="n">tell</span><span class="p">,</span> <span class="n">__builtin_return_address</span><span class="p">()</span> <span class="n">is</span> <span class="n">used</span> <span class="n">only</span> <span class="k">for</span> <span class="n">instrumentation</span>
-<span class="n">and</span> <span class="n">error</span> <span class="n">reporting</span><span class="p">.)</span>
-<span class="o">--&gt;</span>
-<span class="err">因为</span> <span class="k">return</span> <span class="err">探针是通过把蹦床的地址替换为返回地址来实现的，所以堆栈回溯以及调用</span>  <span class="err">`</span><span class="n">__builtin_return_address</span><span class="p">()</span><span class="err">`</span> <span class="err">函数得到的是蹦床的地址，而不是</span> <span class="n">kretprobed</span> <span class="err">函数实际</span> <span class="k">return</span> <span class="err">地址（就目前我们知道的而言，`</span><span class="n">__builtin_return_address</span><span class="p">()</span><span class="err">`</span> <span class="err">函数只用于测试工具和报告错误）。</span>
-
-<span class="o">&lt;!--</span>
-<span class="n">If</span> <span class="n">the</span> <span class="n">number</span> <span class="n">of</span> <span class="n">times</span> <span class="n">a</span> <span class="n">function</span> <span class="n">is</span> <span class="n">called</span> <span class="n">does</span> <span class="n">not</span> <span class="n">match</span> <span class="n">the</span> <span class="n">number</span>
-<span class="n">of</span> <span class="n">times</span> <span class="n">it</span> <span class="n">returns</span><span class="p">,</span> <span class="n">registering</span> <span class="n">a</span> <span class="k">return</span> <span class="n">probe</span> <span class="n">on</span> <span class="n">that</span> <span class="n">function</span> <span class="n">may</span>
-<span class="n">produce</span> <span class="err">`</span><span class="n">undesirable</span><span class="err">`</span> <span class="n">results</span><span class="p">.</span> <span class="n">In</span> <span class="n">such</span> <span class="n">a</span> <span class="k">case</span><span class="p">,</span> <span class="n">a</span> <span class="nl">line</span><span class="p">:</span>
-<span class="n">kretprobe</span> <span class="n">BUG</span><span class="o">!:</span> <span class="n">Processing</span> <span class="n">kretprobe</span> <span class="n">d000000000041aa8</span> <span class="err">@</span> <span class="n">c00000000004f48c</span>
-<span class="n">gets</span> <span class="n">printed</span><span class="p">.</span> <span class="n">With</span> <span class="n">this</span> <span class="n">information</span><span class="p">,</span> <span class="n">one</span> <span class="n">will</span> <span class="n">be</span> <span class="n">able</span> <span class="n">to</span> <span class="err">`</span><span class="n">correlate</span><span class="err">`</span> <span class="n">the</span>
-<span class="n">exact</span> <span class="n">instance</span> <span class="n">of</span> <span class="n">the</span> <span class="n">kretprobe</span> <span class="n">that</span> <span class="n">caused</span> <span class="n">the</span> <span class="n">problem</span><span class="p">.</span> <span class="n">We</span> <span class="n">have</span> <span class="n">the</span>
-<span class="n">do_exit</span><span class="p">()</span> <span class="k">case</span> <span class="n">covered</span><span class="p">.</span> <span class="n">do_execve</span><span class="p">()</span> <span class="n">and</span> <span class="n">do_fork</span><span class="p">()</span> <span class="n">are</span> <span class="n">not</span> <span class="n">an</span> <span class="n">issue</span><span class="p">.</span>
-<span class="n">We</span><span class="err">’</span><span class="n">re</span> <span class="err">`</span><span class="n">unaware</span> <span class="n">of</span><span class="err">`</span> <span class="n">other</span> <span class="n">specific</span> <span class="n">cases</span> <span class="n">where</span> <span class="n">this</span> <span class="n">could</span> <span class="n">be</span> <span class="n">a</span> <span class="n">problem</span><span class="p">.</span>
-<span class="o">--&gt;</span>
-<span class="err">如果一个函数的调用次数不能匹配返回的次数，在那个函数上注册的探针可能产生不想要的结果。这种情况，会输出一行</span> <span class="err">`</span><span class="n">kretprobe</span> <span class="n">BUG</span><span class="o">!:</span> <span class="n">Processing</span> <span class="n">kretprobe</span> <span class="n">d000000000041aa8</span> <span class="err">@</span> <span class="n">c00000000004f48c</span><span class="err">`。有了这行信息，就可以关联导致问题的</span> <span class="n">kretprobe</span> <span class="err">实例。涵盖了</span> <span class="err">`</span><span class="n">do_exit</span><span class="p">()</span><span class="err">`</span> <span class="err">函数的情况。</span> <span class="err">`</span><span class="n">do_execve</span><span class="p">()</span><span class="err">`</span> <span class="err">和</span> <span class="err">`</span><span class="n">do_fork</span><span class="p">()</span><span class="err">`</span> <span class="err">函数都不是问题。我们不知道的其他特定的情况，可能会出现问题。</span>
-
-<span class="o">&lt;!--</span>
-<span class="n">If</span><span class="p">,</span> <span class="n">upon</span> <span class="n">entry</span> <span class="n">to</span> <span class="n">or</span> <span class="n">exit</span> <span class="n">from</span> <span class="n">a</span> <span class="n">function</span><span class="p">,</span> <span class="n">the</span> <span class="n">CPU</span> <span class="n">is</span> <span class="n">running</span> <span class="n">on</span>
-<span class="n">a</span> <span class="n">stack</span> <span class="n">other</span> <span class="n">than</span> <span class="n">that</span> <span class="n">of</span> <span class="n">the</span> <span class="n">current</span> <span class="n">task</span><span class="p">,</span> <span class="n">registering</span> <span class="n">a</span> <span class="k">return</span>
-<span class="n">probe</span> <span class="n">on</span> <span class="n">that</span> <span class="n">function</span> <span class="n">may</span> <span class="n">produce</span> <span class="n">undesirable</span> <span class="n">results</span><span class="p">.</span>  <span class="n">For</span> <span class="n">this</span>
-<span class="n">reason</span><span class="p">,</span> <span class="n">Kprobes</span> <span class="n">doesn</span><span class="err">’</span><span class="n">t</span> <span class="n">support</span> <span class="k">return</span> <span class="n">probes</span> <span class="p">(</span><span class="n">or</span> <span class="n">kprobes</span><span class="p">)</span>
-<span class="n">on</span> <span class="n">the</span> <span class="n">x86_64</span> <span class="n">version</span> <span class="n">of</span> <span class="n">__switch_to</span><span class="p">();</span> <span class="n">the</span> <span class="n">registration</span> <span class="n">functions</span>
-<span class="k">return</span> <span class="o">-</span><span class="n">EINVAL</span><span class="p">.</span>
-<span class="o">--&gt;</span>
-<span class="err">如果在进入或者退出某个函数时，</span><span class="n">CPU</span> <span class="err">在除当前</span> <span class="n">task</span> <span class="err">以外的堆栈上运行，那在这个函数上注册</span> <span class="k">return</span> <span class="err">探针可能会产生不想要的结果。因为这个原因，</span><span class="n">Kprobes</span> <span class="err">不支持</span> <span class="err">`</span><span class="n">__switch_to</span><span class="p">()</span><span class="err">`</span> <span class="err">函数</span> <span class="n">x86_64</span> <span class="err">版本的</span> <span class="k">return</span> <span class="err">探针（或</span> <span class="n">kprobes</span><span class="err">），注册函数会返回</span> <span class="err">`</span><span class="o">-</span><span class="n">EINVAL</span><span class="err">`</span> <span class="err">。</span>
-
-<span class="o">&lt;!--</span>
-<span class="n">On</span> <span class="n">x86</span><span class="o">/</span><span class="n">x86</span><span class="o">-</span><span class="mi">64</span><span class="p">,</span> <span class="n">since</span> <span class="n">the</span> <span class="n">Jump</span> <span class="n">Optimization</span> <span class="n">of</span> <span class="n">Kprobes</span> <span class="n">modifies</span>
-<span class="n">instructions</span> <span class="n">widely</span><span class="p">,</span> <span class="n">there</span> <span class="n">are</span> <span class="n">some</span> <span class="n">limitations</span> <span class="n">to</span> <span class="n">optimization</span><span class="p">.</span> <span class="n">To</span>
-<span class="n">explain</span> <span class="n">it</span><span class="p">,</span> <span class="n">we</span> <span class="n">introduce</span> <span class="n">some</span> <span class="err">`</span><span class="n">terminology</span><span class="err">`</span><span class="p">.</span> <span class="n">Imagine</span> <span class="n">a</span> <span class="mi">3</span><span class="o">-</span><span class="n">instruction</span>
-<span class="n">sequence</span> <span class="n">consisting</span> <span class="n">of</span> <span class="n">a</span> <span class="n">two</span> <span class="mi">2</span><span class="o">-</span><span class="n">byte</span> <span class="n">instructions</span> <span class="n">and</span> <span class="n">one</span> <span class="mi">3</span><span class="o">-</span><span class="n">byte</span>
-<span class="n">instruction</span><span class="p">.</span>
-<span class="o">--&gt;</span>
-<span class="err">在</span> <span class="n">x86</span><span class="o">/</span><span class="n">x86</span><span class="o">-</span><span class="mi">64</span> <span class="err">架构上，由于</span> <span class="n">Kprobes</span> <span class="err">跳转优化修改指令普遍存在，会对优化有一些限制。为解释这一点，我们引入些术语。想象一下，一个由</span> <span class="mi">2</span> <span class="err">字节指令和</span> <span class="mi">3</span> <span class="err">字节指令组成的</span> <span class="mi">3</span> <span class="err">个指令序列。</span>
-
-<span class="err">```</span><span class="n">c</span>
-	    <span class="n">IA</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Enables <code>*probe</code> which has been disabled by disable_*probe(). You must specify the probe which has been registered.<br />
+通过 <code>disable_*probe()</code> 启用已经被禁用的 <code>*probe</code>。必须指定已经注册的 probe。</p>
+<!--
+Kprobes Features and Limitations
+================================
+Kprobes allows multiple probes at the same address. Also,
+a probepoint for which there is a post_handler cannot be optimized.
+So if you install a kprobe with a post_handler, at an optimized
+probepoint, the probepoint will be unoptimized automatically.
+-->
+<h2 id="kprobes-特性与限制">Kprobes 特性与限制</h2>
+<p>kprobes 允许在同一个地址插入多个探针。此外，带有 <code>post_handler</code> 的探测点无法被优化。所以，如果在已优化的探测点插入带有 <code>post_handler</code> 回调函数的 kprobe 探针，探测点会自动地变成未优化的。</p>
+<!--
+In general, you can install a probe anywhere in the kernel.
+In particular, you can probe interrupt handlers.  Known exceptions
+are discussed in this section.
+-->
+<p>通常，可以在内核的任意位置插入探针。特别的是，它可以探测中断处理函数。本节讨论了已知的异常。</p>
+<!--
+The register_*probe functions will return -EINVAL if you attempt
+to install a probe in the code that implements Kprobes (mostly
+kernel/kprobes.c and `arch/*/kernel/kprobes.c`, but also functions such
+as do_page_fault and notifier_call_chain).
+-->
+<p>如果试图在实现 Kprobes 的代码中插入一个探针，<code>register_*probe</code> 函数将返回 <code>-EINVAL</code>。（在 <code>kernel/kprobes.c</code> 和 <code>arch/*/kernel/kprobes.c</code> 文件中，还有像 <code>do_page_fault</code> 和 <code>notifier_call_chain</code> 这类的函数）。</p>
+<!--
+If you install a probe in an inline-able function, Kprobes makes
+no attempt to `chase down` all inline instances of the function and
+install probes there.  gcc may inline a function without being asked,
+so keep this in mind if you’re not seeing the probe hits you expect.
+-->
+<p>如果在可内联的函数中插入探针，Kprobes 并不会给所有内联实例插入探针。如果没有命中期望的探针，记住一点， gcc 可能会自动内联一个函数。</p>
+<!--
+A probe handler can modify the environment of the probed function
+-- e.g., by modifying kernel data structures, or by modifying the
+contents of the pt_regs struct (which are restored to the registers
+upon return from the breakpoint).  So Kprobes can be used, for example,
+to install a bug fix or to inject faults for testing.  Kprobes, of
+course, has no way to `distinguish` the `deliberately` injected faults
+from the accidental ones.  Don't drink and probe.
+-->
+<p>探针回调函数可以修改被检测函数的环境 &ndash; 例如，改变内核数据结构或者 <code>pt_regs</code> 数据结构的内容（从断点返回时恢复到寄存器中）。因此，Kprobes 可用于安装 bug 修复或测试时注入错误。当然， Kprobes 是没有办法把故意地注入的错误与意外的错误区分开。不要喝大了搞事情。</p>
+<!--
+Kprobes makes no attempt to prevent probe handlers from stepping on
+each other — e.g., probing printk() and then calling printk() from a
+probe handler.  If a probe handler hits a probe, that second probe’s
+handlers won’t be run in that instance, and the kprobe.nmissed member
+of the second probe will be incremented.
+-->
+<p>Kprobes 不会阻止探针回调函数之间的相互作用 &ndash; 比如，先给 <code>printk()</code> 函数插入探针，接着又从另一个探针回调函数中调用 <code>printk()</code> 函数。如果探针回调函数命中一个探针，那么这第二个探针的回调函数不会执行，将只会累加探针的 <code>kprobe.nmissed</code> 值。</p>
+<!--
+As of Linux v2.6.15-rc1, multiple handlers (or multiple instances of
+the same handler) may run concurrently on different CPUs.
+-->
+<p>自 Linux v2.6.15-rc1 开始，多个回调函数（或者相同回调函数的多个实例）可以同时在不同的 CPU 上运行。</p>
+<!--
+Kprobes does not use `mutexes` or allocate memory except during
+registration and unregistration.
+-->
+<p>除了注册和注销探针之外，Kprobes 不会用互斥锁或分配内存。</p>
+<!--
+Probe handlers are run with preemption disabled or interrupt disabled,
+which depends on the architecture and optimization state.  (e.g.,
+kretprobe handlers and optimized kprobe handlers run without interrupt
+disabled on x86/x86-64).  In any case, your handler should not yield
+the CPU (e.g., by attempting to `acquire` a `semaphore`, or waiting I/O).
+-->
+<p>探针回调函数在禁用抢占或者禁用中断的情况下运行，这取决于架构以及优化状态（例如，kretprobe 和优化的 kprobe 回调函数在 x86/x86-64 上运行时没有禁用中断）。不管如何，你的回调函数都不应该让出 CPU （比如，试图获取信号量或等待 I/O）。</p>
+<!--
+Since a return probe is implemented by replacing the return
+address with the trampoline's address, stack `backtraces` and calls
+to __builtin_return_address() will typically yield the trampoline’s
+address instead of the real return address for kretprobed functions.
+(As far as we can tell, __builtin_return_address() is used only for instrumentation
+and error reporting.)
+-->
+<p>因为 return 探针是通过把蹦床的地址替换为返回地址来实现的，所以堆栈回溯以及调用  <code>__builtin_return_address()</code> 函数得到的是蹦床的地址，而不是 kretprobed 函数实际 return 地址（就目前我们知道的而言，<code>__builtin_return_address()</code> 函数只用于测试工具和报告错误）。</p>
+<!--
+If the number of times a function is called does not match the number
+of times it returns, registering a return probe on that function may
+produce `undesirable` results. In such a case, a line:
+kretprobe BUG!: Processing kretprobe d000000000041aa8 @ c00000000004f48c
+gets printed. With this information, one will be able to `correlate` the
+exact instance of the kretprobe that caused the problem. We have the
+do_exit() case covered. do_execve() and do_fork() are not an issue.
+We’re `unaware of` other specific cases where this could be a problem.
+-->
+<p>如果一个函数的调用次数不能匹配返回的次数，在那个函数上注册的探针可能产生不想要的结果。这种情况，会输出一行 <code>kretprobe BUG!: Processing kretprobe d000000000041aa8 @ c00000000004f48c</code>。有了这行信息，就可以关联导致问题的 kretprobe 实例。涵盖了 <code>do_exit()</code> 函数的情况。 <code>do_execve()</code> 和 <code>do_fork()</code> 函数都不是问题。我们不知道的其他特定的情况，可能会出现问题。</p>
+<!--
+If, upon entry to or exit from a function, the CPU is running on
+a stack other than that of the current task, registering a return
+probe on that function may produce undesirable results.  For this
+reason, Kprobes doesn’t support return probes (or kprobes)
+on the x86_64 version of __switch_to(); the registration functions
+return -EINVAL.
+-->
+<p>如果在进入或者退出某个函数时，CPU 在除当前 task 以外的堆栈上运行，那在这个函数上注册 return 探针可能会产生不想要的结果。因为这个原因，Kprobes 不支持 <code>__switch_to()</code> 函数 x86_64 版本的 return 探针（或 kprobes），注册函数会返回 <code>-EINVAL</code> 。</p>
+<!--
+On x86/x86-64, since the Jump Optimization of Kprobes modifies
+instructions widely, there are some limitations to optimization. To
+explain it, we introduce some `terminology`. Imagine a 3-instruction
+sequence consisting of a two 2-byte instructions and one 3-byte
+instruction.
+-->
+<p>在 x86/x86-64 架构上，由于 Kprobes 跳转优化修改指令普遍存在，会对优化有一些限制。为解释这一点，我们引入些术语。想象一下，一个由 2 字节指令和 3 字节指令组成的 3 个指令序列。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c">	    <span class="n">IA</span>
 	    <span class="o">|</span>
 <span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">][</span><span class="mi">3</span><span class="p">][</span><span class="mi">4</span><span class="p">][</span><span class="mi">5</span><span class="p">][</span><span class="mi">6</span><span class="p">][</span><span class="mi">7</span><span class="p">]</span>
 	    <span class="p">[</span><span class="n">ins1</span><span class="p">][</span><span class="n">ins2</span><span class="p">][</span>  <span class="n">ins3</span> <span class="p">]</span>
 	    <span class="p">[</span><span class="o">&lt;-</span>     <span class="n">DCR</span>       <span class="o">-&gt;</span><span class="p">]</span>
 	    <span class="p">[</span><span class="o">&lt;-</span> <span class="n">JTPR</span> <span class="o">-&gt;</span><span class="p">]</span>
-<span class="err">```</span><span class="n">c</span>
-
-<span class="err">```</span><span class="n">c</span>
-<span class="nl">ins1</span><span class="p">:</span> <span class="mi">1</span><span class="n">st</span> <span class="n">Instruction</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="nl">ins1</span><span class="p">:</span> <span class="mi">1</span><span class="n">st</span> <span class="n">Instruction</span>
 <span class="nl">ins2</span><span class="p">:</span> <span class="mi">2</span><span class="n">nd</span> <span class="n">Instruction</span>
 <span class="nl">ins3</span><span class="p">:</span> <span class="mi">3</span><span class="n">rd</span> <span class="n">Instruction</span>
 <span class="nl">IA</span><span class="p">:</span>  <span class="n">Insertion</span> <span class="n">Address</span>
 <span class="nl">JTPR</span><span class="p">:</span> <span class="n">Jump</span> <span class="n">Target</span> <span class="n">Prohibition</span> <span class="n">Region</span>
 <span class="nl">DCR</span><span class="p">:</span> <span class="n">Detoured</span> <span class="n">Code</span> <span class="n">Region</span>
-<span class="err">```</span><span class="n">c</span>
-<span class="o">&lt;!--</span>
-<span class="n">The</span> <span class="n">instructions</span> <span class="n">in</span> <span class="n">DCR</span> <span class="n">are</span> <span class="n">copied</span> <span class="n">to</span> <span class="n">the</span> <span class="n">out</span><span class="o">-</span><span class="n">of</span><span class="o">-</span><span class="n">line</span> <span class="n">buffer</span>
-<span class="n">of</span> <span class="n">the</span> <span class="n">kprobe</span><span class="p">,</span> <span class="n">because</span> <span class="n">the</span> <span class="n">bytes</span> <span class="n">in</span> <span class="n">DCR</span> <span class="n">are</span> <span class="n">replaced</span> <span class="n">by</span>
-<span class="n">a</span> <span class="mi">5</span><span class="o">-</span><span class="n">byte</span> <span class="n">jump</span> <span class="n">instruction</span><span class="p">.</span> <span class="n">So</span> <span class="n">there</span> <span class="n">are</span> <span class="n">several</span> <span class="n">limitations</span><span class="p">.</span>
-
-	<span class="n">a</span><span class="p">)</span> <span class="n">The</span> <span class="n">instructions</span> <span class="n">in</span> <span class="n">DCR</span> <span class="n">must</span> <span class="n">be</span> <span class="n">relocatable</span><span class="p">.</span>
-	<span class="n">b</span><span class="p">)</span> <span class="n">The</span> <span class="n">instructions</span> <span class="n">in</span> <span class="n">DCR</span> <span class="n">must</span> <span class="n">not</span> <span class="n">include</span> <span class="n">a</span> <span class="n">call</span> <span class="n">instruction</span><span class="p">.</span>
-	<span class="n">c</span><span class="p">)</span> <span class="n">JTPR</span> <span class="n">must</span> <span class="n">not</span> <span class="n">be</span> <span class="n">targeted</span> <span class="n">by</span> <span class="n">any</span> <span class="n">jump</span> <span class="n">or</span> <span class="n">call</span> <span class="n">instruction</span><span class="p">.</span>
-	<span class="n">d</span><span class="p">)</span> <span class="n">DCR</span> <span class="n">must</span> <span class="n">not</span> <span class="err">`</span><span class="n">straddle</span><span class="err">`</span> <span class="n">the</span> <span class="n">border</span> <span class="n">between</span> <span class="n">functions</span><span class="p">.</span>
-
-<span class="n">Anyway</span><span class="p">,</span> <span class="n">these</span> <span class="n">limitations</span> <span class="n">are</span> <span class="n">checked</span> <span class="n">by</span> <span class="n">the</span> <span class="n">in</span><span class="o">-</span><span class="n">kernel</span> <span class="n">instruction</span>
-<span class="n">decoder</span><span class="p">,</span> <span class="n">so</span> <span class="n">you</span> <span class="n">don</span><span class="err">’</span><span class="n">t</span> <span class="n">need</span> <span class="n">to</span> <span class="n">worry</span> <span class="n">about</span> <span class="n">that</span><span class="p">.</span>
-<span class="o">--&gt;</span>
-<span class="n">DCR</span> <span class="err">内的指令被复制到</span> <span class="n">kprobe</span> <span class="err">的离线缓冲区中，因为</span> <span class="n">DCR</span> <span class="err">内的字节被</span> <span class="mi">5</span> <span class="err">字节</span> <span class="n">jump</span> <span class="err">指令替代了。所以，这儿会有几个限制。</span>
-
-	<span class="o">*</span> <span class="n">DCR</span> <span class="err">内的指令一定是可重定位的</span>
-	<span class="o">*</span> <span class="n">DCR</span> <span class="err">内的指令一定不能包含</span> <span class="err">`</span><span class="n">call</span><span class="err">`</span> <span class="err">指令</span>
-	<span class="o">*</span> <span class="n">JTPR</span> <span class="err">不能作为</span> <span class="err">`</span><span class="n">jump</span><span class="err">`</span> <span class="err">或</span> <span class="err">`</span><span class="n">call</span><span class="err">`</span> <span class="err">指令的目标</span>
-	<span class="o">*</span> <span class="n">DCR</span> <span class="err">不能跨越函数之间的边界</span>
-
-<span class="err">不过，这些限制由内核的指令解码器检查，所以不需要关心这些限制。</span>
-
-<span class="o">&lt;!--</span>
-<span class="cp"># Probe Overhead
-</span><span class="cp"></span><span class="n">On</span> <span class="n">a</span> <span class="n">typical</span> <span class="n">CPU</span> <span class="n">in</span> <span class="n">use</span> <span class="n">in</span> <span class="mi">2005</span><span class="p">,</span> <span class="n">a</span> <span class="n">kprobe</span> <span class="n">hit</span> <span class="n">takes</span> <span class="mf">0.5</span> <span class="n">to</span> <span class="mf">1.0</span>
-<span class="n">microseconds</span> <span class="n">to</span> <span class="n">process</span><span class="p">.</span>  <span class="n">Specifically</span><span class="p">,</span> <span class="n">a</span> <span class="n">benchmark</span> <span class="n">that</span> <span class="n">hits</span> <span class="n">the</span> <span class="n">same</span>
-<span class="n">probepoint</span> <span class="n">repeatedly</span><span class="p">,</span> <span class="n">firing</span> <span class="n">a</span> <span class="n">simple</span> <span class="n">handler</span> <span class="n">each</span> <span class="n">time</span><span class="p">,</span> <span class="n">reports</span> <span class="mi">1</span><span class="o">-</span><span class="mi">2</span>
-<span class="n">million</span> <span class="n">hits</span> <span class="n">per</span> <span class="n">second</span><span class="p">,</span> <span class="n">depending</span> <span class="n">on</span> <span class="n">the</span> <span class="n">architecture</span><span class="p">.</span>  <span class="n">A</span> <span class="k">return</span><span class="o">-</span><span class="n">probe</span>
-<span class="n">hit</span> <span class="n">typically</span> <span class="n">takes</span> <span class="mi">50</span><span class="o">-</span><span class="mi">75</span><span class="o">%</span> <span class="n">longer</span> <span class="n">than</span> <span class="n">a</span> <span class="n">kprobe</span> <span class="n">hit</span><span class="p">.</span>
-<span class="n">When</span> <span class="n">you</span> <span class="n">have</span> <span class="n">a</span> <span class="k">return</span> <span class="n">probe</span> <span class="n">set</span> <span class="n">on</span> <span class="n">a</span> <span class="n">function</span><span class="p">,</span> <span class="n">adding</span> <span class="n">a</span> <span class="n">kprobe</span> <span class="n">at</span>
-<span class="n">the</span> <span class="n">entry</span> <span class="n">to</span> <span class="n">that</span> <span class="n">function</span> <span class="n">adds</span> <span class="err">`</span><span class="n">essentially</span><span class="err">`</span> <span class="n">no</span> <span class="n">overhead</span><span class="p">.</span>
-
-<span class="n">Here</span> <span class="n">are</span> <span class="n">sample</span> <span class="n">overhead</span> <span class="err">`</span><span class="n">figures</span><span class="err">`</span> <span class="p">(</span><span class="n">in</span> <span class="n">usec</span><span class="p">)</span> <span class="k">for</span> <span class="n">different</span> <span class="nl">architectures</span><span class="p">:</span>
-<span class="o">--&gt;</span>
-<span class="cp"># 探针的开销
-</span><span class="cp"></span><span class="err">在</span> <span class="mi">2005</span> <span class="err">年常见的</span> <span class="n">CPU</span> <span class="err">上，处理命中</span> <span class="n">kprobe</span> <span class="err">要花费</span> <span class="mf">0.5</span> <span class="o">-</span> <span class="mf">1.0</span> <span class="err">微秒。具体一点，基准测试反复命中同一个探测点，每一次触发简单的回调函数，每秒</span> <span class="mi">1</span><span class="o">-</span><span class="mi">2</span> <span class="err">百万次命中，具体数值取决于</span> <span class="n">CPU</span> <span class="err">架构。通常，命中</span> <span class="k">return</span> <span class="err">探针比命中</span> <span class="n">kprobe</span> <span class="err">多花费</span> <span class="mi">50</span><span class="o">-</span><span class="mi">75</span><span class="o">%</span> <span class="err">的时间。当你把一个</span> <span class="n">kretprobe</span> <span class="err">插入到一个函数的时候，实际是在函数入口处添加一个</span> <span class="n">kprobe</span><span class="err">，基本上上函数不会增加开销。</span>
-
-<span class="err">下面有些不同架构开销的样本（微秒）：</span>
-
-	<span class="n">k</span> <span class="o">=</span> <span class="n">kprobe</span><span class="p">;</span> <span class="n">r</span> <span class="o">=</span> <span class="k">return</span> <span class="n">probe</span><span class="p">;</span> <span class="n">kr</span> <span class="o">=</span> <span class="n">kprobe</span> <span class="o">+</span> <span class="k">return</span> <span class="n">probe</span>
-	<span class="n">on</span> <span class="n">same</span> <span class="n">function</span>
-
-	<span class="nl">i386</span><span class="p">:</span> <span class="n">Intel</span> <span class="n">Pentium</span> <span class="n">M</span><span class="p">,</span> <span class="mi">1495</span> <span class="n">MHz</span><span class="p">,</span> <span class="mf">2957.31</span> <span class="n">bogomips</span>
-	<span class="n">k</span> <span class="o">=</span> <span class="mf">0.57</span> <span class="n">usec</span><span class="p">;</span> <span class="n">r</span> <span class="o">=</span> <span class="mf">0.92</span><span class="p">;</span> <span class="n">kr</span> <span class="o">=</span> <span class="mf">0.99</span>
-
-	<span class="nl">x86_64</span><span class="p">:</span> <span class="n">AMD</span> <span class="n">Opteron</span> <span class="mi">246</span><span class="p">,</span> <span class="mi">1994</span> <span class="n">MHz</span><span class="p">,</span> <span class="mf">3971.48</span> <span class="n">bogomips</span>
-	<span class="n">k</span> <span class="o">=</span> <span class="mf">0.49</span> <span class="n">usec</span><span class="p">;</span> <span class="n">r</span> <span class="o">=</span> <span class="mf">0.80</span><span class="p">;</span> <span class="n">kr</span> <span class="o">=</span> <span class="mf">0.82</span>
-
-	<span class="nl">ppc64</span><span class="p">:</span> <span class="n">POWER5</span> <span class="p">(</span><span class="n">gr</span><span class="p">),</span> <span class="mi">1656</span> <span class="n">MHz</span> <span class="p">(</span><span class="n">SMT</span> <span class="n">disabled</span><span class="p">,</span> <span class="mi">1</span> <span class="n">virtual</span> <span class="n">CPU</span> <span class="n">per</span> <span class="n">physical</span> <span class="n">CPU</span><span class="p">)</span>
-	<span class="n">k</span> <span class="o">=</span> <span class="mf">0.77</span> <span class="n">usec</span><span class="p">;</span> <span class="n">r</span> <span class="o">=</span> <span class="mf">1.26</span><span class="p">;</span> <span class="n">kr</span> <span class="o">=</span> <span class="mf">1.45</span>
-
-<span class="o">&lt;!--</span>
-<span class="cp">## Optimized Probe Overhead
-</span><span class="cp"></span><span class="n">Typically</span><span class="p">,</span> <span class="n">an</span> <span class="n">optimized</span> <span class="n">kprobe</span> <span class="n">hit</span> <span class="n">takes</span> <span class="mf">0.07</span> <span class="n">to</span> <span class="mf">0.1</span> <span class="n">microseconds</span> <span class="n">to</span>
-<span class="n">process</span><span class="p">.</span> <span class="n">Here</span> <span class="n">are</span> <span class="n">sample</span> <span class="n">overhead</span> <span class="n">figures</span> <span class="p">(</span><span class="n">in</span> <span class="n">usec</span><span class="p">)</span> <span class="k">for</span> <span class="n">x86</span> <span class="nl">architectures</span><span class="p">:</span>
-<span class="o">--&gt;</span>
-<span class="cp">## 已优化探针开销
-</span><span class="cp"></span><span class="err">通常，命中已优化的</span> <span class="n">kprobe</span> <span class="err">要花费</span> <span class="mf">0.07</span> <span class="o">-</span> <span class="mf">0.1</span> <span class="err">微妙来处理。这是</span> <span class="n">x86</span> <span class="err">架构开销的样本（微妙）：</span>
-
-	<span class="n">k</span> <span class="o">=</span> <span class="n">unoptimized</span> <span class="n">kprobe</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">boosted</span> <span class="p">(</span><span class="n">single</span><span class="o">-</span><span class="n">step</span> <span class="n">skipped</span><span class="p">),</span> <span class="n">o</span> <span class="o">=</span> <span class="n">optimized</span> <span class="n">kprobe</span><span class="p">,</span>
-	<span class="n">r</span> <span class="o">=</span> <span class="n">unoptimized</span> <span class="n">kretprobe</span><span class="p">,</span> <span class="n">rb</span> <span class="o">=</span> <span class="n">boosted</span> <span class="n">kretprobe</span><span class="p">,</span> <span class="n">ro</span> <span class="o">=</span> <span class="n">optimized</span> <span class="n">kretprobe</span><span class="p">.</span>
-
-	<span class="nl">i386</span><span class="p">:</span> <span class="n">Intel</span><span class="p">(</span><span class="n">R</span><span class="p">)</span> <span class="n">Xeon</span><span class="p">(</span><span class="n">R</span><span class="p">)</span> <span class="n">E5410</span><span class="p">,</span> <span class="mf">2.33</span><span class="n">GHz</span><span class="p">,</span> <span class="mf">4656.90</span> <span class="n">bogomips</span>
-	<span class="n">k</span> <span class="o">=</span> <span class="mf">0.80</span> <span class="n">usec</span><span class="p">;</span> <span class="n">b</span> <span class="o">=</span> <span class="mf">0.33</span><span class="p">;</span> <span class="n">o</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">;</span> <span class="n">r</span> <span class="o">=</span> <span class="mf">1.10</span><span class="p">;</span> <span class="n">rb</span> <span class="o">=</span> <span class="mf">0.61</span><span class="p">;</span> <span class="n">ro</span> <span class="o">=</span> <span class="mf">0.33</span>
-
-	<span class="n">x86</span><span class="o">-</span><span class="mi">64</span><span class="o">:</span> <span class="n">Intel</span><span class="p">(</span><span class="n">R</span><span class="p">)</span> <span class="n">Xeon</span><span class="p">(</span><span class="n">R</span><span class="p">)</span> <span class="n">E5410</span><span class="p">,</span> <span class="mf">2.33</span><span class="n">GHz</span><span class="p">,</span> <span class="mf">4656.90</span> <span class="n">bogomips</span>
-	<span class="n">k</span> <span class="o">=</span> <span class="mf">0.99</span> <span class="n">usec</span><span class="p">;</span> <span class="n">b</span> <span class="o">=</span> <span class="mf">0.43</span><span class="p">;</span> <span class="n">o</span> <span class="o">=</span> <span class="mf">0.06</span><span class="p">;</span> <span class="n">r</span> <span class="o">=</span> <span class="mf">1.24</span><span class="p">;</span> <span class="n">rb</span> <span class="o">=</span> <span class="mf">0.68</span><span class="p">;</span> <span class="n">ro</span> <span class="o">=</span> <span class="mf">0.30</span>
-
-<span class="cp"># TODO
-</span><span class="cp"></span><span class="o">&lt;!--</span>
-<span class="n">a</span><span class="p">.</span> <span class="n">SystemTap</span> <span class="p">(</span><span class="nl">http</span><span class="p">:</span><span class="c1">//sourceware.org/systemtap): Provides a simplified
-</span><span class="c1"></span><span class="n">programming</span> <span class="n">interface</span> <span class="k">for</span> <span class="n">probe</span><span class="o">-</span><span class="n">based</span> <span class="n">instrumentation</span><span class="p">.</span>  <span class="n">Try</span> <span class="n">it</span> <span class="n">out</span><span class="p">.</span>
-<span class="n">b</span><span class="p">.</span> <span class="n">Kernel</span> <span class="k">return</span> <span class="n">probes</span> <span class="k">for</span> <span class="n">sparc64</span><span class="p">.</span>
-<span class="n">c</span><span class="p">.</span> <span class="n">Support</span> <span class="k">for</span> <span class="n">other</span> <span class="n">architectures</span><span class="p">.</span>
-<span class="n">d</span><span class="p">.</span> <span class="n">User</span><span class="o">-</span><span class="n">space</span> <span class="n">probes</span><span class="p">.</span>
-<span class="n">e</span><span class="p">.</span> <span class="n">Watchpoint</span> <span class="n">probes</span> <span class="p">(</span><span class="n">which</span> <span class="n">fire</span> <span class="n">on</span> <span class="n">data</span> <span class="n">references</span><span class="p">).</span>
-<span class="o">--&gt;</span>
-
-	<span class="mf">1.</span> <span class="p">[</span><span class="n">SystemTap</span><span class="p">](</span><span class="nl">http</span><span class="p">:</span><span class="c1">//sourceware.org/systemtap)：给基于探针的探测工具提供了一个简单的编程接口。可以试一下
-</span><span class="c1"></span>	<span class="mf">2.</span> <span class="n">sparc64</span> <span class="err">架构的</span> <span class="n">kretprobe</span>
-	<span class="mf">3.</span> <span class="err">支持其他架构</span>
-	<span class="mf">4.</span> <span class="err">用户空间的探针</span>
-	<span class="mf">5.</span> <span class="err">观察点探针（在数据引用时触发）</span>
-
-<span class="cp"># Kprobes 例子
-</span><span class="cp"></span><span class="err">见</span> <span class="p">[</span><span class="n">samples</span><span class="o">/</span><span class="n">kprobes</span><span class="o">/</span><span class="n">kprobe_example</span><span class="p">.</span><span class="n">c</span><span class="p">](</span><span class="nl">https</span><span class="p">:</span><span class="c1">//github.com/torvalds/linux/blob/master/samples/kprobes/kprobe_example.c) 文件
-</span><span class="c1"></span>
-<span class="cp"># Kretprobes 例子
-</span><span class="cp"></span><span class="err">见</span> <span class="p">[</span><span class="n">samples</span><span class="o">/</span><span class="n">kprobes</span><span class="o">/</span><span class="n">kretprobe_example</span><span class="p">.</span><span class="n">c</span><span class="p">](</span><span class="nl">https</span><span class="p">:</span><span class="c1">//github.com/torvalds/linux/blob/master/samples/kprobes/kretprobe_example.c) 文件
-</span><span class="c1"></span>
-<span class="o">&lt;!--</span>
-<span class="n">For</span> <span class="n">additional</span> <span class="n">information</span> <span class="n">on</span> <span class="n">Kprobes</span><span class="p">,</span> <span class="err">`</span><span class="n">refer</span> <span class="n">to</span><span class="err">`</span> <span class="n">the</span> <span class="n">following</span> <span class="nl">URLs</span><span class="p">:</span>
-<span class="o">--&gt;</span>
-<span class="err">有关</span> <span class="n">Kprobes</span> <span class="err">的其他信息，请参考以下</span> <span class="n">URL</span> <span class="err">链接：</span>
-	<span class="o">*</span> <span class="nl">http</span><span class="p">:</span><span class="c1">//www-106.ibm.com/developerworks/library/l-kprobes.html?ca=dgr-lnxw42Kprobe
-</span><span class="c1"></span>	<span class="o">*</span> <span class="nl">http</span><span class="p">:</span><span class="c1">//www.redhat.com/magazine/005mar05/features/kprobes/
-</span><span class="c1"></span>	<span class="o">*</span> <span class="nl">http</span><span class="p">:</span><span class="c1">//www-users.cs.umn.edu/~boutcher/kprobes/
-</span><span class="c1"></span>	<span class="o">*</span> <span class="nl">http</span><span class="p">:</span><span class="c1">//www.linuxsymposium.org/2006/linuxsymposium_procv2.pdf (pages 101-115)
-</span><span class="c1"></span>
-<span class="o">&lt;!--</span>
-<span class="cp"># Deprecated Features
-</span><span class="cp"></span><span class="n">Jprobes</span> <span class="n">is</span> <span class="n">now</span> <span class="n">a</span> <span class="err">`</span><span class="n">deprecated</span><span class="err">`</span> <span class="n">feature</span><span class="p">.</span> <span class="n">People</span> <span class="n">who</span> <span class="n">are</span> <span class="n">depending</span> <span class="n">on</span> <span class="n">it</span> <span class="n">should</span>
-<span class="n">migrate</span> <span class="n">to</span> <span class="n">other</span> <span class="n">tracing</span> <span class="n">features</span> <span class="n">or</span> <span class="n">use</span> <span class="n">older</span> <span class="n">kernels</span><span class="p">.</span> <span class="n">Please</span> <span class="n">consider</span> <span class="n">to</span>
-<span class="n">migrate</span> <span class="n">your</span> <span class="n">tool</span> <span class="n">to</span> <span class="n">one</span> <span class="n">of</span> <span class="n">the</span> <span class="n">following</span> <span class="nl">options</span><span class="p">:</span>
-
-	<span class="o">*</span> <span class="n">Use</span> <span class="n">trace</span><span class="o">-</span><span class="n">event</span> <span class="n">to</span> <span class="n">trace</span> <span class="n">target</span> <span class="n">function</span> <span class="n">with</span> <span class="n">arguments</span><span class="p">.</span>
-
-	<span class="n">trace</span><span class="o">-</span><span class="n">event</span> <span class="n">is</span> <span class="n">a</span> <span class="n">low</span><span class="o">-</span><span class="n">overhead</span> <span class="p">(</span><span class="n">and</span> <span class="n">almost</span> <span class="n">no</span> <span class="n">visible</span> <span class="n">overhead</span> <span class="k">if</span> <span class="n">it</span>
-	<span class="n">is</span> <span class="n">off</span><span class="p">)</span> <span class="n">statically</span> <span class="n">defined</span> <span class="n">event</span> <span class="n">interface</span><span class="p">.</span> <span class="n">You</span> <span class="n">can</span> <span class="n">define</span> <span class="n">new</span> <span class="n">events</span>
-	<span class="n">and</span> <span class="n">trace</span> <span class="n">it</span> <span class="n">via</span> <span class="n">ftrace</span> <span class="n">or</span> <span class="n">any</span> <span class="n">other</span> <span class="n">tracing</span> <span class="n">tools</span><span class="p">.</span>
-
-	<span class="o">*</span> <span class="n">Use</span> <span class="n">ftrace</span> <span class="n">dynamic</span> <span class="n">events</span> <span class="p">(</span><span class="n">kprobe</span> <span class="n">event</span><span class="p">)</span> <span class="n">with</span> <span class="n">perf</span><span class="o">-</span><span class="n">probe</span><span class="p">.</span>
-
-	<span class="n">If</span> <span class="n">you</span> <span class="n">build</span> <span class="n">your</span> <span class="n">kernel</span> <span class="n">with</span> <span class="n">debug</span> <span class="n">info</span> <span class="p">(</span><span class="n">CONFIG_DEBUG_INFO</span><span class="o">=</span><span class="n">y</span><span class="p">),</span> <span class="n">you</span> <span class="n">can</span>
-	<span class="n">find</span> <span class="n">which</span> <span class="k">register</span><span class="o">/</span><span class="n">stack</span> <span class="n">is</span> <span class="n">assigned</span> <span class="n">to</span> <span class="n">which</span> <span class="n">local</span> <span class="n">variable</span> <span class="n">or</span> <span class="n">arguments</span>
-	<span class="n">by</span> <span class="n">using</span> <span class="n">perf</span><span class="o">-</span><span class="n">probe</span> <span class="n">and</span> <span class="n">set</span> <span class="n">up</span> <span class="n">new</span> <span class="n">event</span> <span class="n">to</span> <span class="n">trace</span> <span class="n">it</span><span class="p">.</span>
-<span class="o">--&gt;</span>
-<span class="cp"># 不推荐的特性
-</span><span class="cp"></span><span class="err">现在</span> <span class="n">Jprobes</span> <span class="err">是一个不被推荐的机制。依赖它的应该迁移到其他追踪机制或使用旧的内核。请考虑把你的工具迁移到下面这些选项中：</span>
-
-	<span class="o">*</span> <span class="err">使用</span> <span class="n">trace</span><span class="o">-</span><span class="n">event</span> <span class="err">追踪带参数的函数</span>
-	<span class="n">trace</span><span class="o">-</span><span class="n">event</span> <span class="err">是个低开销的静态定义的事件接口（如果关闭，没有明显的开销）。你可以定义新事件，通过</span> <span class="n">ftrace</span> <span class="err">或者其他追踪工具追踪它。</span>
-
-	<span class="err">参考以下</span> <span class="n">URL</span> <span class="err">链接：</span>
-		<span class="o">-</span> <span class="nl">https</span><span class="p">:</span><span class="c1">//lwn.net/Articles/379903/
-</span><span class="c1"></span>		<span class="o">-</span> <span class="nl">https</span><span class="p">:</span><span class="c1">//lwn.net/Articles/381064/
-</span><span class="c1"></span>		<span class="o">-</span> <span class="nl">https</span><span class="p">:</span><span class="c1">//lwn.net/Articles/383362/
-</span><span class="c1"></span>
-	<span class="o">*</span> <span class="err">使用</span> <span class="n">ftrace</span> <span class="err">动态事件（</span><span class="n">kprobe</span> <span class="err">事件）和</span> <span class="n">perf</span><span class="o">-</span><span class="n">probe</span>
-	<span class="err">如果你使用调试信息（`</span><span class="n">CONFIG_DEBUG_INFO</span><span class="o">=</span><span class="n">y</span><span class="err">`）编译你的内核，可以用</span> <span class="n">perf</span><span class="o">-</span><span class="n">probe</span> <span class="err">设置新事件去追踪它，能发现寄存器</span><span class="o">/</span><span class="err">栈被分配给了哪个本地变量或者参数。</span>
-
-<span class="o">&lt;!--</span>
-<span class="n">See</span> <span class="n">following</span> <span class="nl">documents</span><span class="p">:</span>
-	<span class="o">*</span> <span class="n">Documentation</span><span class="o">/</span><span class="n">trace</span><span class="o">/</span><span class="n">kprobetrace</span><span class="p">.</span><span class="n">rst</span>
-	<span class="o">*</span> <span class="n">Documentation</span><span class="o">/</span><span class="n">trace</span><span class="o">/</span><span class="n">events</span><span class="p">.</span><span class="n">rst</span>
-	<span class="o">*</span> <span class="n">tools</span><span class="o">/</span><span class="n">perf</span><span class="o">/</span><span class="n">Documentation</span><span class="o">/</span><span class="n">perf</span><span class="o">-</span><span class="n">probe</span><span class="p">.</span><span class="n">txt</span>
-<span class="o">--&gt;</span>
-<span class="err">参考以下文档：</span>
-	<span class="o">*</span> <span class="p">[</span><span class="n">Documentation</span><span class="o">/</span><span class="n">trace</span><span class="o">/</span><span class="n">kprobetrace</span><span class="p">.</span><span class="n">rst</span><span class="p">](</span><span class="nl">https</span><span class="p">:</span><span class="c1">//github.com/torvalds/linux/blob/master/Documentation/trace/kprobetrace.rst)
-</span><span class="c1"></span>	<span class="o">*</span> <span class="p">[</span><span class="n">Documentation</span><span class="o">/</span><span class="n">trace</span><span class="o">/</span><span class="n">events</span><span class="p">.</span><span class="n">rst</span><span class="p">](</span><span class="nl">https</span><span class="p">:</span><span class="c1">//github.com/torvalds/linux/blob/master/Documentation/trace/events.rst)
-</span><span class="c1"></span>	<span class="o">*</span> <span class="p">[</span><span class="n">tools</span><span class="o">/</span><span class="n">perf</span><span class="o">/</span><span class="n">Documentation</span><span class="o">/</span><span class="n">perf</span><span class="o">-</span><span class="n">probe</span><span class="p">.</span><span class="n">txt</span><span class="p">](</span><span class="nl">https</span><span class="p">:</span><span class="c1">//github.com/torvalds/linux/blob/master/tools/perf/Documentation/perf-probe.txt)
-</span><span class="c1"></span>
-<span class="o">&lt;!--</span>
-<span class="cp"># The kprobes debugfs interface
-</span><span class="cp"></span><span class="n">With</span> <span class="n">recent</span> <span class="n">kernels</span> <span class="p">(</span><span class="o">&gt;</span> <span class="mf">2.6.20</span><span class="p">)</span> <span class="n">the</span> <span class="n">list</span> <span class="n">of</span> <span class="n">registered</span> <span class="n">kprobes</span> <span class="n">is</span> <span class="n">visible</span>
-<span class="n">under</span> <span class="n">the</span> <span class="o">/</span><span class="n">sys</span><span class="o">/</span><span class="n">kernel</span><span class="o">/</span><span class="n">debug</span><span class="o">/</span><span class="n">kprobes</span><span class="o">/</span> <span class="n">directory</span> <span class="p">(</span><span class="n">assuming</span> <span class="n">debugfs</span> <span class="n">is</span> <span class="n">mounted</span> <span class="n">at</span> <span class="c1">//sys/kernel/debug).
-</span><span class="c1"></span>
-<span class="o">/</span><span class="n">sys</span><span class="o">/</span><span class="n">kernel</span><span class="o">/</span><span class="n">debug</span><span class="o">/</span><span class="n">kprobes</span><span class="o">/</span><span class="nl">list</span><span class="p">:</span> <span class="n">Lists</span> <span class="n">all</span> <span class="n">registered</span> <span class="n">probes</span> <span class="n">on</span> <span class="n">the</span> <span class="nl">system</span><span class="p">:</span>
-<span class="o">--&gt;</span>
-<span class="cp"># kprobes debugfs 接口
-</span><span class="cp"></span><span class="err">最新的内核（</span><span class="o">&gt;</span> <span class="mf">2.6.20</span><span class="err">），已经注册的</span> <span class="n">kprobes</span> <span class="err">列表位于</span> <span class="err">`</span><span class="o">/</span><span class="n">sys</span><span class="o">/</span><span class="n">kernel</span><span class="o">/</span><span class="n">debug</span><span class="o">/</span><span class="n">kprobes</span><span class="o">/</span><span class="err">`</span> <span class="err">目录之下（假设</span> <span class="n">debugfs</span> <span class="err">被挂载到</span> <span class="err">`</span><span class="o">/</span><span class="n">sys</span><span class="o">/</span><span class="n">kernel</span><span class="o">/</span><span class="n">debug</span><span class="err">`</span> <span class="err">目录）。</span>
-
-<span class="err">`</span><span class="o">/</span><span class="n">sys</span><span class="o">/</span><span class="n">kernel</span><span class="o">/</span><span class="n">debug</span><span class="o">/</span><span class="n">kprobes</span><span class="o">/</span><span class="n">list</span><span class="err">`：列出在系统上所有已注册的</span> <span class="n">probes</span><span class="err">：</span>
-<span class="err">```</span><span class="n">c</span>
-<span class="n">c015d71a</span>  <span class="n">k</span>  <span class="n">vfs_read</span><span class="o">+</span><span class="mh">0x0</span>
-<span class="n">c03dedc5</span>  <span class="n">r</span>  <span class="n">tcp_v4_rcv</span><span class="o">+</span><span class="mh">0x0</span>
-<span class="err">```</span><span class="n">c</span>
-<span class="o">&lt;!--</span>
-<span class="n">The</span> <span class="n">first</span> <span class="n">column</span> <span class="n">provides</span> <span class="n">the</span> <span class="n">kernel</span> <span class="n">address</span> <span class="n">where</span> <span class="n">the</span> <span class="n">probe</span> <span class="n">is</span> <span class="n">inserted</span><span class="p">.</span>
-<span class="n">The</span> <span class="n">second</span> <span class="n">column</span> <span class="n">identifies</span> <span class="n">the</span> <span class="n">type</span> <span class="n">of</span> <span class="n">probe</span> <span class="p">(</span><span class="n">k</span> <span class="o">-</span> <span class="n">kprobe</span> <span class="n">and</span> <span class="n">r</span> <span class="o">-</span> <span class="n">kretprobe</span><span class="p">)</span>
-<span class="k">while</span> <span class="n">the</span> <span class="n">third</span> <span class="n">column</span> <span class="n">specifies</span> <span class="n">the</span> <span class="n">symbol</span><span class="o">+</span><span class="n">offset</span> <span class="n">of</span> <span class="n">the</span> <span class="n">probe</span><span class="p">.</span>
-<span class="n">If</span> <span class="n">the</span> <span class="n">probed</span> <span class="n">function</span> <span class="n">belongs</span> <span class="n">to</span> <span class="n">a</span> <span class="n">module</span><span class="p">,</span> <span class="n">the</span> <span class="n">module</span> <span class="n">name</span> <span class="n">is</span> <span class="n">also</span>
-<span class="n">specified</span><span class="p">.</span> <span class="n">Following</span> <span class="n">columns</span> <span class="n">show</span> <span class="n">probe</span> <span class="n">status</span><span class="p">.</span> <span class="n">If</span> <span class="n">the</span> <span class="n">probe</span> <span class="n">is</span> <span class="n">on</span>
-<span class="n">a</span> <span class="n">virtual</span> <span class="n">address</span> <span class="n">that</span> <span class="n">is</span> <span class="n">no</span> <span class="n">longer</span> <span class="n">valid</span> <span class="p">(</span><span class="n">module</span> <span class="n">init</span> <span class="n">sections</span><span class="p">,</span> <span class="n">module</span>
-<span class="n">virtual</span> <span class="n">addresses</span> <span class="n">that</span> <span class="n">correspond</span> <span class="n">to</span> <span class="n">modules</span> <span class="n">that</span><span class="err">’</span><span class="n">ve</span> <span class="n">been</span> <span class="n">unloaded</span><span class="p">),</span>
-<span class="n">such</span> <span class="n">probes</span> <span class="n">are</span> <span class="n">marked</span> <span class="n">with</span> <span class="p">[</span><span class="n">GONE</span><span class="p">].</span> <span class="n">If</span> <span class="n">the</span> <span class="n">probe</span> <span class="n">is</span> <span class="n">temporarily</span> <span class="n">disabled</span><span class="p">,</span>
-<span class="n">such</span> <span class="n">probes</span> <span class="n">are</span> <span class="n">marked</span> <span class="n">with</span> <span class="p">[</span><span class="n">DISABLED</span><span class="p">].</span> <span class="n">If</span> <span class="n">the</span> <span class="n">probe</span> <span class="n">is</span> <span class="n">optimized</span><span class="p">,</span> <span class="n">it</span> <span class="n">is</span>
-<span class="n">marked</span> <span class="n">with</span> <span class="p">[</span><span class="n">OPTIMIZED</span><span class="p">].</span> <span class="n">If</span> <span class="n">the</span> <span class="n">probe</span> <span class="n">is</span> <span class="n">ftrace</span><span class="o">-</span><span class="n">based</span><span class="p">,</span> <span class="n">it</span> <span class="n">is</span> <span class="n">marked</span> <span class="n">with</span>
-<span class="p">[</span><span class="n">FTRACE</span><span class="p">].</span>
-<span class="o">--&gt;</span>
-<span class="err">第一列，是已插入探针的内核地址。第二列，是表示探针的类型（</span><span class="n">k</span> <span class="o">-</span> <span class="n">kprobe</span><span class="err">，</span><span class="n">r</span> <span class="o">-</span> <span class="n">kretprobe</span><span class="err">）。第三列，是指定探针的符号</span><span class="o">+</span><span class="err">偏移量（</span><span class="n">symbol</span><span class="o">+</span><span class="n">offset</span><span class="err">）。如果被探测的函数属于一个模块，那么这个模块的名字也会被列出来。随后的几列显示探针的状态。如果探针在虚拟地址上，并且地址无效（模块初始化部分，模块虚拟地址，对应的模块已经卸载），这类探针会被标记为</span> <span class="p">[</span><span class="n">GONE</span><span class="p">]</span><span class="err">。如果探针临时被禁用，会被标记为</span> <span class="p">[</span><span class="n">DISABLED</span><span class="p">]</span><span class="err">。如果探针被优化了，会被标记为</span> <span class="p">[</span><span class="n">OPTIMIZED</span><span class="p">]</span><span class="err">。如果探针是基于</span> <span class="n">ftrace</span> <span class="err">的，会被标记为</span> <span class="p">[</span><span class="n">FTRACE</span><span class="p">]</span><span class="err">。</span>
-
-<span class="o">&lt;!--</span>
-<span class="o">/</span><span class="n">sys</span><span class="o">/</span><span class="n">kernel</span><span class="o">/</span><span class="n">debug</span><span class="o">/</span><span class="n">kprobes</span><span class="o">/</span><span class="nl">enabled</span><span class="p">:</span> <span class="n">Turn</span> <span class="n">kprobes</span> <span class="n">ON</span><span class="o">/</span><span class="n">OFF</span> <span class="n">forcibly</span><span class="p">.</span>
-<span class="o">--&gt;</span>
-<span class="err">`</span><span class="o">/</span><span class="n">sys</span><span class="o">/</span><span class="n">kernel</span><span class="o">/</span><span class="n">debug</span><span class="o">/</span><span class="n">kprobes</span><span class="o">/</span><span class="n">enabled</span><span class="err">`：强制开启</span><span class="o">/</span><span class="err">关闭</span> <span class="n">kprobes</span><span class="err">。</span>
-
-<span class="o">&lt;!--</span>
-<span class="n">Provides</span> <span class="n">a</span> <span class="n">knob</span> <span class="n">to</span> <span class="n">globally</span> <span class="n">and</span> <span class="n">forcibly</span> <span class="n">turn</span> <span class="n">registered</span> <span class="n">kprobes</span> <span class="n">ON</span> <span class="n">or</span> <span class="n">OFF</span><span class="p">.</span>
-<span class="n">By</span> <span class="k">default</span><span class="p">,</span> <span class="n">all</span> <span class="n">kprobes</span> <span class="n">are</span> <span class="n">enabled</span><span class="p">.</span> <span class="n">By</span> <span class="n">echoing</span> <span class="err">“</span><span class="mi">0</span><span class="err">”</span> <span class="n">to</span> <span class="n">this</span> <span class="n">file</span><span class="p">,</span> <span class="n">all</span>
-<span class="n">registered</span> <span class="n">probes</span> <span class="n">will</span> <span class="n">be</span> <span class="err">`</span><span class="n">disarmed</span><span class="err">`</span><span class="p">,</span> <span class="n">till</span> <span class="n">such</span> <span class="n">time</span> <span class="n">a</span> <span class="err">“</span><span class="mi">1</span><span class="err">”</span> <span class="n">is</span> <span class="n">echoed</span> <span class="n">to</span> <span class="n">this</span>
-<span class="n">file</span><span class="p">.</span> <span class="n">Note</span> <span class="n">that</span> <span class="n">this</span> <span class="n">knob</span> <span class="n">just</span> <span class="n">disarms</span> <span class="n">and</span> <span class="n">arms</span> <span class="n">all</span> <span class="n">kprobes</span> <span class="n">and</span> <span class="n">doesn</span><span class="err">’</span><span class="n">t</span>
-<span class="n">change</span> <span class="n">each</span> <span class="n">probe</span><span class="err">’</span><span class="n">s</span> <span class="n">disabling</span> <span class="n">state</span><span class="p">.</span> <span class="n">This</span> <span class="n">means</span> <span class="n">that</span> <span class="n">disabled</span> <span class="n">kprobes</span> <span class="p">(</span><span class="n">marked</span>
-<span class="p">[</span><span class="n">DISABLED</span><span class="p">])</span> <span class="n">will</span> <span class="n">be</span> <span class="n">not</span> <span class="n">enabled</span> <span class="k">if</span> <span class="n">you</span> <span class="n">turn</span> <span class="n">ON</span> <span class="n">all</span> <span class="n">kprobes</span> <span class="n">by</span> <span class="n">this</span> <span class="n">knob</span><span class="p">.</span>
-<span class="o">--&gt;</span>
-<span class="err">提供一个全局按钮，强制的开启或关闭已注册的</span> <span class="n">kprobes</span><span class="err">。默认情况下，所有</span> <span class="n">kprobes</span> <span class="err">是开启的。输出</span> <span class="err">“</span><span class="mi">0</span><span class="err">”</span> <span class="err">到这个文件，所有已注册的探针会被卸载，输出</span> <span class="err">“</span><span class="mi">1</span><span class="err">”</span> <span class="err">到这个文件，又重新加载。请注意，这个按钮只是卸载和加载所有</span> <span class="n">kprobes</span><span class="err">，并不会改变每个探针的禁用状态。意思是，已经禁用的探针（标记为</span> <span class="p">[</span><span class="n">DISABLED</span><span class="p">]</span><span class="err">）是不会被激活的。</span>
-
-<span class="o">&lt;!--</span>
-<span class="cp"># The kprobes sysctl interface
-</span><span class="cp"></span><span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="n">sys</span><span class="o">/</span><span class="n">debug</span><span class="o">/</span><span class="n">kprobes</span><span class="o">-</span><span class="nl">optimization</span><span class="p">:</span> <span class="n">Turn</span> <span class="n">kprobes</span> <span class="n">optimization</span> <span class="n">ON</span><span class="o">/</span><span class="n">OFF</span><span class="p">.</span>
-
-<span class="n">When</span> <span class="n">CONFIG_OPTPROBES</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">this</span> <span class="n">sysctl</span> <span class="n">interface</span> <span class="err">`</span><span class="n">appears</span><span class="err">`</span> <span class="n">and</span> <span class="n">it</span> <span class="n">provides</span>
-<span class="n">a</span> <span class="n">knob</span> <span class="n">to</span> <span class="n">globally</span> <span class="n">and</span> <span class="n">forcibly</span> <span class="n">turn</span> <span class="n">jump</span> <span class="n">optimization</span> <span class="p">(</span><span class="n">see</span> <span class="nl">section</span>
-<span class="p">:</span><span class="nl">ref</span><span class="p">:</span><span class="err">`</span><span class="n">kprobes_jump_optimization</span><span class="err">`</span><span class="p">)</span> <span class="n">ON</span> <span class="n">or</span> <span class="n">OFF</span><span class="p">.</span> <span class="n">By</span> <span class="k">default</span><span class="p">,</span> <span class="n">jump</span> <span class="n">optimization</span>
-<span class="n">is</span> <span class="n">allowed</span> <span class="p">(</span><span class="n">ON</span><span class="p">).</span> <span class="n">If</span> <span class="n">you</span> <span class="n">echo</span> <span class="err">“</span><span class="mi">0</span><span class="err">”</span> <span class="n">to</span> <span class="n">this</span> <span class="n">file</span> <span class="n">or</span> <span class="n">set</span>
-<span class="err">“</span><span class="n">debug</span><span class="p">.</span><span class="n">kprobes_optimization</span><span class="err">”</span> <span class="n">to</span> <span class="mi">0</span> <span class="n">via</span> <span class="n">sysctl</span><span class="p">,</span> <span class="n">all</span> <span class="n">optimized</span> <span class="n">probes</span> <span class="n">will</span> <span class="n">be</span>
-<span class="n">unoptimized</span><span class="p">,</span> <span class="n">and</span> <span class="n">any</span> <span class="n">new</span> <span class="n">probes</span> <span class="n">registered</span> <span class="n">after</span> <span class="n">that</span> <span class="n">will</span> <span class="n">not</span> <span class="n">be</span> <span class="n">optimized</span><span class="p">.</span>
-
-<span class="n">Note</span> <span class="n">that</span> <span class="n">this</span> <span class="n">knob</span> <span class="n">changes</span> <span class="n">the</span> <span class="n">optimized</span> <span class="n">state</span><span class="p">.</span> <span class="n">This</span> <span class="n">means</span> <span class="n">that</span> <span class="n">optimized</span>
-<span class="n">probes</span> <span class="p">(</span><span class="n">marked</span> <span class="p">[</span><span class="n">OPTIMIZED</span><span class="p">])</span> <span class="n">will</span> <span class="n">be</span> <span class="n">unoptimized</span> <span class="p">([</span><span class="n">OPTIMIZED</span><span class="p">]</span> <span class="n">tag</span> <span class="n">will</span> <span class="n">be</span>
-<span class="n">removed</span><span class="p">).</span> <span class="n">If</span> <span class="n">the</span> <span class="n">knob</span> <span class="n">is</span> <span class="n">turned</span> <span class="n">on</span><span class="p">,</span> <span class="n">they</span> <span class="n">will</span> <span class="n">be</span> <span class="n">optimized</span> <span class="n">again</span><span class="p">.</span>
-<span class="o">--&gt;</span>
-<span class="cp"># kprobes sysctl 接口
-</span><span class="cp"></span><span class="err">`</span><span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="n">sys</span><span class="o">/</span><span class="n">debug</span><span class="o">/</span><span class="n">kprobes</span><span class="o">-</span><span class="n">optimization</span><span class="err">`：</span> <span class="n">kprobes</span> <span class="err">优化开关。</span>
-
-<span class="err">在</span> <span class="err">`</span><span class="n">CONFIG_OPTPROBES</span><span class="o">=</span><span class="n">y</span><span class="err">`</span> <span class="err">的时候，</span> <span class="err">`</span><span class="n">sysctl</span><span class="err">`</span> <span class="err">接口提供一个全局按钮，强制的开启或关闭跳转优化（查看跳转章节）。默认情况下，跳转优化是开启的。如果输出</span> <span class="err">“</span><span class="mi">0</span><span class="err">”</span> <span class="err">到这个文件或者通过</span> <span class="err">`</span><span class="n">sysctl</span><span class="err">`</span> <span class="err">设置</span> <span class="err">`</span><span class="n">debug</span><span class="p">.</span><span class="n">kprobes_optimization</span><span class="err">`</span> <span class="err">为</span> <span class="mi">0</span> <span class="err">，所有优化的探针将会变成未优化的，而且在这之后任何新的被注册的探针都不会被优化。</span>
-
-<span class="err">注意，这个按钮会改变优化状态。表示已优化的探针（标记为</span> <span class="p">[</span><span class="n">OPTIMIZED</span><span class="p">]</span><span class="err">）将变成未优化的（标记</span> <span class="p">[</span><span class="n">OPTIMIZED</span><span class="p">]</span> <span class="err">会被移除）。如果按钮被打开，探针将再次被优化。</span></code></pre></td></tr></table>
+</code></pre></td></tr></table>
 </div>
-</div><div class="footnotes" role="doc-endnotes">
+</div><!--
+The instructions in DCR are copied to the out-of-line buffer
+of the kprobe, because the bytes in DCR are replaced by
+a 5-byte jump instruction. So there are several limitations.
+
+	a) The instructions in DCR must be relocatable.
+	b) The instructions in DCR must not include a call instruction.
+	c) JTPR must not be targeted by any jump or call instruction.
+	d) DCR must not `straddle` the border between functions.
+
+Anyway, these limitations are checked by the in-kernel instruction
+decoder, so you don’t need to worry about that.
+-->
+<p>DCR 内的指令被复制到 kprobe 的离线缓冲区中，因为 DCR 内的字节被 5 字节 jump 指令替代了。所以，这儿会有几个限制。</p>
+<ul>
+<li>DCR 内的指令一定是可重定位的</li>
+<li>DCR 内的指令一定不能包含 <code>call</code> 指令</li>
+<li>JTPR 不能作为 <code>jump</code> 或 <code>call</code> 指令的目标</li>
+<li>DCR 不能跨越函数之间的边界</li>
+</ul>
+<p>不过，这些限制由内核的指令解码器检查，所以不需要关心这些限制。</p>
+<!--
+Probe Overhead
+==============
+On a typical CPU in use in 2005, a kprobe hit takes 0.5 to 1.0
+microseconds to process.  Specifically, a benchmark that hits the same
+probepoint repeatedly, firing a simple handler each time, reports 1-2
+million hits per second, depending on the architecture.  A return-probe
+hit typically takes 50-75% longer than a kprobe hit.
+When you have a return probe set on a function, adding a kprobe at
+the entry to that function adds `essentially` no overhead.
+
+Here are sample overhead `figures` (in usec) for different architectures:
+-->
+<h2 id="探针的开销">探针的开销</h2>
+<p>在 2005 年常见的 CPU 上，处理命中 kprobe 要花费 0.5 - 1.0 微秒。具体一点，基准测试反复命中同一个探测点，每一次触发简单的回调函数，每秒 1-2 百万次命中，具体数值取决于 CPU 架构。通常，命中 return 探针比命中 kprobe 多花费 50-75% 的时间。当你把一个 kretprobe 插入到一个函数的时候，实际是在函数入口处添加一个 kprobe，基本上上函数不会增加开销。</p>
+<p>下面有些不同架构开销的样本（微秒）：</p>
+<pre><code>k = kprobe; r = return probe; kr = kprobe + return probe
+on same function
+
+i386: Intel Pentium M, 1495 MHz, 2957.31 bogomips
+k = 0.57 usec; r = 0.92; kr = 0.99
+
+x86_64: AMD Opteron 246, 1994 MHz, 3971.48 bogomips
+k = 0.49 usec; r = 0.80; kr = 0.82
+
+ppc64: POWER5 (gr), 1656 MHz (SMT disabled, 1 virtual CPU per physical CPU)
+k = 0.77 usec; r = 1.26; kr = 1.45
+</code></pre>
+<!--
+Optimized Probe Overhead
+========================
+Typically, an optimized kprobe hit takes 0.07 to 0.1 microseconds to
+process. Here are sample overhead figures (in usec) for x86 architectures:
+-->
+<h2 id="已优化探针开销">已优化探针开销</h2>
+<p>通常，命中已优化的 kprobe 要花费 0.07 - 0.1 微妙来处理。这是 x86 架构开销的样本（微妙）：</p>
+<pre><code>k = unoptimized kprobe, b = boosted (single-step skipped), o = optimized kprobe,
+r = unoptimized kretprobe, rb = boosted kretprobe, ro = optimized kretprobe.
+
+i386: Intel(R) Xeon(R) E5410, 2.33GHz, 4656.90 bogomips
+k = 0.80 usec; b = 0.33; o = 0.05; r = 1.10; rb = 0.61; ro = 0.33
+
+x86-64: Intel(R) Xeon(R) E5410, 2.33GHz, 4656.90 bogomips
+k = 0.99 usec; b = 0.43; o = 0.06; r = 1.24; rb = 0.68; ro = 0.30
+</code></pre>
+<h2 id="todo">TODO</h2>
+<!--
+a. SystemTap (http://sourceware.org/systemtap): Provides a simplified
+programming interface for probe-based instrumentation.  Try it out.
+b. Kernel return probes for sparc64.
+c. Support for other architectures.
+d. User-space probes.
+e. Watchpoint probes (which fire on data references).
+-->
+<pre><code>1. [SystemTap](http://sourceware.org/systemtap)：给基于探针的探测工具提供了一个简单的编程接口。可以试一下
+2. sparc64 架构的 kretprobe
+3. 支持其他架构
+4. 用户空间的探针
+5. 观察点探针（在数据引用时触发）
+</code></pre>
+<h2 id="kprobes-例子">Kprobes 例子</h2>
+<p>见 <a href="https://github.com/torvalds/linux/blob/master/samples/kprobes/kprobe_example.c">samples/kprobes/kprobe_example.c</a> 文件</p>
+<h2 id="kretprobes-例子">Kretprobes 例子</h2>
+<p>见 <a href="https://github.com/torvalds/linux/blob/master/samples/kprobes/kretprobe_example.c">samples/kprobes/kretprobe_example.c</a> 文件</p>
+<!--
+For additional information on Kprobes, `refer to` the following URLs:
+-->
+<p>有关 Kprobes 的其他信息，请参考以下 URL 链接：</p>
+<ul>
+<li><a href="http://www-106.ibm.com/developerworks/library/l-kprobes.html?ca=dgr-lnxw42Kprobe">http://www-106.ibm.com/developerworks/library/l-kprobes.html?ca=dgr-lnxw42Kprobe</a></li>
+<li><a href="http://www.redhat.com/magazine/005mar05/features/kprobes/">http://www.redhat.com/magazine/005mar05/features/kprobes/</a></li>
+<li><a href="http://www-users.cs.umn.edu/~boutcher/kprobes/">http://www-users.cs.umn.edu/~boutcher/kprobes/</a></li>
+<li><a href="http://www.linuxsymposium.org/2006/linuxsymposium_procv2.pdf">http://www.linuxsymposium.org/2006/linuxsymposium_procv2.pdf</a> (pages 101-115)</li>
+</ul>
+<!--
+Deprecated Features
+===================
+Jprobes is now a `deprecated` feature. People who are depending on it should
+migrate to other tracing features or use older kernels. Please consider to
+migrate your tool to one of the following options:
+
+* Use trace-event to trace target function with arguments.
+
+  trace-event is a low-overhead (and almost no visible overhead if it
+  is off) statically defined event interface. You can define new events
+  and trace it via ftrace or any other tracing tools.
+
+  See the following urls:
+
+    - https://lwn.net/Articles/379903/
+    - https://lwn.net/Articles/381064/
+    - https://lwn.net/Articles/383362/
+
+* Use ftrace dynamic events (kprobe event) with perf-probe.
+
+  If you build your kernel with debug info (CONFIG_DEBUG_INFO=y), you can
+  find which register/stack is assigned to which local variable or arguments
+  by using perf-probe and set up new event to trace it.
+
+  See following documents:
+
+	* Documentation/trace/kprobetrace.rst
+	* Documentation/trace/events.rst
+	* tools/perf/Documentation/perf-probe.txt
+-->
+<h2 id="已弃用的机制">已弃用的机制</h2>
+<p>现在 Jprobes 是一个不被推荐的机制。依赖它的应该迁移到其他追踪机制或使用旧的内核。请考虑把你的工具迁移到以下工具中：</p>
+<ul>
+<li>使用 trace-event 追踪带参数的函数</li>
+</ul>
+<blockquote>
+<p>trace-event 是个低开销的静态定义的事件接口（如果关闭，没有明显的开销）。你可以定义新事件，通过 ftrace 或者其他追踪工具追踪它。<br />
+参考以下 URL 链接：<br />
+- <a href="https://lwn.net/Articles/379903/">https://lwn.net/Articles/379903/</a><br />
+- <a href="https://lwn.net/Articles/381064/">https://lwn.net/Articles/381064/</a><br />
+- <a href="https://lwn.net/Articles/383362/">https://lwn.net/Articles/383362/</a></p>
+</blockquote>
+<ul>
+<li>使用 ftrace 动态事件（kprobe 事件）和 perf-probe</li>
+</ul>
+<blockquote>
+<p>如果你使用调试信息（<code>CONFIG_DEBUG_INFO=y</code>）编译你的内核，可以用 perf-probe 设置新事件去追踪它，能发现寄存器/栈被分配给了哪个本地变量或者参数。<br />
+参考以下文档：<br />
+- <a href="https://github.com/torvalds/linux/blob/master/Documentation/trace/kprobetrace.rst">Documentation/trace/kprobetrace.rst</a><br />
+- <a href="https://github.com/torvalds/linux/blob/master/Documentation/trace/events.rst">Documentation/trace/events.rst</a><br />
+- <a href="https://github.com/torvalds/linux/blob/master/tools/perf/Documentation/perf-probe.txt">tools/perf/Documentation/perf-probe.txt</a></p>
+</blockquote>
+<!--
+The kprobes debugfs interface
+=============================
+With recent kernels (> 2.6.20) the list of registered kprobes is visible
+under the /sys/kernel/debug/kprobes/ directory (assuming debugfs is mounted at //sys/kernel/debug).
+
+/sys/kernel/debug/kprobes/list: Lists all registered probes on the system:
+-->
+<h2 id="kprobes-debugfs-接口">kprobes debugfs 接口</h2>
+<p>最新的内核（&gt; 2.6.20），已经注册的 kprobes 列表位于 <code>/sys/kernel/debug/kprobes/</code> 目录之下（假设 debugfs 被挂载到 <code>/sys/kernel/debug</code> 目录）。</p>
+<p><code>/sys/kernel/debug/kprobes/list</code>：列出在系统上所有已注册的 probes：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="n">c015d71a</span>  <span class="n">k</span>  <span class="n">vfs_read</span><span class="o">+</span><span class="mh">0x0</span>
+<span class="n">c03dedc5</span>  <span class="n">r</span>  <span class="n">tcp_v4_rcv</span><span class="o">+</span><span class="mh">0x0</span>
+</code></pre></td></tr></table>
+</div>
+</div><!--
+The first column provides the kernel address where the probe is inserted.
+The second column identifies the type of probe (k - kprobe and r - kretprobe)
+while the third column specifies the symbol+offset of the probe.
+If the probed function belongs to a module, the module name is also
+specified. Following columns show probe status. If the probe is on
+a virtual address that is no longer valid (module init sections, module
+virtual addresses that correspond to modules that’ve been unloaded),
+such probes are marked with [GONE]. If the probe is temporarily disabled,
+such probes are marked with [DISABLED]. If the probe is optimized, it is
+marked with [OPTIMIZED]. If the probe is ftrace-based, it is marked with
+[FTRACE].
+-->
+<p>第一列，是已插入探针的内核地址。第二列，是表示探针的类型（k - kprobe，r - kretprobe）。第三列，是指定探针的符号+偏移量（symbol+offset）。如果被探测的函数属于一个模块，那么这个模块的名字也会被列出来。随后的几列显示探针的状态。如果探针在虚拟地址上，并且地址无效（模块初始化部分，模块虚拟地址，对应的模块已经卸载），这类探针会被标记为 [GONE]。如果探针临时被禁用，会被标记为 [DISABLED]。如果探针被优化了，会被标记为 [OPTIMIZED]。如果探针是基于 ftrace 的，会被标记为 [FTRACE]。</p>
+<!--
+/sys/kernel/debug/kprobes/enabled: Turn kprobes ON/OFF forcibly.
+-->
+<p><code>/sys/kernel/debug/kprobes/enabled</code>：强制开启/关闭 kprobes。</p>
+<!--
+Provides a knob to globally and forcibly turn registered kprobes ON or OFF.
+By default, all kprobes are enabled. By echoing “0” to this file, all
+registered probes will be `disarmed`, till such time a “1” is echoed to this
+file. Note that this knob just disarms and arms all kprobes and doesn’t
+change each probe’s disabling state. This means that disabled kprobes (marked
+[DISABLED]) will be not enabled if you turn ON all kprobes by this knob.
+-->
+<p>提供一个全局按钮，强制的开启或关闭已注册的 kprobes。默认情况下，所有 kprobes 是开启的。输出 “0” 到这个文件，所有已注册的探针会被卸载，输出 “1” 到这个文件，又重新加载。请注意，这个按钮只是卸载和加载所有 kprobes，并不会改变每个探针的禁用状态。意思是，已经禁用的探针（标记为 [DISABLED]）是不会被激活的。</p>
+<!--
+The kprobes sysctl interface
+============================
+/proc/sys/debug/kprobes-optimization: Turn kprobes optimization ON/OFF.
+
+When CONFIG_OPTPROBES=y, this sysctl interface `appears` and it provides
+a knob to globally and forcibly turn jump optimization (see section
+:ref:`kprobes_jump_optimization`) ON or OFF. By default, jump optimization
+is allowed (ON). If you echo “0” to this file or set
+“debug.kprobes_optimization” to 0 via sysctl, all optimized probes will be
+unoptimized, and any new probes registered after that will not be optimized.
+
+Note that this knob changes the optimized state. This means that optimized
+probes (marked [OPTIMIZED]) will be unoptimized ([OPTIMIZED] tag will be
+removed). If the knob is turned on, they will be optimized again.
+-->
+<h2 id="kprobes-sysctl-接口">kprobes sysctl 接口</h2>
+<p><code>/proc/sys/debug/kprobes-optimization</code>： kprobes 优化开关。</p>
+<p>在 <code>CONFIG_OPTPROBES=y</code> 的时候， <code>sysctl</code> 接口提供一个全局按钮，强制的开启或关闭跳转优化（查看跳转章节）。默认情况下，跳转优化是开启的。如果输出 “0” 到这个文件或者通过 <code>sysctl</code> 设置 <code>debug.kprobes_optimization</code> 为 0 ，所有优化的探针将会变成未优化的，而且在这之后任何新的被注册的探针都不会被优化。</p>
+<p>注意，这个按钮会改变优化状态。表示已优化的探针（标记为 [OPTIMIZED]）将变成未优化的（标记 [OPTIMIZED] 会被移除）。如果按钮被打开，探针将再次被优化。</p>
+<div class="footnotes" role="doc-endnotes">
 <hr />
 <ol>
 <li id="fn:1" role="doc-endnote">
-<p>有部分内核代码是不能被捕获的，详情见 <strong>kprobes 黑名单</strong> <a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p>有部分内核代码是不能被捕获的，详情见<a href="#%E9%BB%91%E5%90%8D%E5%8D%95">黑名单</a> <a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:2" role="doc-endnote">
 <p>请想象第二个指令被中断，然后优化器在中断回调函数正在运行的时候用跳转地址替换它。当中断返回到原始地址时，没有有效指令，这会导致一个意外的结果。 <a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
@@ -3603,39 +3136,65 @@ document.addEventListener('DOMContentLoaded', function () {
 
 <section class="sidebar hide">
   <script>document.querySelector('.sidebar').classList.remove('hide')</script>
-  <div class="toc__flexbox" data-position="absolute">
+  <div class="toc__flexbox" data-position="fixed">
     <h6 class="toc__title" data-ani="true">What&#39;s on this Page</h6>
     
+      <label class="switch" data-ani="true">
+        <input id="toggle-toc" aria-label="Toggle TOC" type="checkbox" checked>
+        <span class="slider round"></span>
+      </label>
+    
   </div>
-  <div class="toc hide" data-dir="ltr" data-folding="false" data-ani="true">
+  <div class="toc " data-dir="ltr" data-folding="false" data-ani="true">
     <nav id="TableOfContents">
-  <ol>
+  <ul>
     <li><a href="#译者序">译者序</a></li>
-    <li><a href="#概念-kprobes-和-return-probes">概念： Kprobes 和 Return Probes</a></li>
-    <li><a href="#kprobe-如何工作">Kprobe 如何工作？</a></li>
-    <li><a href="#改变执行路径">改变执行路径</a></li>
-    <li><a href="#return-探针">Return 探针</a>
-      <ol>
-        <li><a href="#return-探针如何工作的">Return 探针如何工作的？</a></li>
-        <li><a href="#kretprobe-入口回调函数">Kretprobe 入口回调函数</a></li>
-      </ol>
-    </li>
-    <li><a href="#跳转优化如何工作的">跳转优化如何工作的？</a>
-      <ol>
-        <li><a href="#初始化-kprobe">初始化 Kprobe</a></li>
-        <li><a href="#安全检查">安全检查</a></li>
-        <li><a href="#准备-detour-缓冲区">准备 detour 缓冲区</a></li>
-        <li><a href="#优化前">优化前</a></li>
-        <li><a href="#优化">优化</a></li>
-        <li><a href="#取消优化">取消优化</a></li>
-      </ol>
+    <li><a href="#概念-kprobes-和-return-probes">概念： Kprobes 和 Return Probes</a>
+      <ul>
+        <li><a href="#kprobe-如何工作">Kprobe 如何工作？</a></li>
+        <li><a href="#改变执行路径">改变执行路径</a></li>
+        <li><a href="#return-探针">Return 探针</a>
+          <ul>
+            <li><a href="#return-探针如何工作的">Return 探针如何工作的？</a></li>
+            <li><a href="#kretprobe-入口回调函数">Kretprobe 入口回调函数</a></li>
+          </ul>
+        </li>
+        <li><a href="#跳转优化如何工作的">跳转优化如何工作的？</a>
+          <ul>
+            <li><a href="#初始化-kprobe">初始化 Kprobe</a></li>
+            <li><a href="#安全检查">安全检查</a></li>
+            <li><a href="#准备-detour-缓冲区">准备 detour 缓冲区</a></li>
+            <li><a href="#优化前">优化前</a></li>
+            <li><a href="#优化">优化</a></li>
+            <li><a href="#取消优化">取消优化</a></li>
+          </ul>
+        </li>
+        <li><a href="#黑名单">黑名单</a></li>
+      </ul>
     </li>
     <li><a href="#支持的架构">支持的架构</a></li>
-  </ol>
-
-  <ol>
-    <li><a href="#register_kprobe">register_kprobe</a></li>
-  </ol>
+    <li><a href="#配置-kprobes">配置 Kprobes</a></li>
+    <li><a href="#api-参考">API 参考</a>
+      <ul>
+        <li><a href="#register_kprobe">register_kprobe</a></li>
+        <li><a href="#register_kretprobe">register_kretprobe</a></li>
+        <li><a href="#unregister_probe">unregister_*probe</a></li>
+        <li><a href="#register_probes">register_*probes</a></li>
+        <li><a href="#unregister_probes">unregister_*probes</a></li>
+        <li><a href="#disable_probe">disable_*probe</a></li>
+        <li><a href="#enable_probe">enable_*probe</a></li>
+      </ul>
+    </li>
+    <li><a href="#kprobes-特性与限制">Kprobes 特性与限制</a></li>
+    <li><a href="#探针的开销">探针的开销</a></li>
+    <li><a href="#已优化探针开销">已优化探针开销</a></li>
+    <li><a href="#todo">TODO</a></li>
+    <li><a href="#kprobes-例子">Kprobes 例子</a></li>
+    <li><a href="#kretprobes-例子">Kretprobes 例子</a></li>
+    <li><a href="#已弃用的机制">已弃用的机制</a></li>
+    <li><a href="#kprobes-debugfs-接口">kprobes debugfs 接口</a></li>
+    <li><a href="#kprobes-sysctl-接口">kprobes sysctl 接口</a></li>
+  </ul>
 </nav>
   </div>
 </section>
@@ -3766,7 +3325,7 @@ document.addEventListener('DOMContentLoaded', function () {
     
     var enableToc = JSON.parse("true");
     var toc = JSON.parse("null");
-    var hideToc = JSON.parse("true");
+    var hideToc = JSON.parse("false");
     var tocFlexbox = document.querySelector('.toc__flexbox');
     var tocFlexboxOuter = document.querySelector('.toc__flexbox--outer');
     var tocFolding = JSON.parse("null");
