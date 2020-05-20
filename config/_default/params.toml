@@ -46,7 +46,7 @@ enableSidebarSeries = true
 enableSidebarCategories = true
 enableToc = false # single page table of contents, you can replace this param to toc(toc = true)
 hideToc = false # Hide or Show toc
-enableTocSwitch = false # single page table of contents visibility switch
+enableTocSwitch = true # single page table of contents visibility switch
 itemsPerCategory = 5 # maximum number of posts shown in the sidebar.
 
 # footer
