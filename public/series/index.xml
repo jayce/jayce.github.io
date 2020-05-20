@@ -12,31 +12,12 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>©{year}, All Rights Reserved</copyright>
-    <lastBuildDate>Sat, 11 Apr 2020 15:52:54 +0800</lastBuildDate>
     
         <atom:link href="https://jayce.github.io/public/series/index.xml" rel="self" type="application/rss+xml" />
     
     
     
 
-      
-      <item>
-        <title>kprobes</title>
-        <link>https://jayce.github.io/public/series/kprobes/</link>
-        <pubDate>Sat, 11 Apr 2020 15:52:54 +0800</pubDate>
-        
-        
-        <guid>https://jayce.github.io/public/series/kprobes/</guid>
-        <description></description>
-        
-        <dc:creator>jayce</dc:creator>
-        
-        
-        
-        
-        
-        
-      </item>
       
 
     

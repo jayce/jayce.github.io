@@ -21,6 +21,30 @@
 
       
       <item>
+        <title>译｜2019｜Kernel Probes (Kprobes)</title>
+        <link>https://jayce.github.io/public/posts/kprobes/kernel-kprobes/</link>
+        <pubDate>Tue, 19 May 2020 11:03:35 +0800</pubDate>
+        
+        <atom:modified>Tue, 19 May 2020 11:03:35 +0800</atom:modified>
+        <guid>https://jayce.github.io/public/posts/kprobes/kernel-kprobes/</guid>
+        <description>译者序 这篇文章翻译自 Linux 内核源码树中的 kprobes.txt 文件，此文件描述了 Kprobes 的概念、工作原理、限制等内容。因为文件的最后一次提交是在 2019 年，所以文章标题中的年份</description>
+        
+        <dc:creator>jayce</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>kprobe</category>
+            
+          
+        
+        
+        
+      </item>
+      
+      <item>
         <title>译｜2005｜ An Introduction to Kprobes</title>
         <link>https://jayce.github.io/public/posts/kprobes/an-introduction-to-kprobes/</link>
         <pubDate>Sat, 11 Apr 2020 15:52:54 +0800</pubDate>
@@ -36,23 +60,11 @@
         
           
             
-              <category>kprobes</category>
+              <category>kprobe</category>
             
           
         
         
-          
-            
-              <category>Dynamic Trace</category>
-            
-          
-        
-        
-          
-            
-              <category>kprobes</category>
-            
-          
         
       </item>
       

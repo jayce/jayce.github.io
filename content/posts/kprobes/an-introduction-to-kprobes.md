@@ -7,11 +7,8 @@ hideToc: false
 enableToc: false
 enableTocContent: false
 tags:
-- kprobes
-series:
-- kprobes
-categories:
-- Dynamic Trace
+- kprobe
+
 ---
 
 ## 译者序

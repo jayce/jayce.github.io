@@ -6,21 +6,18 @@
   xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" 
   xmlns:media="http://search.yahoo.com/mrss/">
   <channel>
-    <title>Blog</title>
-    <link>https://jayce.github.io/public/</link>
-    <description>Recent content on Blog</description>
+    <title>kprobe on Blog</title>
+    <link>https://jayce.github.io/public/tags/kprobe/</link>
+    <description>Recent content in kprobe on Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>©{year}, All Rights Reserved</copyright>
     <lastBuildDate>Tue, 19 May 2020 11:03:35 +0800</lastBuildDate>
     
-        <atom:link href="https://jayce.github.io/public/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="https://jayce.github.io/public/tags/kprobe/index.xml" rel="self" type="application/rss+xml" />
     
     
     
-      
-      
-      
 
       
       <item>
