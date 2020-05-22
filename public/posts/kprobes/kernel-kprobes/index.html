@@ -1600,7 +1600,7 @@ routine to be `invoked` when the breakpoint is hit.
        :ref:`kprobes_blacklist`)
 -->
 <h2 id="概念-kprobes-和-return-probes">概念： Kprobes 和 Return Probes</h2>
-<p>Kprobes 能够让你动态的介入内核的任意函数，且无中断的收集调试和性能信息。几乎可以调试任意内核代码地址<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>，指定一个回调函数，在断点命中的时候调用。</p>
+<p>Kprobes 能够让你动态的介入内核的任意函数，且无中断的收集调试和性能信息。基本上，你可以捕获内核的任意地址<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>，指定一个在断点命中候调用回调函数。</p>
 <!--
 There are currently two types of probes: kprobes, and kretprobes
 (also called return probes).  A kprobe can be inserted on `virtually`

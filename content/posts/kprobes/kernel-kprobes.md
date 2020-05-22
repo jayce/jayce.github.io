@@ -2,7 +2,7 @@
 title: "译｜2019｜Kernel Probes (Kprobes)"
 date: 2020-05-19T11:03:35+08:00
 description:
-# draft: false
+draft: false
 hideToc: false
 enableToc: true
 enableTocContent: false
@@ -52,7 +52,7 @@ routine to be `invoked` when the breakpoint is hit.
        :ref:`kprobes_blacklist`)
 -->
 ## 概念： Kprobes 和 Return Probes
-Kprobes 能够让你动态的介入内核的任意函数，且无中断的收集调试和性能信息。几乎可以调试任意内核代码地址[^1]，指定一个回调函数，在断点命中的时候调用。
+Kprobes 能够让你动态的介入内核的任意函数，且无中断的收集调试和性能信息。基本上，你可以捕获内核的任意地址[^1]，指定一个在断点命中候调用回调函数。
 
 [^1]: 有部分内核代码是不能被捕获的，详情见[黑名单](#黑名单)
 
