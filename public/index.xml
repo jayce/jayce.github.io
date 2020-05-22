@@ -12,7 +12,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>©{year}, All Rights Reserved</copyright>
-    <lastBuildDate>Tue, 19 May 2020 11:03:35 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 21 May 2020 14:07:20 +0800</lastBuildDate>
     
         <atom:link href="https://jayce.github.io/public/index.xml" rel="self" type="application/rss+xml" />
     
@@ -22,6 +22,30 @@
       
       
 
+      
+      <item>
+        <title>译｜2008｜User-Space Probes (Uprobes)</title>
+        <link>https://jayce.github.io/public/posts/kprobes/user-space-probes/</link>
+        <pubDate>Thu, 21 May 2020 14:07:20 +0800</pubDate>
+        
+        <atom:modified>Fri, 22 May 2020 00:00:00 +0000</atom:modified>
+        <guid>https://jayce.github.io/public/posts/kprobes/user-space-probes/</guid>
+        <description>译者序 这篇文章翻译自 SystemTap 项目中 uprobes.txt 文件，此文件描述了 Uprobes 的概念、工作原理、限制等内容。用途跟 Kprobes 一样，用来追踪运行在用户态的应用程序的。看提交历史，</description>
+        
+        <dc:creator>jayce</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>kprobe</category>
+            
+          
+        
+        
+        
+      </item>
       
       <item>
         <title>译｜2019｜Kernel Probes (Kprobes)</title>

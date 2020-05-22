@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>译｜2019｜Kernel Probes (Kprobes) – Blog</title>
+    <title>译｜2008｜User-Space Probes (Uprobes) – Blog</title>
     
 
 
@@ -238,7 +238,7 @@
     
     var tocFolding = JSON.parse("null");
     
-    var tocLevels = JSON.parse("null");
+    var tocLevels = JSON.parse("[\"h2\",\"h3\",\"h4\"]");
     
     if (tocLevels) {
       tocLevels = tocLevels.toString();
@@ -551,7 +551,7 @@
 
   
     
-    var permalink = JSON.parse("\"https://jayce.github.io/public/posts/kprobes/kernel-kprobes/\"");
+    var permalink = JSON.parse("\"https://jayce.github.io/public/posts/kprobes/user-space-probes/\"");
     var searchResults = null;
     var searchMenu = null;
     var searchText = null;
@@ -1208,16 +1208,16 @@
 
 <meta name="keywords" content="kprobe">
 
-<meta name="created" content="2020-05-19T11:03:35&#43;0800">
-<meta name="modified" content="2020-05-19T11:03:35&#43;0800">
-<meta property="article:published_time" content="2020-05-19T11:03:35&#43;0800">
+<meta name="created" content="2020-05-21T14:07:20&#43;0800">
+<meta name="modified" content="2020-05-22T00:00:00&#43;0000">
+<meta property="article:published_time" content="2020-05-21T14:07:20&#43;0800">
 
 <meta name="author" content="jayce">
 
 
 <meta property="og:site_name" content="Blog">
-<meta property="og:title" content="译｜2019｜Kernel Probes (Kprobes)">
-<meta property="og:url" content="https://jayce.github.io/public/posts/kprobes/kernel-kprobes/">
+<meta property="og:title" content="译｜2008｜User-Space Probes (Uprobes)">
+<meta property="og:url" content="https://jayce.github.io/public/posts/kprobes/user-space-probes/">
 <meta property="og:type" content="article">
 <meta property="og:description" content="">
 
@@ -1230,7 +1230,7 @@
 
 <meta name="apple-mobile-web-app-status-bar-style" content="#fff">
 
-<link rel="canonical" href="https://jayce.github.io/public/posts/kprobes/kernel-kprobes/">
+<link rel="canonical" href="https://jayce.github.io/public/posts/kprobes/user-space-probes/">
 
 <link rel="manifest" href="/public/manifest.json">
 
@@ -1256,11 +1256,11 @@
   {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    "headline": "译｜2019｜Kernel Probes (Kprobes)",
-    "datePublished": "2020-05-19T11:03:35+08:00",
-    "dateModified": "2020-05-19T11:03:35+08:00",
-    "url" : "https://jayce.github.io/public/posts/kprobes/kernel-kprobes/",
-    "description": "译者序 这篇文章翻译自 Linux 内核源码树中的 kprobes.txt 文件，此文件描述了 Kprobes 的概念、工作原理、限制等内容。因为文件的最后一次提交是在 2019 年，所以文章标题中的年份",
+    "headline": "译｜2008｜User-Space Probes (Uprobes)",
+    "datePublished": "2020-05-21T14:07:20+08:00",
+    "dateModified": "2020-05-22T00:00:00Z",
+    "url" : "https://jayce.github.io/public/posts/kprobes/user-space-probes/",
+    "description": "译者序 这篇文章翻译自 SystemTap 项目中 uprobes.txt 文件，此文件描述了 Uprobes 的概念、工作原理、限制等内容。用途跟 Kprobes 一样，用来追踪运行在用户态的应用程序的。看提交历史，",
     "keywords": ["kprobe"],
     "mainEntityOfPage": {
       "@type": "WebPage",
@@ -1507,7 +1507,7 @@
   
   <li  class="is-active" >
     
-      <span>译｜2019｜Kernel Probes (Kprobes)</span>
+      <span>译｜2008｜User-Space Probes (Uprobes)</span>
     
   </li>
   
@@ -1519,13 +1519,15 @@
   <div class="single ">
     <div class="single__nojs">This page looks best with JavaScript enabled</div>
     <script>document.querySelector('.single').classList.remove('hide'); document.querySelector('.single__nojs').classList.add('hide');</script>
-    <h2 class="single__title" data-ani="true">译｜2019｜Kernel Probes (Kprobes)</h2>
+    <h2 class="single__title" data-ani="true">译｜2008｜User-Space Probes (Uprobes)</h2>
     <div class="single__meta">
       
 <div class="single__infos">
-  <time class="single__info" title="Written At">📅&nbsp;May 19, 2020 </time>
+  <time class="single__info" title="Written At">📅&nbsp;May 21, 2020 </time>
   
-  &nbsp;&middot;&nbsp; <span class="single__info" title="Reading Time"> ☕&nbsp;18&nbsp;min read </span>
+  &nbsp;&middot;&nbsp; <time class="single__info" title="Modified At"> 📝&nbsp;May 22, 2020 </time>
+  
+  &nbsp;&middot;&nbsp; <span class="single__info" title="Reading Time"> ☕&nbsp;14&nbsp;min read </span>
   
   <span class="single__info">
     
@@ -1543,556 +1545,192 @@
     </div>
     <article class="single__contents" data-dir="ltr" data-ani="true">
       
-      <!--
-## 对于文中一些疑惑：**
-* trap 怎么理解？陷阱？调试？捕捉？
-* notifier_call_chain 机制？
-* routine 翻译为函数或者程序
-* debug 翻译为调试
-* probepoint 翻译为探测点
-* 查查以 TOC 作为函数调用的架构，及其原理
-* CPU 如何区分二进制中的指令和数据，或者说是可执行文件如何存储指令以及数据的？
-* 指令与函数怎么对应？编译原理？
--->
-<h2 id="译者序">译者序</h2>
-<p>这篇文章翻译自 Linux 内核源码树中的 <a href="https://github.com/torvalds/linux/blob/master/Documentation/kprobes.txt">kprobes.txt</a> 文件，此文件描述了 Kprobes 的概念、工作原理、限制等内容。因为文件的最后一次提交是在 2019 年，所以文章标题中的年份也就是指这个意思的。</p>
-<p>下面的表格是对关键词的一点解释，概念其实就这几个。</p>
-<table>
-<thead>
-<tr>
-<th>关键词</th>
-<th>解释</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Kprobes</td>
-<td>指的是内核的探测机制、框架，依赖于硬件的特定功能实现的，比如 int3 指令</td>
-</tr>
-<tr>
-<td>kprobe</td>
-<td>指的是 Kprobes 的对象或结构体，关联探测点和探针</td>
-</tr>
-<tr>
-<td>probepoint</td>
-<td><strong>探测点</strong>，一个可用于观察、监视目的的具体位置，比如：一个函数的入口、返回地址</td>
-</tr>
-<tr>
-<td>probe</td>
-<td><strong>探针</strong>，在探测点做具体事情的对象，比如：分析、追踪</td>
-</tr>
-</tbody>
-</table>
-<p><strong>如果用一句话解释 Kprobes 原理就是</strong>：Kprobes 在探测点上注册了一些探针，当 CPU 执行到探测点的时候 Kprobes 会调用所有相关探针的回调函数。CPU 是怎么从执行流转到 Kprobes 的呢？</p>
+      <h2 id="译者序">译者序</h2>
+<p>这篇文章翻译自 SystemTap 项目中 <a href="https://sourceware.org/git/?p=systemtap.git;a=blob;f=runtime/uprobes/uprobes.txt;h=edd524be022691498c7f38133b0e32192dcbb35f;hb=a2b182f549cf64427a474803f3c02286b8c1b5e1">uprobes.txt</a> 文件，此文件描述了 Uprobes 的概念、工作原理、限制等内容。用途跟 Kprobes 一样，用来追踪运行在用户态的应用程序的。看提交<a href="https://lore.kernel.org/linux-mm/20120209092642.GE16600@linux.vnet.ibm.com/">历史</a>，这个功能在 2012 年才提交到 Linux 内核中。</p>
+<p>文章最后提供的例子，可以修改来玩一玩。</p>
 <p><strong>注：因为水平有限，文中难免存在遗漏或者错误的地方。如有疑问，建议直接阅读原文。</strong></p>
 <hr />
-<!--
-Concepts: Kprobes and Return Probes
-===================================
-
-Kprobes `enables you to dynamically break into` any kernel `routine` and
-collect debugging and performance information `non-disruptively`. You
-can trap at almost any kernel code address [1]_, specifying a handler
-routine to be `invoked` when the breakpoint is hit.
-
-.. [1] some parts of the kernel code can not be trapped, see
-
-       :ref:`kprobes_blacklist`)
--->
-<h2 id="概念-kprobes-和-return-probes">概念： Kprobes 和 Return Probes</h2>
-<p>Kprobes 能够让你动态的介入内核的任意函数，且无中断的收集调试和性能信息。几乎可以调试任意内核代码地址<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>，指定一个回调函数，在断点命中的时候调用。</p>
-<!--
-There are currently two types of probes: kprobes, and kretprobes
-(also called return probes).  A kprobe can be inserted on `virtually`
-any `instruction` in the kernel.  A return probe `fires` when a specified
-function returns.
--->
-<p>目前，探针有两种类型：kprobes ，kretprobes（也被称为 <code>return</code> 探针）。基本上， kprobe 可以安插到任意指令上。当一个指定的函数返回时触发 <code>return</code> 探针。</p>
-<!--
-In the typical case, Kprobes-based `instrumentation` is packaged as
-a kernel module.  The module’s init function installs (“registers”)
-one or more probes, and the exit function unregisters them.  A
-`registration` function such as register_kprobe() specifies where
-the probe is to be inserted and what handler is to be called when
-the probe is hit.
--->
-<p>通常，基于 Kprobes 的探测工具被打包成了一个内核模块。模块的初始化函数会安装（注册）一个或多个探针，而模块的卸载函数会注销它们。 <code>register_kprobe()</code> 注册函数指明探针要插入到什么位置，探针命中的时候要调用什么样的函数。</p>
-<!--
-There are also `register_/unregister_*probes()` functions for `batch`
-registration/unregistration of a group of `*probes`. These functions
-can `speed up` unregistration process when you have to unregister
-a lot of probes at once.
--->
-<p>也有一些用来批量注销或注册一组探针的 <code>register_/unregister_*probes()</code> 函数。在必须一次性注销大量探针的时候，这些函数可以加快注销过程。</p>
-<!--
-The next four subsections explain how the different types of
-probes work and how jump optimization works.  They explain certain
-things that you’ll need to know in order to make the best use of
-Kprobes — e.g., the difference between a pre_handler and
-a post_handler, and how to use the maxactive and nmissed fields of
-a kretprobe.  But if you’re in a hurry to start using Kprobes, you
-can skip ahead to :ref:`kprobes_archs_supported`.
--->
-<p>接下来的四个小节会解释不同类型的探针及跳转优化是如何工作的。这些内容讲了一些必须要知道的事项，以便充分利用 Kprobes ，例如： <code>pre_handler</code> 与 <code>post_handler</code> 之间的区别，以及如何使用 kretprobes 的 <code>maxactive</code> 、 <code>nmissed</code> 字段。不过，假如你想马上试试 Kprobes 的话，可以直接跳至[##支持的架构]章节。</p>
-<!--
-## How Does a Kprobe Work?
-When a kprobe is registered, Kprobes `makes a copy of` the probed
-`instruction` and replaces the first byte(s) of the probed instruction
-with a breakpoint instruction (e.g., int3 on i386 and x86_64).
--->
-<h3 id="kprobe-如何工作">Kprobe 如何工作？</h3>
-<p>Kprobes 在注册了一个 kprobe 后，复制被探测的指令，并且把被探测指令的第一个字节替换为断点指令（例如：在 i386、x86_64 平台上的 <code>int3</code>）。</p>
-<!--
-When a CPU hits the breakpoint instruction, a trap `occurs`, the CPU’s
-registers are saved, and control passes to Kprobes via the
-notifier_call_chain `mechanism`.  Kprobes executes the “pre_handler”
-`associated with` the kprobe, passing the handler the addresses of the
-kprobe struct and the saved registers.
--->
-<p>在 CPU 命中断点指令时，会发生一个 <code>trap</code>，CPU 的寄存器会被保存，而控制通过 notifier_call_chain 机制转移到 Kprobes 。Kprobes 执行与 kprobe 关联的 <code>pre_handler</code>，并且向它传递 kprobe 结构体和保存的寄存器地址。</p>
-<!--
-Next, Kprobes single-steps its copy of the probed instruction.
-(It would be simpler to single-step the actual instruction `in place`,
-but then Kprobes would have to temporarily remove the breakpoint
-instruction.  This would open a small time window when another CPU
-could `sail` right past the probepoint.)
--->
-<p>接着，Kprobes 单步执行被探测指令的副本。（虽然单步执行原始指令会更简单，但过后 Kprobes 还必须移除断点指令。当另一个 CPU 执行过探测点的时候，将会打开一个小的时间窗口。）</p>
-<!--
-After the instruction is single-stepped, Kprobes executes the
-“post_handler”, if any, that is associated with the kprobe.
-Execution then continues with the instruction following the probepoint.
--->
-<p>在指令单步执行完之后，Kprobes 会执行与 kprobe 关联的 <code>post_handler</code>，如果有的话。然后，继续执行探测点之后的指令。</p>
-<!--
-## Changing Execution Path
-Since kprobes can probe into a running kernel code, it can change the
-register set, including instruction pointer. This operation requires
-maximum care, such as keeping the stack frame, recovering the execution
-path etc. Since it operates on a running kernel and needs deep knowledge
-of computer architecture and `concurrent` computing, you can easily shoot
-your foot.
--->
-<h3 id="改变执行路径">改变执行路径</h3>
-<p>kprobes 能够探测一段正在运行的内核代码，因此它能改变寄存器，包括指令指针。类似保存栈帧、恢复执行路径，这类操作需要非常地小心，因为 kprobes 作用在正在运行的内核上面，需要深入的了解计算结构体系和并行计算才行。</p>
-<!--
-If you change the instruction pointer (and set up other `related`
-registers) in pre_handler, you must return !0 `so that` kprobes stops
-single stepping and just returns to the given address.
-This also means post_handler should not be called anymore.
--->
-<p>假如你在 <code>pre_handler</code> 回调函数内改变指令指针（以及设置其它相关的寄存器），那你必须返回非零值，好让 kprobes 停止单步执行并立即返回到指定地址。这也表示 <code>post_handler</code> 不应该再被调用。</p>
-<!--
-Note that this operation may be harder on some architectures which use
-TOC (Table of Contents) for function call, `since` you have to setup a new
-TOC for your function in your module, and recover the old one after
-returning from it.
--->
-<p>注意，在那些使用 TOC （目录）进行函数调用的架构上，这种操作可能会更困难，因为你必须在你的模块中为你的函数设置新的 TOC，并且在函数返回之后还要恢复先前的 TOC。</p>
-<!--
-## Return Probes
-How Does a Return Probe Work?
-
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-When you call register_kretprobe(), Kprobes establishes a kprobe at
-the entry to the function.  When the probed function is called and this
-probe is hit, Kprobes saves a copy of the return address, and replaces
-the return address with the address of a “`trampoline`.”  The trampoline
-is an `arbitrary` piece of code — typically just a nop instruction.
-At boot time, Kprobes registers a kprobe at the trampoline.
--->
-<h3 id="return-探针">Return 探针</h3>
-<h4 id="return-探针如何工作的">Return 探针如何工作的？</h4>
-<p>在你调用 <code>register_kretprobe()</code> 函数的时候， Kprobes 会在函数的入口处建立一个 kprobe。在调用被探测函数的时候命中这个探针， Kprobes 会保存 return 地址的一个副本，且用一个 “trampoline”（蹦床）的地址替换 return 地址。trampoline 是一段任意的代码 — 通常只是 nop 指令。在启动的时候， Kprobes 在蹦床注册了一个 kprobe。</p>
-<!--
-When the probed function executes its return instruction, control
-passes to the trampoline and that probe is hit.  Kprobes’ trampoline
-handler calls the `user-specified` return handler associated with the
-kretprobe, then sets the saved instruction pointer to the saved return
-address, and that’s where execution `resumes` upon return from the trap.
-生词：user-specified, set ... to, resume, upon（此后的意思，跟在单词后面的句子表达的事情完成之后的意思）
--->
-<p>在被探测的函数执行 return 指令时，控制转移到蹦床命中探针。 Kprobes 的蹦床处理函数调用与 kretprobe 关联的用户指定的回调函数，然后把保存的指令指针设置为保存的 return 地址，一旦从 trap 返回，执行会在这里恢复。</p>
-<!--
-While the probed function is executing, its return address is
-stored in an object of type kretprobe_instance.  Before calling
-register_kretprobe(), the user sets the maxactive field of the
-kretprobe struct to specify how many instances of the specified
-function can be probed `simultaneously`.  register_kretprobe()
-pre-allocates the `indicated` number of kretprobe_instance objects.
-生词：simultaneous, indicated（形容词）
--->
-<p>在被探测的函数执行期间，它的返回地址被保存在一个 <code>kretprobe_instance</code> 类型的对象中。在调用 <code>register_kretprobe()</code> 函数前，用户设置 kretprobe 结构体的 <code>maxactive</code> 字段表示可同时探测指定函数的实例数量。 <code>register_kretprobe()</code> 函数会预先分配规定数量的 <code>kretprobe_instance</code> 对象。</p>
-<!--
-For example, if the function is non-recursive and is called with a
-spinlock held, maxactive = 1 should be enough.  If the function is
-non-recursive and can never `relinquish` the CPU (e.g., via a semaphore
-or `preemption`), NR_CPUS should be enough.  If maxactive <= 0, it is
-set to a default value.  If CONFIG_PREEMPT is enabled, the default
-is max(10, 2*NR_CPUS).  Otherwise, the default is NR_CPUS.
-生词： with a spinlock held, relinquish, preemption
--->
-<p>例如，假设该函数是非递归的，且在自旋锁锁住的情况下被调用，那 <code>maxactive</code> 的值为 1 应该足够。如果函数是非递归的，且永远不放弃 CPU （例如：通过信号量或抢占），那 NR_CPUS 应该足够。要是 <code>maxactive</code> 的值小于等于零的话，会设置成默认值。如果开启 CONFIG_PREEMPT 选项，默认值为 <code>max(10, 2*NR_CPUS)</code>（在两倍的 CPU 数量与 10 之间取较大的值）。其他情况，默认值为 NR_CPUS（CPU 数量）。</p>
-<!--
-It’s not a `disaster` if you set maxactive too low; you’ll just miss
-some probes.  In the kretprobe struct, the nmissed field is set to
-zero when the return probe is registered, and is `incremented` every
-time the probed function is entered but there is no kretprobe_instance
-object available for establishing the return probe.
-生词：disaster, incremented
--->
-<p>如果你把 <code>maxactive</code> 设置的很小的话，也不会有什么问题，只是会漏掉一些探针而已。在 kretprobe 结构体中，return 探针注册后 <code>nmissed</code> 字段会设置为 0，之后在每次进入被探测函数且没有可用的 <code>kretprobe_instance</code> 对象关联 return 探测的时候累加。</p>
-<!--
-### Kretprobe entry-handler
-Kretprobes also provides an optional user-specified handler which runs
-on function entry. This handler is specified by setting the entry_handler
-field of the kretprobe struct. Whenever the kprobe `placed by` kretprobe at the
-function entry is hit, the user-defined entry_handler, if any, is invoked.
-If the entry_handler returns 0 (success) then a `corresponding` return handler
-is `guaranteed` to be called upon function return. If the entry_handler
-returns a non-zero error then Kprobes leaves the return address as is, and
-the kretprobe has no further effect for that particular function instance.
-生词：placed by, corresponding（形容词）, guarantee, further（进一步）, effect（效果，影响）
--->
-<h4 id="kretprobe-入口回调函数">Kretprobe 入口回调函数</h4>
-<p>Kretprobes 还提供一个可选的用户回调函数，它运行于函数入口。这个回调函数通过 kretprobe 结构体 <code>entry_handler</code> 字段指定。每当命中放置在函数入口处的 kprobe 时，就会调用用户自定义的 <code>entry_handler</code> 函数。如果 <code>entry_handler</code> 函数返回零（成功），那么对应的 return 回调函数保证会在函数返回的时候被调用。如果 <code>entry_handler</code> 返回一个非零错误， Kprobes 会保留返回地址，而 kretprobe 对特定的函数实例没有影响。</p>
-<!--
-Multiple entry and return handler `invocations` are matched using the unique
-kretprobe_instance object associated with them. Additionally, a user
-may also specify per return-instance private data to be part of each
-kretprobe_instance object. This is especially useful when sharing private
-data between corresponding user entry and return handlers. The size of each
-private data object can be specified at kretprobe registration time by
-setting the data_size field of the kretprobe struct. This data can be
-accessed through the data field of each kretprobe_instance object.
-生词：invocation（名词，调用）, corresponding
--->
-<p>使用与它们关联的唯一对象 kretprobe_instance，可以匹配许多的 entry 和 return 回调函数调用。另外，用户也可以把每个 return-instace 的私有数据指定为每个 kretprobe_instance 对象的一部分。这在 entry 和 return 回调函数之间共享私有数据时尤其有用。每个私有数据对象的大小可以在 kretprobe 注册时通过 kretprobe 结构体中的 data_size 字段指定。私有数据可以通过每个 kretprobe_instance 对象的 data 字段访问。</p>
-<!--
-`In case` probed function is entered but there is no kretprobe_instance
-object available, then `in addition to` incrementing the nmissed count,
-the user entry_handler invocation is also skipped.
--->
-<p>如果已经进入被探测函数但没有可用的 kretprobe_instance 对象，那么除了增加 <code>nmissed</code> 的计数之外，还会跳过 <code>entry_handler</code> 调用。</p>
-<!--
-.. _kprobes_jump_optimization:
-How Does Jump Optimization Work?
----------------------------------
-If your kernel is built with CONFIG_OPTPROBES=y (currently this flag
-is automatically set ‘y’ on x86/x86-64, non-preemptive kernel) and
-the “debug.kprobes_optimization” kernel parameter is set to 1 (see
-sysctl(8)), Kprobes tries to reduce probe-hit `overhead` by using a jump
-instruction instead of a breakpoint instruction at each probepoint.
--->
-<h3 id="跳转优化如何工作的">跳转优化如何工作的？</h3>
-<p>如果内核使用 CONFIG_OPTPROBES=y （x86/x86-64、非抢占式内核上该标记自动地设置为 y）编译，且内核参数 “debug.kprobes_optimization” 设置为 1 （见 sysctl(8) ），那么 Kprobes 尝试在每个探测点用 jump 指令代替 breakpoint 指令来减少命中探针的开销。</p>
-<!--
-Init a Kprobe
-^^^^^^^^^^^^^
-
-When a probe is registered, before `attempting` this optimization,
-Kprobes inserts an `ordinary`, breakpoint-based kprobe at the specified
-address. So, even if it’s not possible to optimize this particular
-probepoint, there’ll be a probe there.
--->
-<h4 id="初始化-kprobe">初始化 Kprobe</h4>
-<p>在注册了一个探针试图优化之前，Kprobes 会在指定的地址插入一个普通的，基于断点的 kprobe。所以，即便不能优化这个特定的探测点，也会有一个探针在那儿。</p>
-<!--
-Safety Check
-^^^^^^^^^^^^
-
-Before optimizing a probe, Kprobes `performs` the following safety checks:
-
-	* Kprobes verifies that the `region` that will be replaced by the jump
-	instruction (the “optimized region”) lies entirely within one function.
-	(A jump instruction is multiple bytes, and so may `overlay` multiple
-	instructions.)
-
-	* Kprobes analyzes the entire function and verifies that there is no
-	jump into the optimized region.  Specifically:
-		* the function contains no `indirect` jump;
-		* the function contains no instruction that causes an exception (since
-		the `fixup` code triggered by the exception could jump back into the
-		optimized region — Kprobes checks the exception tables to verify this);
-		* there is no near jump to the optimized region (`other than` to the first
-		byte).
-
-	* For each instruction in the optimized region, Kprobes verifies that
-	the instruction can be executed `out of line`.
--->
-<h4 id="安全检查">安全检查</h4>
-<p>在进行优化探针之前，Kprobes 会做以下安全检查：</p>
+<!-- ## Concepts: Uprobes, Return Probes
+Uprobes enables you to dynamically break into any routine in a
+user application and collect debugging and performance information
+non-disruptively. You can trap at any code address, specifying a
+kernel handler routine to be invoked when the breakpoint is hit. -->
+<h2 id="概念uprobesreturn-探针">概念：Uprobes、Return 探针</h2>
+<p>Uprobes 能够动态的介入应用程序的任意函数，采集调试和性能信息，且不引起混乱。你可以在任意地址上，指定断点命中时调用的内核函数。</p>
+<!-- There are currently two types of user-space probes: uprobes and
+uretprobes (also called return probes).  A uprobe can be inserted on
+any instruction in the application’s virtual address space.  A return
+probe fires when a specified user function returns.  These two probe
+types are discussed in more detail later. -->
+<p>目前，用户态探针有两种类型： uprobes 和 uretprobes（也叫 return 探针）。可以在应用程序的虚拟地址空间的任意指令上插入 uprobe 。 当用户函数返回的时候触发 return 探针。后续内容会详细的讨论这两类探针的细节。</p>
+<!-- A registration function such as register_uprobe() specifies which
+process is to be probed, where the probe is to be inserted, and what
+handler is to be called when the probe is hit. -->
+<p><code>register_uprobe()</code> 注册函数设定要探测的进程，探针插入的位置，以及命中探针时调用什么回调函数。</p>
+<!-- Typically, Uprobes-based instrumentation is packaged as a kernel
+module.  In the simplest case, the module’s init function installs
+("registers") one or more probes, and the exit function unregisters
+them.  However, probes can be registered or unregistered in response
+to other events as well.  For example:
+- A probe handler itself can register and/or unregister probes.
+- You can establish Utrace callbacks to register and/or unregister
+probes when a particular process forks, clones a thread,
+execs, enters a system call, receives a signal, exits, etc.
+See Documentation/utrace.txt. -->
+<p>通常，基于 Uprobes 的探测工具是被打包成内核模块。最简单的内核模块，初始化函数安装（&ldquo;注册&rdquo;）一个或多个探针，而后在 exit 函数中注销。其实还可以在响应其他事件中注册或注销探针。例如：</p>
 <ul>
-<li>
-<p>Kprobes 校验会被 jump 指令替换的区域（”已优化的区域“）完全处于一个函数内部。（jump 指令是多字节指令，因此可能会覆盖多个指令）</p>
-</li>
-<li>
-<p>Kprobes 分析整个函数，并且确认不会跳入已优化的区域。特别是：</p>
-<ul>
-<li>该函数不包含间接跳转</li>
-<li>该函数不包含引起异常的指令（因为被异常触发的固定代码可能会跳回到已优化的区域 — Kprobes 会检查异常表来验证这一点）</li>
-<li>该函数附近没有跳转到已优化的区域（除了第一个字节）</li>
+<li>探针回调函数自身可以注册或注销探针</li>
+<li>可以创建 Utrace 回调函数来注册或注销探针，探测特定的进程什么时候派生子进程、克隆线程、执行、进入系统调用、接收信号、退出等等。参考 <code>Documentation/utrace.txt</code>。</li>
 </ul>
-</li>
-<li>
-<p>对于已优化区域中的每一个指令，Kprobes 会验证它们能否离线执行。</p>
-</li>
-</ul>
-<!--
-Preparing Detour Buffer
-^^^^^^^^^^^^^^^^^^^^^^^
-
-Next, Kprobes prepares a "detour" buffer, which contains the following
-instruction sequence:
-
-	- code to push the CPU's registers (emulating a breakpoint trap)
-	- a call to the trampoline code which calls user's probe handlers.
-	- code to restore registers
-	- the instructions from the optimized region
-	- a jump back to the original execution path.
--->
-<h4 id="准备-detour-缓冲区">准备 detour 缓冲区</h4>
-<blockquote>
-<p>detour 意思是像交通节点（环岛）那样</p>
-</blockquote>
-<p>接着，Kprobes 准备一个“环形”缓冲区，包含以下指令序列：</p>
+<!-- ### How Does a Uprobe Work?
+When a uprobe is registered, Uprobes makes a copy of the probed
+instruction, stops the probed application, replaces the first byte(s)
+of the probed instruction with a breakpoint instruction (e.g., int3
+on i386 and x86_64), and allows the probed application to continue.
+(When inserting the breakpoint, Uprobes uses the same copy-on-write
+mechanism that ptrace uses, so that the breakpoint affects only that
+process, and not any other process running that program.  This is
+true even if the probed instruction is in a shared library.) -->
+<h3 id="uprobe-是怎么工作的">Uprobe 是怎么工作的？</h3>
+<p>当一个 uprobe 被注册后，Uprobes 会创建一个被探测指令的副本，停止被探测的应用程序，用断点指令替换被探测指令的首字节（在 i386 和 x86_64 上是 <code>int3</code>），之后让应用程序继续运行。（在插入断点的时候，Uprobes 使用与 ptrace 使用的相同的 <code>copy-on-write</code> 机制，这样断点也只影响那个进程，不会影响其他运行相同程序的进程。甚至是被探测的指令在共享库中也一样。）</p>
+<!-- When a CPU hits the breakpoint instruction, a trap occurs, the CPU’s
+user-mode registers are saved, and a SIGTRAP signal is generated.
+Uprobes `intercepts` the SIGTRAP and finds the associated uprobe.
+It then executes the handler associated with the uprobe, passing the
+handler the addresses of the uprobe struct and the saved registers.
+The handler may block, but `keep in mind` that the probed thread remains
+stopped while your handler runs. -->
+<p>当 CPU 命中断点指令的时候，发生了一个 trap，CPU 用户模式的寄存器都被保存起来，产生了一个 <code>SIGTRAP</code> 信号。Uprobes 拦截 <code>SIGTRAP</code> 信号，找到关联的 uprobe。然后，用 uprobe 结构体和先前保存的寄存器地址调用与 uprobe 关联的回调函数。这个回调函数可能会阻塞，但要记住回调函数执行期间，被探测的线程一直是停止的。</p>
+<!-- Next, Uprobes single-steps its copy of the probed instruction and
+resumes execution of the probed process at the instruction following
+the probepoint.  (It would be simpler to single-step the actual
+instruction in place, but then Uprobes would have to temporarily
+remove the breakpoint instruction.  This would create problems in a
+multithreaded application.  For example, it would open a time window
+when another thread could sail right past the probepoint.) -->
+<p>接下来，Uprobes 会单步执行被探测指令的副本，之后会恢复被探测的程序，让它在探测点之后的指令处继续执行。（实际上单步执行原始指令会更简单，但之后，Uprobes 必须移除断点指令。这在多线程应用程序中会引起问题。比如，当另一个线程执行过探测点的时会打开一个时间窗口。）</p>
+<!-- Instruction copies to be single-stepped are stored in a per-process
+"single-step out of line (SSOL) area," which is a little VM area
+created by Uprobes in each probed process’s address space. -->
+<p>被单步执行的指令副本存储在每个进程的&quot;单步跳出（SSOL）区域&quot;中，它是由 Uprobes 在每个被探测进程的地址空间中创建的很小的 VM 区域。</p>
+<!-- ### The Role of Utrace
+When a probe is registered on a previously unprobed process,
+Uprobes establishes a tracing "engine" with Utrace (see
+Documentation/utrace.txt) for each thread (task) in the process.
+Uprobes uses the Utrace "`quiesce`" mechanism to stop all the threads
+`prior` to insertion or removal of a breakpoint.  Utrace also notifies
+Uprobes of breakpoint and single-step traps and of other interesting
+events in the lifetime of the probed process, such as fork, clone,
+exec, and exit. -->
+<h3 id="utrace-的作用">Utrace 的作用</h3>
+<p>当先前被取消探测的进程上又注册一个探针的时候，Uprobes 用 Utrace 为进程中每个线程建立了一个追踪&quot;引擎&rdquo;。Uprobes 使用 Utrace &ldquo;静默&quot;机制，在插入或移除断点之前停止所有线程。Utrace 在被探测进程的生命周期中（fork, clone, exec, exit），通知 Uprobes 断点和单步执行陷阱以及其他感兴趣的事件。</p>
+<!-- ### How Does a Return Probe Work?
+When you call register_uretprobe(), Uprobes establishes a uprobe
+at the entry to the function.  When the probed function is called
+and this probe is hit, Uprobes saves a copy of the return address,
+and replaces the return address with the address of a "trampoline"
+— a piece of code that contains a breakpoint instruction. -->
+<h3 id="return-探针怎么工作的">Return 探针怎么工作的？</h3>
+<p>当你调用 <code>register_uretprobe()</code> 函数的时候，Uprobes 在函数的入口处创建一个 uprobe 。当调用被探测函数的时候命中这个探针，Uprobes 会保存 return 地址的一个副本，然后用&quot;蹦床&quot;的地址替换 return 地址 —— 一段包含一个断点指令代码。</p>
+<!-- When the probed function executes its return instruction, control
+passes to the trampoline and that breakpoint is hit.  Uprobes’s
+trampoline handler calls the user-specified handler associated with the
+uretprobe, then sets the saved instruction pointer to the saved return
+address, and that’s where execution resumes upon return from the trap. -->
+<p>当被探测的函数执行它的 return 指令时，控制转移到蹦床，命中断点。Uprobes 的蹦床回调函数调用与 uretprobe 关联的回调函数，然后把已保存的指令指针设置为已保存的 return 地址，再然后就从 trap 返回后的地方恢复执行。</p>
+<!-- The trampoline is stored in the SSOL area. -->
+<p>蹦床存储在 SSOL 区域中。</p>
+<!-- ### Multithreaded Applications
+Uprobes supports the probing of multithreaded applications.  Uprobes
+`imposes` no limit on the number of threads in a probed application.
+All threads in a process use the same text pages, so every probe
+in a process affects all threads; of course, each thread hits the
+probepoint (and runs the handler) independently.  Multiple threads
+may run the same handler simultaneously.  If you want a particular
+thread or set of threads to run a particular handler, your handler
+should check current or current->pid to determine which thread has
+hit the probepoint. -->
+<h3 id="多线程应用">多线程应用</h3>
+<p>Uprobes 支持多线程应用的探测。Uprobes 在被探测的应用中没有线程数量的限制。<br />
+在单个进程中的所有线程，使用相同的文本页，所以进程中的每个探针，会影响所有线程；当然，每个线程命中探测点（以及运行回调函数）是相对独立的。多个线程可能同时运行相同的回调函数。如果你想要一个特定的线程或是一组线程运行一个特定的回调函数，那回调函数应该检查 <code>current</code> 或 <code>current-&gt;pid</code> 来确认哪个线程命中了探测点。</p>
+<!-- When a process clones a new thread, that thread automatically shares
+all current and future probes established for that process. -->
+<p>当进程克隆一个新的线程时，该线程自动的共享所有为进程创建的探针。</p>
+<!-- Keep in mind that when you register or unregister a probe, the
+breakpoint is not inserted or removed until Utrace has stopped all
+threads in the process.  The register/unregister function returns
+after the breakpoint has been inserted/removed (but see the next
+section). -->
+<p>要记住，注册或注销探针的时候，要等到 Utrace 停止了进程中的所有线程后，才会插入或删除断点。注册/注销函数在断点已经被插入或移除之后才返回（看下一章节）。</p>
+<!-- ### Registering Probes within Probe Handlers
+A uprobe or uretprobe handler can call any of the functions
+in the Uprobes API ([un]register_uprobe(), [un]register_uretprobe()).
+A handler can even unregister its own probe.  However, when invoked
+from a handler, the actual [un]register operations do not take
+place immediately.  Rather, they are queued up and executed after
+all handlers for that probepoint have been run.  In the handler,
+the [un]register call returns -EINPROGRESS.  If you set the
+registration_callback field in the uprobe object, that callback will
+be called when the [un]register operation completes. -->
+<h3 id="探针回调函数內注册探针">探针回调函数內注册探针</h3>
+<p><code>uprobe</code> 或 <code>uretprobe</code> 回调函数可以调用 Uprobes API 中的任何函数（<code>[un]register_uprobe()</code>, <code>[un]register_uretprobe()</code>）。探针回调函数甚至可以注销它自己。不过，在回调函数中调用的时候，实际的注册/注销操作不会立刻执行。反而，它们会被放入队列，在该探测点已经运行所有回调函数之后执行。在回调函数中，注册/注销函数会返回 <code>-EINPROGRESS</code>。如果在 uprobe 对象中设置了 <code>registration_callback</code> 字段，会在注册/注销操作完成的时候调用。</p>
+<!-- ## Architectures Supported
+Uprobes and uretprobes are implemented on the following
+architectures: -->
+<h2 id="已支持的-cpu-架构">已支持的 CPU 架构</h2>
+<p><code>uprobes</code> 和 <code>uretprobes</code> 被实现，在下面的架构上：</p>
 <ul>
-<li>推进 CPU 寄存器的代码（模拟断点 trap）</li>
-<li>调用蹦床代码，再间接调用用户的探针回调函数</li>
-<li>恢复寄存器的代码</li>
-<li>优化区域的指令</li>
-<li>跳回原始执行路径的指令</li>
-</ul>
-<!--
-Pre-optimization
-^^^^^^^^^^^^^^^^^
-
-After preparing the detour buffer, Kprobes verifies that none of the
-following situations exist:
-
-	* The probe has a post_handler.
-	* Other instructions in the optimized region are probed.
-	* The probe is disabled.
--->
-<h4 id="优化前">优化前</h4>
-<p>在准备 detour 缓冲区后， Kprobes 会检查确保不出现以下情况：</p>
-<ul>
-<li>探针有一个 post_handler 回调函数</li>
-<li>在优化区域中的其他指令被探测了</li>
-<li>已禁用的探针</li>
-</ul>
-<!--
-In any of the above cases, Kprobes won’t start optimizing the probe.
-Since these are temporary situations, Kprobes tries to start
-optimizing it again if the situation is changed.
--->
-<p>在上述任何一种情况下，Kprobes 都不会优化探针。因为这都是临时情况，如果情况有变化，Kprobes 会再次进行优化。</p>
-<!--
-If the kprobe can be optimized, Kprobes enqueues the kprobe to an
-optimizing list, and kicks the kprobe-optimizer workqueue to optimize
-it.  If the to-be-optimized probepoint is hit before being optimized,
-Kprobes returns control to the original instruction path by setting
-the CPU’s instruction pointer to the copied code in the detour buffer
-— thus at least avoiding the single-step.
--->
-<p>如果 kprobe 可以被优化，Kprobes 会把 kprobe 列入优化队列中，然后启动工作队列 kprobe-optimizer 去优化它。如果被优化的 probepoint 在优化之前命中， Kprobes 通过把 CPU 的指令指针设置为 detour 缓冲区中被复制的代码，将控制权返回到原始指令路径 — 这样做至少避免了单步执行。</p>
-<!--
-Optimization
-^^^^^^^^^^^^^
-
-The Kprobe-optimizer doesn’t insert the jump instruction immediately;
-`rather`, it calls synchronize_rcu() for safety first, because it’s
-possible for a CPU to be interrupted in the middle of executing the
-optimized region [^3].  As you know, synchronize_rcu() can ensure
-that all interruptions that were active when synchronize_rcu()
-was called are done, but only if CONFIG_PREEMPT=n.  So, this version
-of kprobe optimization supports only kernels with CONFIG_PREEMPT=n [^4].
-
-After that, the Kprobe-optimizer calls stop_machine() to replace
-the optimized region with a jump instruction to the detour buffer,
-using text_poke_smp().
--->
-<h4 id="优化">优化</h4>
-<p>Kprobe-optimizer 并不会立即插入 jump 指令，相反为了安全它会先调用 <code>synchronize_rcu()</code> 函数，因为在处理优化区域的过程中 CPU 可能会被中断 <sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>。如你所知， <code>synchronize_rcu()</code> 函数可以确保所有活跃的中断在调用 <code>synchronize_rcu()</code> 的时候已经完成，但前提是 <code>CONFIG_PREEMPT=n</code> 的时候。所以，kprobe 的优化版本只支持 <code>CONFIG_PREEMPT=n</code> 的内核 <sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>。</p>
-<p>之后， Kprobe-optimizer 调用 <code>stop_machine()</code> 函数替换优化区域，用一个跳转到 detour 缓冲区指令，使用 <code>text_poke_smp()</code> 函数。</p>
-<!--
-Unoptimization
-^^^^^^^^^^^^^^^^^
-When an optimized kprobe is unregistered, disabled, or blocked by
-another kprobe, it will be unoptimized.  If this happens before
-the optimization is complete, the kprobe is just `dequeued` from the
-optimized list.  If the optimization has been done, the jump is
-replaced with the original code (except for an int3 breakpoint in
-the first byte) by using text_poke_smp().
--->
-<h4 id="取消优化">取消优化</h4>
-<p>当优化的 kprobe 被其他 kprobe 注销、禁用或阻塞的时候，它将不会被优化。如果这种情况在优化完成之前发生，则只是将 kprobe 从优化队列中移除。如果优化已经完成，会通过调用 <code>text_poke_smp()</code> 函数把 jump 指令替换为原始代码（除了第一个字节中的 int3 断点）。</p>
-<!--
-[^3]: Please imagine that the 2nd instruction is interrupted and then
-the optimizer replaces the 2nd instruction with the jump address
-while the interrupt handler is running. When the interrupt returns to
-original address, there is no valid instruction, and it causes an unexpected result.
--->
-<!--
-[^4]: This optimization-safety checking may be replaced with the
-stop-machine method that ksplice uses for supporting a CONFIG_PREEMPT=y
-kernel.
--->
-<!--
-NOTE for geeks:
-The jump optimization changes the kprobe’s pre_handler behavior.
-Without optimization, the pre_handler can change the kernel’s execution
-path by changing regs->ip and returning 1.  However, when the probe
-is optimized, that `modification` is ignored.  `Thus`, if you want to
-`tweak` the kernel’s execution path, you need to `suppress` optimization,
-using one of the following techniques:
-
-	* Specify an empty function for the kprobe’s post_handler.
-	or
-	* Execute ‘sysctl -w debug.kprobes_optimization=n’
--->
-<p>geeks 注意：<br />
-跳转优化改变了 kprobe 的 <code>pre_handler</code> 的行为。优化前，<code>pre_handler</code> 通过改变 <code>regs-&gt;ip</code> 的同时返回 1 可以改变内核的执行路径。然而，在 probe 被优化的时候，修改会被忽略。因此，如果你想微调内核的执行路径，需要使用一个方法去抑制优化：</p>
-<ul>
-<li>给 kprobe 的 post_handler 指定一个空函数</li>
-<li>执行 <code>sysctl -w debug.kprobes_optimization=n</code> 命令</li>
-</ul>
-<!--
-.. _kprobes_blacklist:
-Blacklist
----------
-Kprobes can probe most of the kernel except itself. This means
-that there are some functions where kprobes cannot probe. Probing
-(trapping) such functions can cause a recursive trap (e.g. double
-fault) or the `nested` probe handler may never be called.
-Kprobes manages such functions as a blacklist.
-If you want to add a function into the blacklist, you just need
-to (1) include linux/kprobes.h and (2) use NOKPROBE_SYMBOL() macro
-to specify a blacklisted function.
-Kprobes checks the given probe address `against` the blacklist and
-rejects registering it, if the given address is in the blacklist.
--->
-<h3 id="黑名单">黑名单</h3>
-<p>Kprobes 可以探测除自身以外的大部分内核空间。这表示有一些函数 kprobes 无法探测。探测（trapping）这样的函数会导致递归 trap （比如：双重故障）或者嵌套的 probe 回调函数可能永远不会被调用。如果你想添加一个函数到黑名单中，只需要两个步骤：首先，引入<code> linux/kprobes.h</code> 文件；其次，使用 <code>NOKPROBE_SYMBOL()</code> 宏指定一个要被列入黑名单的函数。 Kprobes 对照黑名单检查传入的 probe 地址，如果传入的地址在黑名单中会拒绝注册。</p>
-<!--
-.. kprobes_archs_supported:
-## Architectures Supported
-Kprobes and return probes are implemented on the following
-architectures:
--->
-<h2 id="支持的架构">支持的架构</h2>
-<p>Kprobes 和 Kretprobes 已在下面的这些结构体系上实现：</p>
-<ul>
-<li>i386 (Supports jump optimization)（支持跳转优化）</li>
-<li>x86_64 (AMD-64, EM64T) (Supports jump optimization)（支持跳转优化）</li>
+<li>i386</li>
+<li>x86_64 (AMD-64, EM64T)</li>
 <li>ppc64</li>
-<li>ia64 (Does not support probes on instruction slot1.)（在 slot1 指令上不支持 probes）</li>
-<li>sparc64 (Return probes not yet implemented.)（返回 probes 还没实现）</li>
-<li>arm</li>
-<li>ppc</li>
-<li>mips</li>
-<li>s390</li>
-<li>parisc</li>
+<li>s390x</li>
 </ul>
 <!--
-Configuring Kprobes
-===================
-When configuring the kernel using make menuconfig/xconfig/oldconfig,
-ensure that CONFIG_KPROBES is set to “y”. Under “General setup”, look
-for “Kprobes”.
-
-So that you can load and unload Kprobes-based instrumentation modules,
-make sure “Loadable module support” (CONFIG_MODULES) and “Module
-unloading” (CONFIG_MODULE_UNLOAD) are set to “y”.
-
-Also make sure that CONFIG_KALLSYMS and perhaps even CONFIG_KALLSYMS_ALL
-are set to “y”, since kallsyms_lookup_name() is used by the in-kernel
-kprobe `address` resolution code.
--->
-<h2 id="配置-kprobes">配置 Kprobes</h2>
-<p>在使用 <code>make menuconfig/xconfig/oldconfig</code> 配置内核时，确保 <code>CONFIG_KPROBES </code> 设置为 “y”。在 “General setup” 字符后搜索 “Kprobes”。</p>
-<p>为了可以加载和卸载基于 Kprobes 的探测模块，请确保将“支持模块加载”（CONFIG_MODULES）和“模块卸载”（CONFIG_MODULE_UNLOAD）设置为 “y”。</p>
-<p>还要确保将  <code>CONFIG_KALLSYMS </code> 甚至是 <code>CONFIG_KALLSYMS_ALL</code> 都设置为 “y”，因为 <code>kallsyms_lookup_name()</code> 函数被内核里的 kprobe 地址解析代码使用。</p>
-<!--
-If you need to insert a probe in the middle of a function, you may find
-it useful to “Compile the kernel with debug info” (CONFIG_DEBUG_INFO),
-so you can use “objdump -d -l vmlinux” to see the source-to-object
-code mapping.
-疑惑：you may find it useful to ...（it 代词，指后面的从句）
--->
-<p>如果你需要在函数中间插入 probe，也许发现“使用 debug info 编译内核” (<code>CONFIG_DEBUG_INFO</code>) 非常有用，因此可以使用 <code>objdump -d -l vmlinux</code> 命令去查看源码到目标代码的映射关系。</p>
-<!--
-API Reference
-=============
-The Kprobes API includes a “register” function and an “unregister”
-function for each type of probe. The API also includes “register_*probes”
-and “unregister_*probes” functions for (un)registering arrays of probes.
-Here are `terse`, mini-man-page specifications for these functions and
-the associated probe handlers that you’ll write. See the files in the
-samples/kprobes/ sub-directory for examples.
--->
+## Configuring Uprobes
+// TODO: The patch actually puts Uprobes configuration under "Instrumentation
+// Support" with Kprobes.  Need to decide which is the better place. -->
+<h2 id="配置-uprobes">配置 Uprobes</h2>
+<p>// TODO: 补丁实际上把 Uprobes 配置放在 &ldquo;Instrumentation Support&rdquo; 下面与 Kprobes 一起。需要决定哪个更好。</p>
+<!-- When configuring the kernel using make menuconfig/xconfig/oldconfig,
+ensure that CONFIG_UPROBES is set to "y".  Under "Process debugging
+support," select "Infrastructure for tracing and debugging user
+processes" to enable Utrace, then select "Uprobes". -->
+<p>在使用 <code>make menuconfig/xconfig/oldconfig</code> 配置内核的时候，确保 <code>CONFIG_UPROBES</code> 设置为 &ldquo;y&rdquo;。在 &ldquo;Process debugging support&rdquo; 下面，选择 &ldquo;Infrastructure for tracing and debugging user processes&rdquo; 开启 Utrace，然后选择 &ldquo;Uprobes&rdquo;。</p>
+<!-- So that you can load and unload Uprobes-based instrumentation modules,
+make sure "Loadable module support" (CONFIG_MODULES) and "Module
+unloading" (CONFIG_MODULE_UNLOAD) are set to "y". -->
+<p>确保 &ldquo;Loadable module support&rdquo;（CONFIG_MODULES）和 &ldquo;Module unloading&rdquo; (CONFIG_MODULE_UNLOAD) 都被设置为 &ldquo;y&rdquo;，这样就可以加载或卸载基于 Uprobes 的测试工具模块。</p>
+<!-- ## API Reference
+The Uprobes API includes a "register" function and an "unregister"
+function for each type of probe.  Here are `terse`, mini-man-page
+specifications for these functions and the associated probe handlers
+that you'll write.  See the latter half of this document for examples. -->
 <h2 id="api-参考">API 参考</h2>
-<p>Kprobes API 为每种探针类型提供了一个”注册“和“注销”函数。还包括批量注册、注销探针的 <code>register_*probes</code> 和 <code>unregister_*probes</code> 函数。这有些迷你手册以及将会用到的相关的探针回调函数的简短说明。相关例子，可查看在 <code>samples/kprobes/</code> 子目录内的文件。</p>
-<h3 id="register_kprobe">register_kprobe</h3>
+<p>Uprobes API 为每种类型的探针分别提供了&quot;注册&quot;和&quot;注销&quot;函数。这有一份这些函数以及相关的探针处理函数的简短说明。例子见文档后半部分。</p>
+<h3 id="register_uprobe">register_uprobe</h3>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;linux/kprobes.h&gt;</span><span class="cp">
-</span><span class="cp"></span><span class="kt">int</span> <span class="nf">register_kprobe</span><span class="p">(</span><span class="k">struct</span> <span class="n">kprobe</span> <span class="o">*</span><span class="n">kp</span><span class="p">);</span>
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;linux/uprobes.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">register_uprobe</span><span class="p">(</span><span class="k">struct</span> <span class="n">uprobe</span> <span class="o">*</span><span class="n">u</span><span class="p">);</span>
 </code></pre></td></tr></table>
 </div>
-</div><!--
-Sets a breakpoint at the address kp->addr.  When the breakpoint is
-hit, Kprobes calls kp->pre_handler.  After the probed instruction
-is single-stepped, Kprobe calls kp->post_handler.  If a fault
-occurs during execution of kp->pre_handler or kp->post_handler,
-or during single-stepping of the probed instruction, Kprobes calls
-kp->fault_handler.  Any or all handlers can be NULL. If kp->flags
-is set KPROBE_FLAG_DISABLED, that kp will be registered but disabled,
-so, its handlers aren’t hit until calling enable_kprobe(kp).
--->
-<p>在 <code>kp-&gt;addr</code> 地址设置一个断点。命中断点时，Kprobes 调用 <code>kp-&gt;pre_handler</code>。在探测的指令单步执行后，Kprobe 调用 <code>kp-&gt;post_handler</code>。如果一个错误发生，在执行 <code>kp-&gt;pre_handler</code> 或 <code>kp-&gt;post_handler</code> 期间，又或者是在单步执行被探测指令期间，Kprobes 会调用 <code>kp-&gt;fault_handler</code>。所有回调函数都可以是 <code>NULL</code>。如果 <code>kp-&gt;flags</code> 设置为  <code>KPROBE_FLAG_DISABLED</code> ，<code>kp</code> 将会被注册且处于禁用状态。所以 <code>kp</code> 的回调函数在调用 <code>enable_kprobe(kp)</code> 之前不会被调用。</p>
-<!--
-.. note
-	1. With the introduction of the “symbol_name” field to struct kprobe, the probepoint address resolution will now be taken care of by the kernel. The following will now work:
-
-	kp.symbol_name = "symbol_name";
-
-	(64-bit powerpc `intricacies` such as function descriptors are handled `transparently`)
-	2. Use the “offset” field of struct kprobe if the offset into the symbol
-	to install a probepoint is known. This field is used to calculate the
-	probepoint.
-	3. Specify either the kprobe "symbol_name" OR the "addr". If both are
-	specified, kprobe registration will fail with -EINVAL.
-	4. With CISC architectures (such as i386 and x86_64), the kprobes code
-	does not validate if the kprobe.addr is at an instruction `boundary`.
-	Use “offset” with `caution`.
-
-register_kprobe() returns 0 on success, or a negative errno otherwise.
--->
-<p>注意：</p>
-<ol>
-<li>
-<p>通过引入 <code>symbol_name</code> 字段来构造 kprobe，探测点地址解析将会由内核来处理。可以使用以下内容：</p>
-<p><code>kp.symbol_name = &quot;symbol_name&quot;;</code></p>
-<p>（64 位 powepc 错综复杂，例如透明地处理函数描述符）</p>
-</li>
-<li>
-<p>如果在符号中用于安装探测点的偏移量是已知的，请使用 kprobes 结构体的 <code>offset</code> 字段。这个字段用于计算探测点。</p>
-</li>
-<li>
-<p>kprobe 的 <code>symbol_name</code> 或者 <code>addr</code> 字段都被指定，kprobe 注册会失败且返回 <code>EINVAL</code>。</p>
-</li>
-<li>
-<p>使用 CISC 架构（如：i386，x86_64），kprobes 代码不会验证，如果 <code>kprobe.addr</code> 在指令边界。谨慎使用 <code>offset</code>。</p>
-</li>
-</ol>
-<p><code>register_kprobe()</code> 函数成功返回 0，其他情况返回一个负的 <code>errno</code>。</p>
-<p>用户的 pre-handler（<code>kp-&gt;pre_handler</code>）函数原型:</p>
+</div><!-- Sets a breakpoint at virtual address u->vaddr in the process whose
+pid is u->pid.  When the breakpoint is hit, Uprobes calls u->handler. -->
+<p>在 pid 是 <code>u-&gt;pid</code> 的进程中，虚拟地址 <code>u-&gt;vaddr</code>处设置断点。在命中断点的时候，Uprobes 调用 <code>u-&gt;handler</code>。</p>
+<!-- register_uprobe() returns 0 on success, -EINPROGRESS if
+register_uprobe() was called from a uprobe or uretprobe handler
+(and therefore delayed), or a negative errno otherwise. -->
+<p><code>register_uprobe()</code> 调用成功返回 0，如果是在 uprobe 或 uretprobe 回调函数中（因此延迟了）调用返回 <code>-EINPROGRESS</code>，否则返回负的 errno 。</p>
+<!-- Section 4.4, "User's Callback for Delayed Registrations",
+explains how to be notified upon completion of a delayed
+registration. -->
+<p><a href="#%E5%BB%B6%E8%BF%9F%E6%B3%A8%E5%86%8C%E5%9B%9E%E8%B0%83">&ldquo;延迟注册回调&rdquo;</a>，解释了在完成延迟注册后如何通知。</p>
+<!-- User's handler (u->handler): -->
+<p>用户的回调函数（u-&gt;handler）:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt">1
@@ -2100,125 +1738,67 @@ register_kprobe() returns 0 on success, or a negative errno otherwise.
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;linux/kprobes.h&gt;</span><span class="cp">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;linux/uprobes.h&gt;</span><span class="cp">
 </span><span class="cp">#include</span> <span class="cpf">&lt;linux/ptrace.h&gt;</span><span class="cp">
-</span><span class="cp"></span><span class="kt">int</span> <span class="nf">pre_handler</span><span class="p">(</span><span class="k">struct</span> <span class="n">kprobe</span> <span class="o">*</span><span class="n">p</span><span class="p">,</span> <span class="k">struct</span> <span class="n">pt_regs</span> <span class="o">*</span><span class="n">regs</span><span class="p">);</span>
+</span><span class="cp"></span><span class="kt">void</span> <span class="nf">handler</span><span class="p">(</span><span class="k">struct</span> <span class="n">uprobe</span> <span class="o">*</span><span class="n">u</span><span class="p">,</span> <span class="k">struct</span> <span class="n">pt_regs</span> <span class="o">*</span><span class="n">regs</span><span class="p">);</span>
 </code></pre></td></tr></table>
 </div>
-</div><!--
-Called with p pointing to the kprobe associated with the breakpoint,
+</div><!-- Called with u pointing to the uprobe associated with the breakpoint,
 and regs pointing to the struct containing the registers saved when
-the breakpoint was hit.  Return 0 here unless you’re a Kprobes geek.
--->
-<p>用指向与断点关联的 kprobe 指针 <code>p</code> 以及命中断点时保存的寄存器指针 <code>regs</code> 调用。</p>
-<!-- User’s post-handler (kp->post_handler): -->
-<p>用户的 post-handler （<code>kp-&gt;post_handler</code>）函数原型：</p>
+the breakpoint was hit. -->
+<p>在断点命中的时候调用，传入指向断点关联的 uprobe 指针 <code>u</code> 和含有保存的寄存器的结构体指针 <code>regs</code>。</p>
+<h3 id="register_uretprobe">register_uretprobe</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;linux/uprobes.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">register_uretprobe</span><span class="p">(</span><span class="k">struct</span> <span class="n">uretprobe</span> <span class="o">*</span><span class="n">rp</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><!-- Establishes a return probe in the process whose pid is rp->u.pid for
+the function whose address is rp->u.vaddr.  When that function returns,
+Uprobes calls rp->handler. -->
+<p>在 pid 是 <code>rp-&gt;u.pid</code> 的进程中，函数地址 <code>rp-&gt;u.vaddr</code> 处创建 return 探针。当该函数返回时，Uprobes 调用 <code>rp-&gt;handler</code>。</p>
+<!-- register_uretprobe() returns 0 on success, -EINPROGRESS if
+register_uretprobe() was called from a uprobe or uretprobe handler
+(and therefore delayed), or a negative errno otherwise. -->
+<p><code>register_uretprobe()</code> 成功返回 0 ，如果是在 uprobe 或 uretprobe 回调函数中（因此被延迟）调用返回 <code>-EINPROGRESS</code>，否则返回负的 errno。</p>
+<!-- Section 4.4, "User's Callback for Delayed Registrations",
+explains how to be notified upon completion of a delayed
+registration. -->
+<p><a href="#%E5%BB%B6%E8%BF%9F%E6%B3%A8%E5%86%8C%E5%9B%9E%E8%B0%83">&ldquo;延迟注册回调&rdquo;</a>，解释了在完成延迟注册后如何通知。</p>
+<!-- User's return-probe handler (rp->handler): -->
+<p>用户的 return 探针回调函数（rp-&gt;handler）：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
-</span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;linux/kprobes.h&gt;</span><span class="cp">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;linux/uprobes.h&gt;</span><span class="cp">
 </span><span class="cp">#include</span> <span class="cpf">&lt;linux/ptrace.h&gt;</span><span class="cp">
-</span><span class="cp"></span><span class="kt">void</span> <span class="nf">post_handler</span><span class="p">(</span><span class="k">struct</span> <span class="n">kprobe</span> <span class="o">*</span><span class="n">p</span><span class="p">,</span> <span class="k">struct</span> <span class="n">pt_regs</span> <span class="o">*</span><span class="n">regs</span><span class="p">,</span>
-		  <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">flags</span><span class="p">);</span>
+</span><span class="cp"></span><span class="kt">void</span> <span class="nf">uretprobe_handler</span><span class="p">(</span><span class="k">struct</span> <span class="n">uretprobe_instance</span> <span class="o">*</span><span class="n">ri</span><span class="p">,</span> <span class="k">struct</span> <span class="n">pt_regs</span> <span class="o">*</span><span class="n">regs</span><span class="p">);</span>
 </code></pre></td></tr></table>
 </div>
-</div><!--
-p and regs are as described for the pre_handler.  flags always seems to be zero.
--->
-<p><code>p</code> 和 <code>regs</code> 同  <code>pre_handler</code> 所述。<code>flags</code> 看起来一直是 0。</p>
-<!--
-User’s fault-handler (kp->fault_handler):
--->
-<p>用户的 fault-handler （<code>kp-&gt;fault_handler</code>）函数原型：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;linux/kprobes.h&gt;</span><span class="cp">
-</span><span class="cp">#include</span> <span class="cpf">&lt;linux/ptrace.h&gt;</span><span class="cp">
-</span><span class="cp"></span><span class="kt">int</span> <span class="nf">fault_handler</span><span class="p">(</span><span class="k">struct</span> <span class="n">kprobe</span> <span class="o">*</span><span class="n">p</span><span class="p">,</span> <span class="k">struct</span> <span class="n">pt_regs</span> <span class="o">*</span><span class="n">regs</span><span class="p">,</span> <span class="kt">int</span> <span class="n">trapnr</span><span class="p">);</span>
-</code></pre></td></tr></table>
-</div>
-</div><!--
-p and regs are as described for the pre_handler.  trapnr is the
-architecture-specific trap number associated with the fault (e.g.,
-on i386, 13 for a general protection fault or 14 for a page fault).
-Returns 1 if it successfully handled the exception.
--->
-<p><code>p</code> 和 <code>regs</code> 同 <code>pre_handler</code> 所述 。 <code>trapnr</code> 是故障相关的特定架构下的 trap 号（例如：在 i386 上， 13 为普通防护故障，14 为页面故障）。如果成功的处理了异常返回 1。</p>
-<h3 id="register_kretprobe">register_kretprobe</h3>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;linux/kprobes.h&gt;</span><span class="cp">
-</span><span class="cp"></span><span class="kt">int</span> <span class="nf">register_kretprobe</span><span class="p">(</span><span class="k">struct</span> <span class="n">kretprobe</span> <span class="o">*</span><span class="n">rp</span><span class="p">);</span>
-</code></pre></td></tr></table>
-</div>
-</div><!--
-Establishes a return probe for the function whose address is
-rp->kp.addr.  When that function returns, Kprobes calls rp->handler.
-You must set rp->maxactive `appropriately` before you call
-register_kretprobe(); see “How Does a Return Probe Work?” for details.
-
-register_kretprobe() returns 0 on success, or a negative errno otherwise.
--->
-<p>为 <code>rp-&gt;kp.addr</code> 地址的函数建立一个 return 探针。在函数返回时，kprobes 调用 <code>rp-&gt;handler</code> 。在调用 <code>register_kretprobe()</code> 之前必须设置合适的 <code>rp-&gt;maxactive</code>，细节参考 “Return Probe 如何工作？” 。</p>
-<p><code>register_kretprobe()</code> 成功返回 0，其他情况返回一个负的 <code>errno</code>。</p>
-<!--
-User’s return-probe handler (rp->handler):
--->
-<p>用户的 return 探针回调函数（<code>rp-&gt;handler</code>）原型：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;linux/kprobes.h&gt;</span><span class="cp">
-</span><span class="cp">#include</span> <span class="cpf">&lt;linux/ptrace.h&gt;</span><span class="cp">
-</span><span class="cp"></span><span class="kt">int</span> <span class="nf">kretprobe_handler</span><span class="p">(</span><span class="k">struct</span> <span class="n">kretprobe_instance</span> <span class="o">*</span><span class="n">ri</span><span class="p">,</span>
-		      <span class="k">struct</span> <span class="n">pt_regs</span> <span class="o">*</span><span class="n">regs</span><span class="p">);</span>
-</code></pre></td></tr></table>
-</div>
-</div><!--
-regs is as described for kprobe.pre_handler.  ri points to the
-kretprobe_instance object, of which the following fields may be of interest:
-
-	* ret_addr: the return address
-	* rp: points to the corresponding kretprobe object
-	* task: points to the corresponding task struct
-	* data: points to per return-instance private data; see “Kretprobe
-	entry-handler” for details.
--->
-<p><code>regs</code> 同 kprobe.pre_handler 描述那样。<code>ri</code> 指向 <code>kretprobe_instance</code> 对象，其中可能涉及以下字段：</p>
+</div><!-- regs is as described for the user's uprobe handler.  ri points to
+the uretprobe_instance object associated with the particular function
+instance that is currently returning.  The following fields in that
+object may be of interest:
+	- ret_addr: the return address
+	- rp: points to the corresponding uretprobe object -->
+<p><code>regs</code>表示用户的 uprobe 处理函数。<code>ri</code> 指向 <code>uretprobe_instance</code> 对象，其关联了当前正在返回的函数实例。可以关注对象中的两个字段：</p>
 <ul>
-<li>ret_addr：返回地址</li>
-<li>rp：指向相关的 kretprobe 对象</li>
-<li>task：指向相关的 task 结构体</li>
-<li>data：指向每个 return-instace 私有数据，细节参考 “kretprobe entry-handler”。</li>
+<li><code>ret_addr</code>：return 地址</li>
+<li><code>rp</code>：指向对应的 uretprobe 对象</li>
 </ul>
-<!--
-The regs_return_value(regs) macro provides a simple abstraction to
-`extract` the return value from the `appropriate` register as defined by
-the architecture’s ABI.
-
-The handler’s return value is currently ignored.
--->
-<p><code>regs_return_value(regs)</code> 宏提供一个简单的抽象方法，从架构的 ABI 定义的合适的寄存器中提取返回值。</p>
-<p>目前，回调函数的返回值是被忽略的。</p>
+<!-- In ptrace.h, the regs_return_value(regs) macro provides a simple
+`abstraction` to extract the return value from the appropriate register
+as defined by the architecture's ABI. -->
+<p>在 <code>ptrace.h</code> 文件中，<code>regs_return_value(regs)</code> 宏提供了一种简单的抽象，从架构的 ABI 定义的相关寄存器中获得返回值。</p>
 <h3 id="unregister_probe">unregister_*probe</h3>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -2227,24 +1807,17 @@ The handler’s return value is currently ignored.
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c">	<span class="cp">#include</span> <span class="cpf">&lt;linux/kprobes.h&gt;</span><span class="cp">
-</span><span class="cp"></span>	<span class="kt">void</span> <span class="nf">unregister_kprobe</span><span class="p">(</span><span class="k">struct</span> <span class="n">kprobe</span> <span class="o">*</span><span class="n">kp</span><span class="p">);</span>
-	<span class="kt">void</span> <span class="nf">unregister_kretprobe</span><span class="p">(</span><span class="k">struct</span> <span class="n">kretprobe</span> <span class="o">*</span><span class="n">rp</span><span class="p">);</span>
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;linux/uprobes.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">void</span> <span class="nf">unregister_uprobe</span><span class="p">(</span><span class="k">struct</span> <span class="n">uprobe</span> <span class="o">*</span><span class="n">u</span><span class="p">);</span>
+<span class="kt">void</span> <span class="nf">unregister_uretprobe</span><span class="p">(</span><span class="k">struct</span> <span class="n">uretprobe</span> <span class="o">*</span><span class="n">rp</span><span class="p">);</span>
 </code></pre></td></tr></table>
 </div>
-</div><!--
-Removes the specified probe.  The unregister function can be called
-at any time after the probe has been registered.
-
-.. note
-
-	If the functions find an incorrect probe (ex. an unregistered probe),
-	they clear the addr field of the probe.
--->
-<p>移除探针。注销函数可以在探针被注册后调用。</p>
-<p>注意：<br />
-如果这些发现一个不正确的探针（不包括未注册的探针），它们会清除探针的 <code>addr</code> 字段。</p>
-<h3 id="register_probes">register_*probes</h3>
+</div><!-- Removes the specified probe.  The unregister function can be called
+at any time after the probe has been registered, and can be called
+from a uprobe or uretprobe handler. -->
+<p>移除探针。注销函数可以在探针注册之后的任何时间调用，还能在 uprobe 或 uretprobe 回调函数中调用。</p>
+<!-- ### User's Callback for Delayed Registrations -->
+<h3 id="延迟注册回调">延迟注册回调</h3>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt">1
@@ -2252,459 +1825,695 @@ at any time after the probe has been registered.
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;linux/kprobes.h&gt;</span><span class="cp">
-</span><span class="cp"></span><span class="kt">int</span> <span class="nf">register_kprobes</span><span class="p">(</span><span class="k">struct</span> <span class="n">kprobe</span> <span class="o">**</span><span class="n">kps</span><span class="p">,</span> <span class="kt">int</span> <span class="n">num</span><span class="p">);</span>
-<span class="kt">int</span> <span class="nf">register_kretprobes</span><span class="p">(</span><span class="k">struct</span> <span class="n">kretprobe</span> <span class="o">**</span><span class="n">rps</span><span class="p">,</span> <span class="kt">int</span> <span class="n">num</span><span class="p">);</span>
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;linux/uprobes.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">void</span> <span class="nf">registration_callback</span><span class="p">(</span><span class="k">struct</span> <span class="n">uprobe</span> <span class="o">*</span><span class="n">u</span><span class="p">,</span> <span class="kt">int</span> <span class="n">reg</span><span class="p">,</span>
+	<span class="k">enum</span> <span class="n">uprobe_type</span> <span class="n">type</span><span class="p">,</span> <span class="kt">int</span> <span class="n">result</span><span class="p">);</span>
 </code></pre></td></tr></table>
 </div>
-</div><!--
-Registers each of the num probes in the specified array.  If any
-error occurs during registration, all probes in the array, up to
-the bad probe, are safely unregistered before the register_*probes
-function returns.
+</div><!-- As previously mentioned, the functions described in Section 4 can be
+called from within a uprobe or uretprobe handler.  When that happens,
+the [un]registration operation is delayed until all handlers associated
+with that handler's probepoint have been run.  Upon completion of the
+[un]registration operation, Uprobes checks the registration_callback
+member of the associated uprobe: u->registration_callback
+for [un]register_uprobe or rp->u.registration_callback for
+[un]register_uretprobe.  Uprobes calls that callback function, if any,
+passing it the following values:
+- u = the address of the uprobe object.  (For a uretprobe, you can use
+container_of(u, struct uretprobe, u) to `obtain` the address of the
+uretprobe object.)
 
-	* kps/rps: an array of pointers to `*probe` data structures
-	* num: the number of the array entries.
+- reg = 1 for register_u[ret]probe() or 0 for unregister_u[ret]probe()
 
-.. note
+- type = UPTY_UPROBE or UPTY_URETPROBE
 
-	You have to allocate(or define) an array of pointers and set all
-	of the array entries before using these functions.
--->
-<p>注册数组中 <code>num</code> 个探针。如果在注册期间发生错误，在 <code>register_*probes</code> 函数返回之前会安全地注销数组中已注册的探针，直到发生错误的探针为止。</p>
+- result = the return value that register_u[ret]probe() would have
+returned if this weren't a delayed operation.  This is always 0
+for unregister_u[ret]probe(). -->
+<p>像前面提到的函数，可以在 uprobe 或 uretprobe 回调函数内部调用。当发生这种情况的时候，注销/注册操作会被延迟，直到与探测点关联的所有回调函数都已运行之后执行。在完成注销/注册操作之后，Uprobes 会检查 uprobe 关联的 <code>registration_callback</code> 成员变量：uprobe 对应 <code>u-&gt;registration_callback</code> 或者 uretprobe 对应 <code>rp-&gt;u.registration_callback</code>。如果存在 Uprobes 会调用 <code>registration_callback</code> 回调函数，并传入下面的值：</p>
 <ul>
-<li><code>kps/rps</code>：指向 <code>*probe</code> 数据结构的指针数组</li>
-<li><code>num</code>：数组的大小</li>
+<li>u = uprobe 对象的地址。（uretprobe 对象，可以使用 <code>container_of(u, struct uretprobe, u)</code> 获得 uretprobe 对象的地址。）</li>
 </ul>
-<p>注意：<br />
-必须分配（或定义）指针数组，且在使用这些函数之前设置数组的所有元素。</p>
-<h3 id="unregister_probes">unregister_*probes</h3>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;linux/kprobes.h&gt;</span><span class="cp">
-</span><span class="cp"></span><span class="kt">void</span> <span class="nf">unregister_kprobes</span><span class="p">(</span><span class="k">struct</span> <span class="n">kprobe</span> <span class="o">**</span><span class="n">kps</span><span class="p">,</span> <span class="kt">int</span> <span class="n">num</span><span class="p">);</span>
-<span class="kt">void</span> <span class="nf">unregister_kretprobes</span><span class="p">(</span><span class="k">struct</span> <span class="n">kretprobe</span> <span class="o">**</span><span class="n">rps</span><span class="p">,</span> <span class="kt">int</span> <span class="n">num</span><span class="p">);</span>
-</code></pre></td></tr></table>
-</div>
-</div><!--
-Removes each of the num probes in the specified array at once.
-
-.. note
-
-	If the functions find some incorrect probes (ex. unregistered
-	probes) in the specified array, they clear the addr field of those
-	incorrect probes. However, other probes in the array are
-	unregistered correctly.
--->
-<p>一次性移除指定数组中 <code>num</code> 个探针。</p>
-<p>注意：<br />
-如果这些函数在数组中发现一些不正确的探针（比如：未注册的探针），会清除那些不正确探针的 <code>addr</code> 字段。数组中其他的探针会被注销掉。</p>
-<h3 id="disable_probe">disable_*probe</h3>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;linux/kprobes.h&gt;</span><span class="cp">
-</span><span class="cp"></span><span class="kt">int</span> <span class="nf">disable_kprobe</span><span class="p">(</span><span class="k">struct</span> <span class="n">kprobe</span> <span class="o">*</span><span class="n">kp</span><span class="p">);</span>
-<span class="kt">int</span> <span class="nf">disable_kretprobe</span><span class="p">(</span><span class="k">struct</span> <span class="n">kretprobe</span> <span class="o">*</span><span class="n">rp</span><span class="p">);</span>
-</code></pre></td></tr></table>
-</div>
-</div><!--
-Temporarily disables the specified `*probe`. You can enable it again by using enable_*probe(). You must specify the probe which has been registered.
--->
-<p>临时地禁用某个探针。调用 <code>enable_*probe()</code> 函数可再次启用。必须是已经注册的探针。</p>
-<h3 id="enable_probe">enable_*probe</h3>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;linux/kprobes.h&gt;</span><span class="cp">
-</span><span class="cp"></span><span class="kt">int</span> <span class="nf">enable_kprobe</span><span class="p">(</span><span class="k">struct</span> <span class="n">kprobe</span> <span class="o">*</span><span class="n">kp</span><span class="p">);</span>
-<span class="kt">int</span> <span class="nf">enable_kretprobe</span><span class="p">(</span><span class="k">struct</span> <span class="n">kretprobe</span> <span class="o">*</span><span class="n">rp</span><span class="p">);</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>Enables <code>*probe</code> which has been disabled by disable_*probe(). You must specify the probe which has been registered.<br />
-通过 <code>disable_*probe()</code> 启用已经被禁用的 <code>*probe</code>。必须指定已经注册的 probe。</p>
-<!--
-Kprobes Features and Limitations
-================================
-Kprobes allows multiple probes at the same address. Also,
-a probepoint for which there is a post_handler cannot be optimized.
-So if you install a kprobe with a post_handler, at an optimized
-probepoint, the probepoint will be unoptimized automatically.
--->
-<h2 id="kprobes-特性与限制">Kprobes 特性与限制</h2>
-<p>kprobes 允许在同一个地址插入多个探针。此外，带有 <code>post_handler</code> 的探测点无法被优化。所以，如果在已优化的探测点插入带有 <code>post_handler</code> 回调函数的 kprobe 探针，探测点会自动地变成未优化的。</p>
-<!--
-In general, you can install a probe anywhere in the kernel.
-In particular, you can probe interrupt handlers.  Known exceptions
-are discussed in this section.
--->
-<p>通常，可以在内核的任意位置插入探针。特别的是，它可以探测中断处理函数。本节讨论了已知的异常。</p>
-<!--
-The register_*probe functions will return -EINVAL if you attempt
-to install a probe in the code that implements Kprobes (mostly
-kernel/kprobes.c and `arch/*/kernel/kprobes.c`, but also functions such
-as do_page_fault and notifier_call_chain).
--->
-<p>如果试图在实现 Kprobes 的代码中插入一个探针，<code>register_*probe</code> 函数将返回 <code>-EINVAL</code>。（在 <code>kernel/kprobes.c</code> 和 <code>arch/*/kernel/kprobes.c</code> 文件中，还有像 <code>do_page_fault</code> 和 <code>notifier_call_chain</code> 这类的函数）。</p>
-<!--
-If you install a probe in an inline-able function, Kprobes makes
-no attempt to `chase down` all inline instances of the function and
+<ul>
+<li>reg = 1 for register_u[ret]probe() or 0 for unregister_u[ret]probe()</li>
+<li>type = UPTY_UPROBE or UPTY_URETPROBE</li>
+</ul>
+<ul>
+<li>result = 如果不是延迟操作，作为 register_u[ret]probe() 的返回值。对于 unregister_u[ret]probe() 总是返回 0 。</li>
+</ul>
+<!-- NOTE: Uprobes calls the registration_callback ONLY in the case of a
+delayed [un]registration. -->
+<p>注意：Uprobes <strong>只在</strong>延迟注销/注册的情况下调用 <code>registration_callback</code>。</p>
+<!-- ## Uprobes Features and Limitations
+The user is expected to assign values to the following members
+of struct uprobe: pid, vaddr, handler, and (as needed)
+registration_callback.  Other members are `reserved` for Uprobes's use.
+Uprobes may produce unexpected results if you:
+- assign non-zero values to reserved members of struct uprobe;
+- change the contents of a uprobe or uretprobe object while it is registered; or
+- attempt to register a uprobe or uretprobe that is already registered. -->
+<h2 id="uprobes-功能与限制">Uprobes 功能与限制</h2>
+<p>希望用户给 uprobe 结构体的成员赋值：pid, vaddr, handler, （如果需要）registration_callback。其他保留的成员给 Uprobes 使用。如果做了下面这些事情，Uprobes 可能会产生不期望的结果：</p>
+<ul>
+<li>把保留的 uprobe 结构体成员设置为非 0 值</li>
+<li>在注册期间改变 uprobe 或 uretprobe 对象的内容</li>
+<li>注册已注册的 uprobe 或 uretprobe</li>
+</ul>
+<!-- Uprobes allows any number of probes (uprobes and/or uretprobes)
+at a particular address.  For a particular probepoint, handlers are
+run in the order in which they were registered. -->
+<p>Uprobes 允许在特定的地址上注册任意数量的探针（uprobes、uretprobe 都可以）。探针回调函数是按照它们注册的顺序调用的。</p>
+<!-- Any number of kernel modules may probe a particular process
+simultaneously, and a particular module may probe any number of
+processes simultaneously. -->
+<p>任意数量的内核模块可以同时探测一个特定的进程，而特定的模块也可以同时探测任意数量的进程。</p>
+<!-- Probes are shared by all threads in a process (including newly created -->
+<p>threads).<br />
+在进程中的所有线程之间的探针是共享的（包括新创建的线程）。</p>
+<!-- If a probed process exits or execs, Uprobes automatically unregisters
+all uprobes and uretprobes associated with that process.  `Subsequent`
+attempts to unregister these probes will be treated as no-ops. -->
+<p>如果被探测进程退出或执行，Uprobes 会自动注销所有与之关联的 uprobes 和 uretprobes 。之后再注销这些探针将会视为无效。</p>
+<!-- On the other hand, if a probed memory area is removed from the
+process's virtual memory map (e.g., via dlclose(3) or munmap(2)),
+it's currently up to you to unregister the probes first. -->
+<p>另外，如果从进程的虚拟内存映射删除探测的内存区域的话（例如：通过 <code>dlclose(3)</code> 或 <code>munmap(2)</code>），目前需要先主动注销探针。</p>
+<!-- There is no way to specify that probes should be inherited across fork;
+Uprobes removes all probepoints in the newly created child process.
+See Section 7, "Interoperation with Utrace", for more information on
+this topic. -->
+<p>没有方法在 fork 进程时继承探针，Uprobes 会在新创建的子进程中移除所有探测点。关于这点更多的信息见&quot;与 Utrace 交互&rdquo;。</p>
+<!-- On at least some architectures, Uprobes makes no attempt to verify
+that the probe address you specify actually marks the start of an
+instruction.  If you get this wrong, chaos may ensue. -->
+<p>至少在某些架构上，Uprobes 不会尝试校验，指定的探针地址是否是一条指令的开始。如果你弄错了，可能造成会混乱。</p>
+<!-- To avoid `interfering` with interactive debuggers, Uprobes will refuse
+to insert a probepoint where a breakpoint instruction already exists,
+unless it was Uprobes that put it there.  Some architectures may
+refuse to insert probes on other types of instructions. -->
+<p>为避免干扰交互式调试工具，Uprobes 会拒绝在已存在断点指令的地方插入探测点，除非是 Uprobes 放那里的。有一些架构可能会拒绝在其他类型的指令上插入探针。</p>
+<!-- If you install a probe in an inline-able function, Uprobes makes
+no attempt to chase down all inline instances of the function and
 install probes there.  gcc may inline a function without being asked,
-so keep this in mind if you’re not seeing the probe hits you expect.
--->
-<p>如果在可内联的函数中插入探针，Kprobes 并不会给所有内联实例插入探针。如果没有命中期望的探针，记住一点， gcc 可能会自动内联一个函数。</p>
-<!--
-A probe handler can modify the environment of the probed function
--- e.g., by modifying kernel data structures, or by modifying the
+so keep this in mind if you're not seeing the probe hits you expect. -->
+<p>如果在可内联的函数中插入一个探针，Uprobes 并不会尝试给该函数的所有内联实例插入探针。如果没有命中期望的探针，要记住，gcc 可能会自动内联一个函数。</p>
+<!-- A probe handler can modify the environment of the probed function
+-- e.g., by modifying data structures, or by modifying the
 contents of the pt_regs struct (which are restored to the registers
-upon return from the breakpoint).  So Kprobes can be used, for example,
-to install a bug fix or to inject faults for testing.  Kprobes, of
-course, has no way to `distinguish` the `deliberately` injected faults
-from the accidental ones.  Don't drink and probe.
--->
-<p>探针回调函数可以修改被检测函数的环境 &ndash; 例如，改变内核数据结构或者 <code>pt_regs</code> 数据结构的内容（从断点返回时恢复到寄存器中）。因此，Kprobes 可用于安装 bug 修复或测试时注入错误。当然， Kprobes 是没有办法把故意地注入的错误与意外的错误区分开。不要喝大了搞事情。</p>
-<!--
-Kprobes makes no attempt to prevent probe handlers from stepping on
-each other — e.g., probing printk() and then calling printk() from a
-probe handler.  If a probe handler hits a probe, that second probe’s
-handlers won’t be run in that instance, and the kprobe.nmissed member
-of the second probe will be incremented.
--->
-<p>Kprobes 不会阻止探针回调函数之间的相互作用 &ndash; 比如，先给 <code>printk()</code> 函数插入探针，接着又从另一个探针回调函数中调用 <code>printk()</code> 函数。如果探针回调函数命中一个探针，那么这第二个探针的回调函数不会执行，将只会累加探针的 <code>kprobe.nmissed</code> 值。</p>
-<!--
-As of Linux v2.6.15-rc1, multiple handlers (or multiple instances of
-the same handler) may run concurrently on different CPUs.
--->
-<p>自 Linux v2.6.15-rc1 开始，多个回调函数（或者相同回调函数的多个实例）可以同时在不同的 CPU 上运行。</p>
-<!--
-Kprobes does not use `mutexes` or allocate memory except during
-registration and unregistration.
--->
-<p>除了注册和注销探针之外，Kprobes 不会用互斥锁或分配内存。</p>
-<!--
-Probe handlers are run with preemption disabled or interrupt disabled,
-which depends on the architecture and optimization state.  (e.g.,
-kretprobe handlers and optimized kprobe handlers run without interrupt
-disabled on x86/x86-64).  In any case, your handler should not yield
-the CPU (e.g., by attempting to `acquire` a `semaphore`, or waiting I/O).
--->
-<p>探针回调函数在禁用抢占或者禁用中断的情况下运行，这取决于架构以及优化状态（例如，kretprobe 和优化的 kprobe 回调函数在 x86/x86-64 上运行时没有禁用中断）。不管如何，你的回调函数都不应该让出 CPU （比如，试图获取信号量或等待 I/O）。</p>
-<!--
-Since a return probe is implemented by replacing the return
-address with the trampoline's address, stack `backtraces` and calls
-to __builtin_return_address() will typically yield the trampoline’s
-address instead of the real return address for kretprobed functions.
-(As far as we can tell, __builtin_return_address() is used only for instrumentation
-and error reporting.)
--->
-<p>因为 return 探针是通过把蹦床的地址替换为返回地址来实现的，所以堆栈回溯以及调用  <code>__builtin_return_address()</code> 函数得到的是蹦床的地址，而不是 kretprobed 函数实际 return 地址（就目前我们知道的而言，<code>__builtin_return_address()</code> 函数只用于测试工具和报告错误）。</p>
-<!--
-If the number of times a function is called does not match the number
-of times it returns, registering a return probe on that function may
-produce `undesirable` results. In such a case, a line:
-kretprobe BUG!: Processing kretprobe d000000000041aa8 @ c00000000004f48c
-gets printed. With this information, one will be able to `correlate` the
-exact instance of the kretprobe that caused the problem. We have the
-do_exit() case covered. do_execve() and do_fork() are not an issue.
-We’re `unaware of` other specific cases where this could be a problem.
--->
-<p>如果一个函数的调用次数不能匹配返回的次数，在那个函数上注册的探针可能产生不想要的结果。这种情况，会输出一行 <code>kretprobe BUG!: Processing kretprobe d000000000041aa8 @ c00000000004f48c</code>。有了这行信息，就可以关联导致问题的 kretprobe 实例。涵盖了 <code>do_exit()</code> 函数的情况。 <code>do_execve()</code> 和 <code>do_fork()</code> 函数都不是问题。我们不知道的其他特定的情况，可能会出现问题。</p>
-<!--
-If, upon entry to or exit from a function, the CPU is running on
-a stack other than that of the current task, registering a return
-probe on that function may produce undesirable results.  For this
-reason, Kprobes doesn’t support return probes (or kprobes)
-on the x86_64 version of __switch_to(); the registration functions
-return -EINVAL.
--->
-<p>如果在进入或者退出某个函数时，CPU 在除当前 task 以外的堆栈上运行，那在这个函数上注册 return 探针可能会产生不想要的结果。因为这个原因，Kprobes 不支持 <code>__switch_to()</code> 函数 x86_64 版本的 return 探针（或 kprobes），注册函数会返回 <code>-EINVAL</code> 。</p>
-<!--
-On x86/x86-64, since the Jump Optimization of Kprobes modifies
-instructions widely, there are some limitations to optimization. To
-explain it, we introduce some `terminology`. Imagine a 3-instruction
-sequence consisting of a two 2-byte instructions and one 3-byte
-instruction.
--->
-<p>在 x86/x86-64 架构上，由于 Kprobes 跳转优化修改指令普遍存在，会对优化有一些限制。为解释这一点，我们引入些术语。想象一下，一个由 2 字节指令和 3 字节指令组成的 3 个指令序列。</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c">	    <span class="n">IA</span>
-	    <span class="o">|</span>
-<span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">][</span><span class="mi">3</span><span class="p">][</span><span class="mi">4</span><span class="p">][</span><span class="mi">5</span><span class="p">][</span><span class="mi">6</span><span class="p">][</span><span class="mi">7</span><span class="p">]</span>
-	    <span class="p">[</span><span class="n">ins1</span><span class="p">][</span><span class="n">ins2</span><span class="p">][</span>  <span class="n">ins3</span> <span class="p">]</span>
-	    <span class="p">[</span><span class="o">&lt;-</span>     <span class="n">DCR</span>       <span class="o">-&gt;</span><span class="p">]</span>
-	    <span class="p">[</span><span class="o">&lt;-</span> <span class="n">JTPR</span> <span class="o">-&gt;</span><span class="p">]</span>
-</code></pre></td></tr></table>
-</div>
-</div><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="nl">ins1</span><span class="p">:</span> <span class="mi">1</span><span class="n">st</span> <span class="n">Instruction</span>
-<span class="nl">ins2</span><span class="p">:</span> <span class="mi">2</span><span class="n">nd</span> <span class="n">Instruction</span>
-<span class="nl">ins3</span><span class="p">:</span> <span class="mi">3</span><span class="n">rd</span> <span class="n">Instruction</span>
-<span class="nl">IA</span><span class="p">:</span>  <span class="n">Insertion</span> <span class="n">Address</span>
-<span class="nl">JTPR</span><span class="p">:</span> <span class="n">Jump</span> <span class="n">Target</span> <span class="n">Prohibition</span> <span class="n">Region</span>
-<span class="nl">DCR</span><span class="p">:</span> <span class="n">Detoured</span> <span class="n">Code</span> <span class="n">Region</span>
-</code></pre></td></tr></table>
-</div>
-</div><!--
-The instructions in DCR are copied to the out-of-line buffer
-of the kprobe, because the bytes in DCR are replaced by
-a 5-byte jump instruction. So there are several limitations.
-
-	a) The instructions in DCR must be relocatable.
-	b) The instructions in DCR must not include a call instruction.
-	c) JTPR must not be targeted by any jump or call instruction.
-	d) DCR must not `straddle` the border between functions.
-
-Anyway, these limitations are checked by the in-kernel instruction
-decoder, so you don’t need to worry about that.
--->
-<p>DCR 内的指令被复制到 kprobe 的离线缓冲区中，因为 DCR 内的字节被 5 字节 jump 指令替代了。所以，这儿会有几个限制。</p>
+upon return from the breakpoint).  So Uprobes can be used, for example,
+to install a bug fix or to inject faults for testing.  Uprobes, of
+course, has no way to distinguish the deliberately injected faults
+from the accidental ones.  Don't drink and probe. -->
+<p>探针回调函数可以修改目标函数的环境 ——例如：修改数据结构，或修改 <code>pt_regs</code> 结构体的内容（从断点返回之后保存的寄存器）。因此，Uprobes 可以用来，安装补丁或测试时注入错误。当然 Uprobes 没有办法区分错误是故意注入的还是意外发生的。所以不要搞事情。</p>
+<!-- Since a return probe is implemented by replacing the return
+address with the trampoline's address, stack backtraces and calls
+to __builtin_return_address() will typically yield the trampoline's
+address instead of the real return address for uretprobed functions. -->
+<p>因为 return 探针是通过使用蹦床的地址替换 return 地址实现的，那么栈回溯和调用 <code>__builtin_return_address()</code> 产生的是蹦床的地址，而不是uretprobed 函数的实际 return 地址。</p>
+<!-- If the number of times a function is called does not match the
+number of times it returns (e.g., if a function exits via longjmp()),
+registering a return probe on that function may produce undesirable
+results. -->
+<p>如果函数调用的次数与 return 次数不匹配（例如：如果函数调用 <code>longjmp()</code> 退出），在这种函数上注册 return 探针，可能会产生不期望的结果。</p>
+<!-- When you register the first probe at probepoint or unregister the
+last probe probe at a probepoint, Uprobes asks Utrace to "`quiesce`"
+the probed process so that Uprobes can insert or remove the breakpoint
+instruction.  If the process is not already stopped, Utrace stops it.
+If the process is running an interruptible system call, this may cause
+the system call to finish early or fail with EINTR.  (The PTRACE_ATTACH
+request of the ptrace system call has this same limitation.) -->
+<p>当在探测点注册第一个探针或者注销最后一个探针的时候，Uprobes 要求 Utrace 去&quot;暂停&quot;目标进程，这样 Uprobes 就可以插入或者移除断点指令。如果进程还没有停止，Utrace 会停止它。如果进程正在运行一个可中断的系统调用，可能会让系统调用提早完成或失败而产生 <code>EINTR</code> 信号。（ptrace 系统调用的 <code>PTRACE_ATTACH</code> 请求有同样的问题。）</p>
+<!-- When Uprobes establishes a probepoint on a previous unprobed page
+of text, Linux creates a new copy of the page via its copy-on-write
+mechanism.  When probepoints are removed, Uprobes makes no attempt
+to `consolidate` identical copies of the same page.  This could affect
+memory availability if you probe many, many pages in many, many
+long-running processes. -->
+<p>当 Uprobes 在先前的未探测的页面上建立探测点的时候，Linux 会通过 <code>copy-on-write</code> 机制创建了这个页面的新副本。在移除探测点的时候，Uprobes 并不会尝试合并同一个页面的副本。如果探测在大量长时间运行的进程中探测大量的页面，会影响内存可用性。</p>
+<!-- ## Interoperation with Kprobes
+Uprobes is `intended` to interoperate usefully with Kprobes (see
+Documentation/kprobes.txt).  For example, an instrumentation module
+can make calls to both the Kprobes API and the Uprobes API. -->
+<h2 id="与-kprobes-交互">与 Kprobes 交互</h2>
+<p>Uprobes 打算与 Kprobes 进行有效的相互操作（见 <code>Documentation/kprobes.txt</code> 文件）。例如，检测模块可以同时调用 Kprobes API 和 Uprobes API。</p>
+<!-- A uprobe or uretprobe handler can register or unregister kprobes,
+jprobes, and kretprobes, as well as uprobes and uretprobes.  On the
+other hand, a kprobe, jprobe, or kretprobe handler must not sleep, and
+therefore cannot register or unregister any of these types of probes.
+(Ideas for removing this restriction are welcome.) -->
+<p>uprobe 或 uretprobe 回调函数可以注册或注销 kprobes、jprobes、kretprobes，以及 uprobes 和 uretprobes。另外，kprobe、jprobe、kretprobe 回调函数一定不能休眠，不然会无法注册或注销这些探针。（欢迎移除这种限制的想法）</p>
+<!-- Note that the overhead of a u[ret]probe hit is several times that of
+a k[ret]probe hit. -->
+<p>注意，命中 <code>u[ret]probe</code> 的开销是命中 <code>k[ret]probe</code> 的几倍。</p>
+<!-- ## Interoperation with Utrace
+As mentioned in Section 1.2, Uprobes is a client of Utrace.  For each
+probed thread, Uprobes establishes a Utrace engine, and registers
+callbacks for the following types of events: clone/fork, exec, exit,
+and "core-dump" signals (which include breakpoint traps).  Uprobes
+establishes this engine when the process is first probed, or when
+Uprobes is notified of the thread's creation, whichever comes first. -->
+<h2 id="与-utrace-交互">与 Utrace 交互</h2>
+<p>在&quot;Utrace 的作用&quot;章节中提到，Uprobes 是 Utrace 的客户端。Uprobes 为每个被探测的线程建立了一个 Utrace 引擎，及为 clone/fork, exec, exit, &ldquo;core-dump&rdquo; 信号（其包括断点陷阱）这类事件创建寄存器回调函数。Uprobes 是在进程首次被探测的时候创建引擎，或者在创建线程时通知，反正先到先处理。</p>
+<!-- An instrumentation module can use both the Utrace and Uprobes APIs (as
+well as Kprobes).  When you do this, keep the following facts in mind:
+- For a particular event, Utrace callbacks are called in the order in
+which the engines are established.  Utrace does not currently provide
+a mechanism for altering this order.
+- When Uprobes learns that a probed process has forked, it removes
+the breakpoints in the child process. -->
+<p>检测模块可以同时使用 Utrace 和 Uprobes APIs（以及 Kprobes）。这么做的时候，请记住下面的事情：</p>
 <ul>
-<li>DCR 内的指令一定是可重定位的</li>
-<li>DCR 内的指令一定不能包含 <code>call</code> 指令</li>
-<li>JTPR 不能作为 <code>jump</code> 或 <code>call</code> 指令的目标</li>
-<li>DCR 不能跨越函数之间的边界</li>
+<li>对于特定的事件，Utrace 回调函数是按引擎的创建顺序调用的。目前 Utrace 没有机制来改变顺序。</li>
+<li>在 Uprobes 得知目标进程创建了子进程后，会在子进程中移除断点。</li>
 </ul>
-<p>不过，这些限制由内核的指令解码器检查，所以不需要关心这些限制。</p>
-<!--
-Probe Overhead
-==============
-On a typical CPU in use in 2005, a kprobe hit takes 0.5 to 1.0
-microseconds to process.  Specifically, a benchmark that hits the same
-probepoint repeatedly, firing a simple handler each time, reports 1-2
-million hits per second, depending on the architecture.  A return-probe
-hit typically takes 50-75% longer than a kprobe hit.
-When you have a return probe set on a function, adding a kprobe at
-the entry to that function adds `essentially` no overhead.
-
-Here are sample overhead `figures` (in usec) for different architectures:
--->
-<h2 id="探针的开销">探针的开销</h2>
-<p>在 2005 年常见的 CPU 上，处理命中 kprobe 要花费 0.5 - 1.0 微秒。具体一点，基准测试反复命中同一个探测点，每一次触发简单的回调函数，每秒 1-2 百万次命中，具体数值取决于 CPU 架构。通常，命中 return 探针比命中 kprobe 多花费 50-75% 的时间。当你把一个 kretprobe 插入到一个函数的时候，实际是在函数入口处添加一个 kprobe，基本上上函数不会增加开销。</p>
-<p>下面有些不同架构开销的样本（微秒）：</p>
-<pre><code>k = kprobe; r = return probe; kr = kprobe + return probe
-on same function
+<!-- - When Uprobes learns that a probed process has exec-ed or exited,
+it `disposes of` its data structures for that process (first allowing
+any outstanding [un]registration operations to terminate). -->
+<ul>
+<li>在 Uprobes 得知目标进程已经执行或退出后，将会清理这个进程中的数据结构（先允许终止未完成的注销、注册操作）。</li>
+</ul>
+<!-- - When a probed thread hits a breakpoint or completes single-stepping
+of a probed instruction, engines with the UTRACE_EVENT(SIGNAL_CORE)
+flag set are notified.  The Uprobes signal callback prevents (via
+UTRACE_ACTION_HIDE) this event from being reported to engines later
+in the list.  But if your engine was established before Uprobes's,
+you will see this this event. -->
+<ul>
+<li>当目标线程命中断点或被探测指令单步执行完成的时候，通知已设置 <code>UTRACE_EVENT(SIGNAL_CORE)</code> 标记的引擎。Uprobes 信号回调函数防止（通过 <code>UTRACE_ACTION_HIDE</code>）这个事件，报告给在列表后面的引擎。但，如果你的引擎是在 Uprobes 的引擎之前创建的，还是会收到这个事件。</li>
+</ul>
+<!-- If you want to establish probes in a newly forked child, you can use
+the following `procedure`: -->
+<p>如果你想在新的子进程中创建探针，可以用以下办法：</p>
+<!-- - Register a report_clone callback with Utrace.  In this callback,
+the CLONE_THREAD flag distinguishes between the creation of a new
+thread vs. a new process. -->
+<ul>
+<li>用 Utrace 注册一个 <code>report_clone</code> 回调函数。在这个回调函数中，以 <code>CLONE_THREAD</code> 标记区分创建新线程还是进程。</li>
+</ul>
+<!-- - In your report_clone callback, call utrace_attach() to attach to
+the child process, and set the engine's UTRACE_ACTION_QUIESCE flag.
+The child process will `quiesce` at a point where it is ready to
+be probed. -->
+<ul>
+<li>在你的 <code>report_clone</code> 回调函数中，调用 <code>utrace_attach()</code> 附着到子进程，以及设置引擎的 <code>UTRACE_ACTION_QUIESCE</code> 标记。子进程将会停顿在准备要探测的位置。</li>
+</ul>
+<!-- - In your report_quiesce callback, register the desired probes.
+(Note that you cannot use the same probe object for both parent
+and child.  If you want to duplicate the probepoints, you must
+create a new set of u[ret]probe objects.) -->
+<ul>
+<li>在 <code>report_quiesce</code> 回调函数中，注册所需要的探针。（注意，不能对父子进程使用同一个探测对象。如果想要复制探测点，必须创建一个新的 <code>u[ret]probe</code> 对象集合。）</li>
+</ul>
+<!-- ## Probe Overhead
+// TODO: This is out of date.
+// TODO: Adjust as other architectures are tested.
+On a typical CPU in use in 2007, a uprobe hit takes about 3
+microseconds to process.  Specifically, a benchmark that hits the
+same probepoint repeatedly, firing a simple handler each time, reports
+300,000 to 350,000 hits per second, depending on the architecture.
+A return-probe hit typically takes 50% longer than a uprobe hit.
+When you have a return probe set on a function, adding a uprobe at
+the entry to that function adds essentially no overhead. -->
+<p>Here are sample overhead figures (in usec) for different architectures.</p>
+<h2 id="探针开销">探针开销</h2>
+<p>// TODO: 已经过时。<br />
+// TODO: 根据其他架构的测试整理。<br />
+在 2007 年常见的 CPU 上，处理 uprobe 命中大约需要3微秒的时间。基准测试反复命中相同的探测点，每次触发一个简单的处理程序，每秒报告 30w-35w 次命中，具体取决于架构。通常，return 探针命中比 uprobe 命中多花 50％ 的时间。当在某个函数上设置了 return 探针，会在该函数的入口处添加 uprobe ，本质上不会增加开销。</p>
+<p>下面是些不同架构的样本（纳秒）。</p>
+<pre><code>u = uprobe; r = return probe; ur = uprobe + return probe
 
 i386: Intel Pentium M, 1495 MHz, 2957.31 bogomips
-k = 0.57 usec; r = 0.92; kr = 0.99
+u = 2.9 usec; r = 4.7 usec; ur = 4.7 usec
 
 x86_64: AMD Opteron 246, 1994 MHz, 3971.48 bogomips
-k = 0.49 usec; r = 0.80; kr = 0.82
+// TODO
 
 ppc64: POWER5 (gr), 1656 MHz (SMT disabled, 1 virtual CPU per physical CPU)
-k = 0.77 usec; r = 1.26; kr = 1.45
-</code></pre>
-<!--
-Optimized Probe Overhead
-========================
-Typically, an optimized kprobe hit takes 0.07 to 0.1 microseconds to
-process. Here are sample overhead figures (in usec) for x86 architectures:
--->
-<h2 id="已优化探针开销">已优化探针开销</h2>
-<p>通常，命中已优化的 kprobe 要花费 0.07 - 0.1 微妙来处理。这是 x86 架构开销的样本（微妙）：</p>
-<pre><code>k = unoptimized kprobe, b = boosted (single-step skipped), o = optimized kprobe,
-r = unoptimized kretprobe, rb = boosted kretprobe, ro = optimized kretprobe.
-
-i386: Intel(R) Xeon(R) E5410, 2.33GHz, 4656.90 bogomips
-k = 0.80 usec; b = 0.33; o = 0.05; r = 1.10; rb = 0.61; ro = 0.33
-
-x86-64: Intel(R) Xeon(R) E5410, 2.33GHz, 4656.90 bogomips
-k = 0.99 usec; b = 0.43; o = 0.06; r = 1.24; rb = 0.68; ro = 0.30
-</code></pre>
-<h2 id="todo">TODO</h2>
-<!--
-a. SystemTap (http://sourceware.org/systemtap): Provides a simplified
-programming interface for probe-based instrumentation.  Try it out.
-b. Kernel return probes for sparc64.
-c. Support for other architectures.
-d. User-space probes.
-e. Watchpoint probes (which fire on data references).
--->
-<pre><code>1. [SystemTap](http://sourceware.org/systemtap)：给基于探针的探测工具提供了一个简单的编程接口。可以试一下
-2. sparc64 架构的 kretprobe
-3. 支持其他架构
-4. 用户空间的探针
-5. 观察点探针（在数据引用时触发）
-</code></pre>
-<h2 id="kprobes-例子">Kprobes 例子</h2>
-<p>见 <a href="https://github.com/torvalds/linux/blob/master/samples/kprobes/kprobe_example.c">samples/kprobes/kprobe_example.c</a> 文件</p>
-<h2 id="kretprobes-例子">Kretprobes 例子</h2>
-<p>见 <a href="https://github.com/torvalds/linux/blob/master/samples/kprobes/kretprobe_example.c">samples/kprobes/kretprobe_example.c</a> 文件</p>
-<!--
-For additional information on Kprobes, `refer to` the following URLs:
--->
-<p>有关 Kprobes 的其他信息，请参考以下 URL 链接：</p>
+// TODO
+</code></pre><h2 id="todo">TODO</h2>
+<!-- * SystemTap (http://sourceware.org/systemtap): Provides a simplified
+programming interface for probe-based instrumentation.  SystemTap
+already supports kernel probes.  It could exploit Uprobes as well.
+* Support for other architectures. -->
 <ul>
-<li><a href="http://www-106.ibm.com/developerworks/library/l-kprobes.html?ca=dgr-lnxw42Kprobe">http://www-106.ibm.com/developerworks/library/l-kprobes.html?ca=dgr-lnxw42Kprobe</a></li>
-<li><a href="http://www.redhat.com/magazine/005mar05/features/kprobes/">http://www.redhat.com/magazine/005mar05/features/kprobes/</a></li>
-<li><a href="http://www-users.cs.umn.edu/~boutcher/kprobes/">http://www-users.cs.umn.edu/~boutcher/kprobes/</a></li>
-<li><a href="http://www.linuxsymposium.org/2006/linuxsymposium_procv2.pdf">http://www.linuxsymposium.org/2006/linuxsymposium_procv2.pdf</a> (pages 101-115)</li>
+<li><a href="http://sourceware.org/systemtap">Systemtap</a>：基于探针的检测工具，提供简化的编程接口。SystemTap 已经支持内核探针。还可以利用 Uprobes 。</li>
+<li>支持其他 CPU 架构</li>
 </ul>
-<!--
-Deprecated Features
-===================
-Jprobes is now a `deprecated` feature. People who are depending on it should
-migrate to other tracing features or use older kernels. Please consider to
-migrate your tool to one of the following options:
-
-* Use trace-event to trace target function with arguments.
-
-  trace-event is a low-overhead (and almost no visible overhead if it
-  is off) statically defined event interface. You can define new events
-  and trace it via ftrace or any other tracing tools.
-
-  See the following urls:
-
-    - https://lwn.net/Articles/379903/
-    - https://lwn.net/Articles/381064/
-    - https://lwn.net/Articles/383362/
-
-* Use ftrace dynamic events (kprobe event) with perf-probe.
-
-  If you build your kernel with debug info (CONFIG_DEBUG_INFO=y), you can
-  find which register/stack is assigned to which local variable or arguments
-  by using perf-probe and set up new event to trace it.
-
-  See following documents:
-
-	* Documentation/trace/kprobetrace.rst
-	* Documentation/trace/events.rst
-	* tools/perf/Documentation/perf-probe.txt
--->
-<h2 id="已弃用的机制">已弃用的机制</h2>
-<p>现在 Jprobes 是一个不被推荐的机制。依赖它的应该迁移到其他追踪机制或使用旧的内核。请考虑把你的工具迁移到以下工具中：</p>
+<!-- ## Uprobes Team
+The following people have made major contributions to Uprobes: -->
+<h2 id="uprobes-团队">Uprobes 团队</h2>
+<p>下面的成员对 Uprobes 作出了主要的贡献：</p>
 <ul>
-<li>使用 trace-event 追踪带参数的函数</li>
+<li>Jim Keniston - <a href="mailto:jkenisto@us.ibm.com">jkenisto@us.ibm.com</a></li>
+<li>Ananth Mavinakayanahalli - <a href="mailto:ananth@in.ibm.com">ananth@in.ibm.com</a></li>
+<li>Prasanna Panchamukhi - <a href="mailto:prasanna@in.ibm.com">prasanna@in.ibm.com</a></li>
+<li>Dave Wilder - <a href="mailto:dwilder@us.ibm.com">dwilder@us.ibm.com</a></li>
 </ul>
-<blockquote>
-<p>trace-event 是个低开销的静态定义的事件接口（如果关闭，没有明显的开销）。你可以定义新事件，通过 ftrace 或者其他追踪工具追踪它。<br />
-参考以下 URL 链接：<br />
-- <a href="https://lwn.net/Articles/379903/">https://lwn.net/Articles/379903/</a><br />
-- <a href="https://lwn.net/Articles/381064/">https://lwn.net/Articles/381064/</a><br />
-- <a href="https://lwn.net/Articles/383362/">https://lwn.net/Articles/383362/</a></p>
-</blockquote>
-<ul>
-<li>使用 ftrace 动态事件（kprobe 事件）和 perf-probe</li>
-</ul>
-<blockquote>
-<p>如果你使用调试信息（<code>CONFIG_DEBUG_INFO=y</code>）编译你的内核，可以用 perf-probe 设置新事件去追踪它，能发现寄存器/栈被分配给了哪个本地变量或者参数。<br />
-参考以下文档：<br />
-- <a href="https://github.com/torvalds/linux/blob/master/Documentation/trace/kprobetrace.rst">Documentation/trace/kprobetrace.rst</a><br />
-- <a href="https://github.com/torvalds/linux/blob/master/Documentation/trace/events.rst">Documentation/trace/events.rst</a><br />
-- <a href="https://github.com/torvalds/linux/blob/master/tools/perf/Documentation/perf-probe.txt">tools/perf/Documentation/perf-probe.txt</a></p>
-</blockquote>
-<!--
-The kprobes debugfs interface
-=============================
-With recent kernels (> 2.6.20) the list of registered kprobes is visible
-under the /sys/kernel/debug/kprobes/ directory (assuming debugfs is mounted at //sys/kernel/debug).
+<!-- ## Uprobes Example
+Here's a sample kernel module showing the use of Uprobes to count the
+number of times an instruction at a particular address is executed,
+and optionally (unless verbose=0) report each time it's executed. -->
+<h2 id="uprobes-例子">Uprobes 例子</h2>
+<p>这儿有份内核模块样本，展示 Uprobes 的用法，统计在特定地址的指令执行了多少次，以及可选的（除非 verbose=0）输出每次执行。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="cm">/* uprobe_example.c */</span>
+<span class="cp">#include</span> <span class="cpf">&lt;linux/module.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;linux/kernel.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;linux/init.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;linux/uprobes.h&gt;</span><span class="cp">
+</span><span class="cp"></span>
+<span class="cm">/*
+</span><span class="cm"> * Usage: insmod uprobe_example.ko pid=&lt;pid&gt; vaddr=&lt;address&gt; [verbose=0]
+</span><span class="cm"> * where &lt;pid&gt; identifies the probed process and &lt;address&gt; is the virtual
+</span><span class="cm"> * address of the probed instruction.
+</span><span class="cm"> */</span>
 
-/sys/kernel/debug/kprobes/list: Lists all registered probes on the system:
--->
-<h2 id="kprobes-debugfs-接口">kprobes debugfs 接口</h2>
-<p>最新的内核（&gt; 2.6.20），已经注册的 kprobes 列表位于 <code>/sys/kernel/debug/kprobes/</code> 目录之下（假设 debugfs 被挂载到 <code>/sys/kernel/debug</code> 目录）。</p>
-<p><code>/sys/kernel/debug/kprobes/list</code>：列出在系统上所有已注册的 probes：</p>
+<span class="k">static</span> <span class="kt">int</span> <span class="n">pid</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="n">module_param</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+<span class="n">MODULE_PARM_DESC</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="s">&#34;pid&#34;</span><span class="p">);</span>
+
+<span class="k">static</span> <span class="kt">int</span> <span class="n">verbose</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="n">module_param</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+<span class="n">MODULE_PARM_DESC</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="s">&#34;verbose&#34;</span><span class="p">);</span>
+
+<span class="k">static</span> <span class="kt">long</span> <span class="n">vaddr</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="n">module_param</span><span class="p">(</span><span class="n">vaddr</span><span class="p">,</span> <span class="kt">long</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+<span class="n">MODULE_PARM_DESC</span><span class="p">(</span><span class="n">vaddr</span><span class="p">,</span> <span class="s">&#34;vaddr&#34;</span><span class="p">);</span>
+
+<span class="k">static</span> <span class="kt">int</span> <span class="n">nhits</span><span class="p">;</span>
+<span class="k">static</span> <span class="k">struct</span> <span class="n">uprobe</span> <span class="n">usp</span><span class="p">;</span>
+
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">uprobe_handler</span><span class="p">(</span><span class="k">struct</span> <span class="n">uprobe</span> <span class="o">*</span><span class="n">u</span><span class="p">,</span> <span class="k">struct</span> <span class="n">pt_regs</span> <span class="o">*</span><span class="n">regs</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="n">nhits</span><span class="o">++</span><span class="p">;</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">verbose</span><span class="p">)</span>
+		<span class="n">printk</span><span class="p">(</span><span class="n">KERN_INFO</span> <span class="s">&#34;Hit #%d on probepoint at %#lx</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span>
+			<span class="n">nhits</span><span class="p">,</span> <span class="n">u</span><span class="o">-&gt;</span><span class="n">vaddr</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="n">__init</span> <span class="nf">init_module</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="kt">int</span> <span class="n">ret</span><span class="p">;</span>
+	<span class="n">usp</span><span class="p">.</span><span class="n">pid</span> <span class="o">=</span> <span class="n">pid</span><span class="p">;</span>
+	<span class="n">usp</span><span class="p">.</span><span class="n">vaddr</span> <span class="o">=</span> <span class="n">vaddr</span><span class="p">;</span>
+	<span class="n">usp</span><span class="p">.</span><span class="n">handler</span> <span class="o">=</span> <span class="n">uprobe_handler</span><span class="p">;</span>
+	<span class="n">printk</span><span class="p">(</span><span class="n">KERN_INFO</span> <span class="s">&#34;Registering uprobe on pid %d, vaddr %#lx</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span>
+		<span class="n">usp</span><span class="p">.</span><span class="n">pid</span><span class="p">,</span> <span class="n">usp</span><span class="p">.</span><span class="n">vaddr</span><span class="p">);</span>
+	<span class="n">ret</span> <span class="o">=</span> <span class="n">register_uprobe</span><span class="p">(</span><span class="o">&amp;</span><span class="n">usp</span><span class="p">);</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">ret</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+		<span class="n">printk</span><span class="p">(</span><span class="n">KERN_ERR</span> <span class="s">&#34;register_uprobe() failed, returned %d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">ret</span><span class="p">);</span>
+		<span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="n">__exit</span> <span class="nf">cleanup_module</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="n">printk</span><span class="p">(</span><span class="n">KERN_INFO</span> <span class="s">&#34;Unregistering uprobe on pid %d, vaddr %#lx</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span>
+		<span class="n">usp</span><span class="p">.</span><span class="n">pid</span><span class="p">,</span> <span class="n">usp</span><span class="p">.</span><span class="n">vaddr</span><span class="p">);</span>
+	<span class="n">printk</span><span class="p">(</span><span class="n">KERN_INFO</span> <span class="s">&#34;Probepoint was hit %d times</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">nhits</span><span class="p">);</span>
+	<span class="n">unregister_uprobe</span><span class="p">(</span><span class="o">&amp;</span><span class="n">usp</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="n">MODULE_LICENSE</span><span class="p">(</span><span class="s">&#34;GPL&#34;</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><!-- You can build the kernel module, uprobe_example.ko, using the following Makefile: -->
+<p>你可以用下面的 Makefile 编译内核模块 <code>uprobe_example.ko</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nv">obj-m</span> <span class="o">:=</span> uprobe_example.o
+<span class="nv">KDIR</span> <span class="o">:=</span> /lib/modules/<span class="k">$(</span>shell uname -r<span class="k">)</span>/build
+<span class="nv">PWD</span> <span class="o">:=</span> <span class="k">$(</span>shell <span class="nb">pwd</span><span class="k">)</span>
+<span class="nf">default</span><span class="o">:</span>
+	<span class="k">$(</span>MAKE<span class="k">)</span> -C <span class="k">$(</span>KDIR<span class="k">)</span> <span class="nv">SUBDIRS</span><span class="o">=</span><span class="k">$(</span>PWD<span class="k">)</span> modules
+<span class="nf">clean</span><span class="o">:</span>
+	rm -f *.mod.c *.ko *.o .*.cmd
+	rm -rf .tmp_versions
+</code></pre></td></tr></table>
+</div>
+</div><!-- For example, if you want to run myprog and monitor its calls to myfunc(),
+you can do the following: -->
+<p>例如，如果你想要运行 <code>myprog</code> ，然后监控 <code>myfunc()</code> 的调用情况，你可以这样做：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">$ make			// Build the uprobe_example module.
+...
+$ nm -p myprog <span class="p">|</span> awk <span class="s1">&#39;$3==&#34;myfunc&#34;&#39;</span>
+080484a8 T myfunc
+$ ./myprog <span class="p">&amp;</span>
+$ ps
+  PID TTY          TIME CMD
+ <span class="m">4367</span> pts/3    00:00:00 bash
+ <span class="m">8156</span> pts/3    00:00:00 myprog
+ <span class="m">8157</span> pts/3    00:00:00 ps
+$ su -
+...
+<span class="c1"># insmod uprobe_example.ko pid=8156 vaddr=0x080484a8</span>
+</code></pre></td></tr></table>
+</div>
+</div><!-- In /var/log/messages and on the console, you will see a message of the
+form "kernel: Hit #1 on probepoint at 0x80484a8" each time myfunc()
+is called.  To turn off probing, remove the module: -->
+<p>每次调用 <code>myfunc()</code> 函数，将会在 <code>/var/log/messages</code> 文件中和终端上，看到这种信息：&ldquo;kernel: Hit #1 on probepoint at 0x80484a8&rdquo;。要关闭探测，就移除模块：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># rmmod uprobe_example</span>
+</code></pre></td></tr></table>
+</div>
+</div><!-- In /var/log/messages and on the console, you will see a message of the
+form "Probepoint was hit 5 times". -->
+<p>将会在 <code>/var/log/messages</code> 文件中和终端上看见这种信息：&ldquo;Probepoint was hit 5 times&rdquo;。</p>
+<!-- ## Uretprobes Example
+Here's a sample kernel module showing the use of a return probe to
+report a function's return values. -->
+<h2 id="uretprobes-例子">Uretprobes 例子</h2>
+<p>这是展示 return 探针用法的内核模块样本，输出函数的返回值。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span><span class="lnt">80
+</span><span class="lnt">81
+</span><span class="lnt">82
+</span><span class="lnt">83
+</span><span class="lnt">84
+</span><span class="lnt">85
+</span><span class="lnt">86
+</span><span class="lnt">87
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="cm">/* uretprobe_example.c */</span>
+<span class="cp">#include</span> <span class="cpf">&lt;linux/module.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;linux/kernel.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;linux/init.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;linux/uprobes.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;linux/ptrace.h&gt;</span><span class="cp">
+</span><span class="cp"></span>
+<span class="cm">/*
+</span><span class="cm"> * Usage:
+</span><span class="cm"> * insmod uretprobe_example.ko pid=&lt;pid&gt; func=&lt;addr&gt; [verbose=0]
+</span><span class="cm"> * where &lt;pid&gt; identifies the probed process, and &lt;addr&gt; is the virtual
+</span><span class="cm"> * address of the probed function.
+</span><span class="cm"> */</span>
+
+<span class="k">static</span> <span class="kt">int</span> <span class="n">pid</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="n">module_param</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+<span class="n">MODULE_PARM_DESC</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="s">&#34;pid&#34;</span><span class="p">);</span>
+
+<span class="k">static</span> <span class="kt">int</span> <span class="n">verbose</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="n">module_param</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+<span class="n">MODULE_PARM_DESC</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="s">&#34;verbose&#34;</span><span class="p">);</span>
+
+<span class="k">static</span> <span class="kt">long</span> <span class="n">func</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="n">module_param</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="kt">long</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+<span class="n">MODULE_PARM_DESC</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s">&#34;func&#34;</span><span class="p">);</span>
+
+<span class="k">static</span> <span class="kt">int</span> <span class="n">ncall</span><span class="p">,</span> <span class="n">nret</span><span class="p">;</span>
+<span class="k">static</span> <span class="k">struct</span> <span class="n">uprobe</span> <span class="n">usp</span><span class="p">;</span>
+<span class="k">static</span> <span class="k">struct</span> <span class="n">uretprobe</span> <span class="n">rp</span><span class="p">;</span>
+
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">uprobe_handler</span><span class="p">(</span><span class="k">struct</span> <span class="n">uprobe</span> <span class="o">*</span><span class="n">u</span><span class="p">,</span> <span class="k">struct</span> <span class="n">pt_regs</span> <span class="o">*</span><span class="n">regs</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="n">ncall</span><span class="o">++</span><span class="p">;</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">verbose</span><span class="p">)</span>
+		<span class="n">printk</span><span class="p">(</span><span class="n">KERN_INFO</span> <span class="s">&#34;Function at %#lx called</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">u</span><span class="o">-&gt;</span><span class="n">vaddr</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">uretprobe_handler</span><span class="p">(</span><span class="k">struct</span> <span class="n">uretprobe_instance</span> <span class="o">*</span><span class="n">ri</span><span class="p">,</span>
+	<span class="k">struct</span> <span class="n">pt_regs</span> <span class="o">*</span><span class="n">regs</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="n">nret</span><span class="o">++</span><span class="p">;</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">verbose</span><span class="p">)</span>
+		<span class="n">printk</span><span class="p">(</span><span class="n">KERN_INFO</span> <span class="s">&#34;Function at %#lx returns %#lx</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span>
+			<span class="n">ri</span><span class="o">-&gt;</span><span class="n">rp</span><span class="o">-&gt;</span><span class="n">u</span><span class="p">.</span><span class="n">vaddr</span><span class="p">,</span> <span class="n">regs_return_value</span><span class="p">(</span><span class="n">regs</span><span class="p">));</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="n">__init</span> <span class="nf">init_module</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="kt">int</span> <span class="n">ret</span><span class="p">;</span>
+
+	<span class="cm">/* Register the entry probe. */</span>
+	<span class="n">usp</span><span class="p">.</span><span class="n">pid</span> <span class="o">=</span> <span class="n">pid</span><span class="p">;</span>
+	<span class="n">usp</span><span class="p">.</span><span class="n">vaddr</span> <span class="o">=</span> <span class="n">func</span><span class="p">;</span>
+	<span class="n">usp</span><span class="p">.</span><span class="n">handler</span> <span class="o">=</span> <span class="n">uprobe_handler</span><span class="p">;</span>
+	<span class="n">printk</span><span class="p">(</span><span class="n">KERN_INFO</span> <span class="s">&#34;Registering uprobe on pid %d, vaddr %#lx</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span>
+		<span class="n">usp</span><span class="p">.</span><span class="n">pid</span><span class="p">,</span> <span class="n">usp</span><span class="p">.</span><span class="n">vaddr</span><span class="p">);</span>
+	<span class="n">ret</span> <span class="o">=</span> <span class="n">register_uprobe</span><span class="p">(</span><span class="o">&amp;</span><span class="n">usp</span><span class="p">);</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">ret</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+		<span class="n">printk</span><span class="p">(</span><span class="n">KERN_ERR</span> <span class="s">&#34;register_uprobe() failed, returned %d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">ret</span><span class="p">);</span>
+		<span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="cm">/* Register the return probe. */</span>
+	<span class="n">rp</span><span class="p">.</span><span class="n">u</span><span class="p">.</span><span class="n">pid</span> <span class="o">=</span> <span class="n">pid</span><span class="p">;</span>
+	<span class="n">rp</span><span class="p">.</span><span class="n">u</span><span class="p">.</span><span class="n">vaddr</span> <span class="o">=</span> <span class="n">func</span><span class="p">;</span>
+	<span class="n">rp</span><span class="p">.</span><span class="n">handler</span> <span class="o">=</span> <span class="n">uretprobe_handler</span><span class="p">;</span>
+	<span class="n">printk</span><span class="p">(</span><span class="n">KERN_INFO</span> <span class="s">&#34;Registering return probe on pid %d, vaddr %#lx</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span>
+		<span class="n">rp</span><span class="p">.</span><span class="n">u</span><span class="p">.</span><span class="n">pid</span><span class="p">,</span> <span class="n">rp</span><span class="p">.</span><span class="n">u</span><span class="p">.</span><span class="n">vaddr</span><span class="p">);</span>
+	<span class="n">ret</span> <span class="o">=</span> <span class="n">register_uretprobe</span><span class="p">(</span><span class="o">&amp;</span><span class="n">rp</span><span class="p">);</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">ret</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+		<span class="n">printk</span><span class="p">(</span><span class="n">KERN_ERR</span> <span class="s">&#34;register_uretprobe() failed, returned %d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span>
+			<span class="n">ret</span><span class="p">);</span>
+		<span class="n">unregister_uprobe</span><span class="p">(</span><span class="o">&amp;</span><span class="n">usp</span><span class="p">);</span>
+		<span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="n">__exit</span> <span class="nf">cleanup_module</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="n">printk</span><span class="p">(</span><span class="n">KERN_INFO</span> <span class="s">&#34;Unregistering probes on pid %d, vaddr %#lx</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span>
+		<span class="n">usp</span><span class="p">.</span><span class="n">pid</span><span class="p">,</span> <span class="n">usp</span><span class="p">.</span><span class="n">vaddr</span><span class="p">);</span>
+	<span class="n">printk</span><span class="p">(</span><span class="n">KERN_INFO</span> <span class="s">&#34;%d calls, %d returns</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">ncall</span><span class="p">,</span> <span class="n">nret</span><span class="p">);</span>
+	<span class="n">unregister_uprobe</span><span class="p">(</span><span class="o">&amp;</span><span class="n">usp</span><span class="p">);</span>
+	<span class="n">unregister_uretprobe</span><span class="p">(</span><span class="o">&amp;</span><span class="n">rp</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="n">MODULE_LICENSE</span><span class="p">(</span><span class="s">&#34;GPL&#34;</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><!-- Build the kernel module as shown in the above uprobe example. -->
+<p>像在上面的 uprobe 例子那样编译内核模块。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">$ nm -p myprog <span class="p">|</span> awk ‘<span class="nv">$3</span><span class="o">==</span><span class="s2">&#34;myfunc&#34;</span>’
+080484a8 T myfunc
+$ ./myprog <span class="p">&amp;</span>
+$ ps
+  PID TTY          TIME CMD
+ <span class="m">4367</span> pts/3    00:00:00 bash
+ <span class="m">9156</span> pts/3    00:00:00 myprog
+ <span class="m">9157</span> pts/3    00:00:00 ps
+$ su -
+…
+<span class="c1"># insmod uretprobe_example.ko pid=9156 func=0x080484a8</span>
+</code></pre></td></tr></table>
+</div>
+</div><!-- In /var/log/messages and on the console, you will see messages such
+as the following: -->
+<p>在 <code>/var/log/messages</code> 文件中和终端上，会看到如下信息：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="n">c015d71a</span>  <span class="n">k</span>  <span class="n">vfs_read</span><span class="o">+</span><span class="mh">0x0</span>
-<span class="n">c03dedc5</span>  <span class="n">r</span>  <span class="n">tcp_v4_rcv</span><span class="o">+</span><span class="mh">0x0</span>
+<pre class="chroma"><code class="language-shell" data-lang="shell">kernel: Function at 0x80484a8 called
+kernel: Function at 0x80484a8 returns 0x3
 </code></pre></td></tr></table>
 </div>
-</div><!--
-The first column provides the kernel address where the probe is inserted.
-The second column identifies the type of probe (k - kprobe and r - kretprobe)
-while the third column specifies the symbol+offset of the probe.
-If the probed function belongs to a module, the module name is also
-specified. Following columns show probe status. If the probe is on
-a virtual address that is no longer valid (module init sections, module
-virtual addresses that correspond to modules that’ve been unloaded),
-such probes are marked with [GONE]. If the probe is temporarily disabled,
-such probes are marked with [DISABLED]. If the probe is optimized, it is
-marked with [OPTIMIZED]. If the probe is ftrace-based, it is marked with
-[FTRACE].
--->
-<p>第一列，是已插入探针的内核地址。第二列，是表示探针的类型（k - kprobe，r - kretprobe）。第三列，是指定探针的符号+偏移量（symbol+offset）。如果被探测的函数属于一个模块，那么这个模块的名字也会被列出来。随后的几列显示探针的状态。如果探针在虚拟地址上，并且地址无效（模块初始化部分，模块虚拟地址，对应的模块已经卸载），这类探针会被标记为 [GONE]。如果探针临时被禁用，会被标记为 [DISABLED]。如果探针被优化了，会被标记为 [OPTIMIZED]。如果探针是基于 ftrace 的，会被标记为 [FTRACE]。</p>
-<!--
-/sys/kernel/debug/kprobes/enabled: Turn kprobes ON/OFF forcibly.
--->
-<p><code>/sys/kernel/debug/kprobes/enabled</code>：强制开启/关闭 kprobes。</p>
-<!--
-Provides a knob to globally and forcibly turn registered kprobes ON or OFF.
-By default, all kprobes are enabled. By echoing “0” to this file, all
-registered probes will be `disarmed`, till such time a “1” is echoed to this
-file. Note that this knob just disarms and arms all kprobes and doesn’t
-change each probe’s disabling state. This means that disabled kprobes (marked
-[DISABLED]) will be not enabled if you turn ON all kprobes by this knob.
--->
-<p>提供一个全局按钮，强制的开启或关闭已注册的 kprobes。默认情况下，所有 kprobes 是开启的。输出 “0” 到这个文件，所有已注册的探针会被卸载，输出 “1” 到这个文件，又重新加载。请注意，这个按钮只是卸载和加载所有 kprobes，并不会改变每个探针的禁用状态。意思是，已经禁用的探针（标记为 [DISABLED]）是不会被激活的。</p>
-<!--
-The kprobes sysctl interface
-============================
-/proc/sys/debug/kprobes-optimization: Turn kprobes optimization ON/OFF.
-
-When CONFIG_OPTPROBES=y, this sysctl interface `appears` and it provides
-a knob to globally and forcibly turn jump optimization (see section
-:ref:`kprobes_jump_optimization`) ON or OFF. By default, jump optimization
-is allowed (ON). If you echo “0” to this file or set
-“debug.kprobes_optimization” to 0 via sysctl, all optimized probes will be
-unoptimized, and any new probes registered after that will not be optimized.
-
-Note that this knob changes the optimized state. This means that optimized
-probes (marked [OPTIMIZED]) will be unoptimized ([OPTIMIZED] tag will be
-removed). If the knob is turned on, they will be optimized again.
--->
-<h2 id="kprobes-sysctl-接口">kprobes sysctl 接口</h2>
-<p><code>/proc/sys/debug/kprobes-optimization</code>： kprobes 优化开关。</p>
-<p>在 <code>CONFIG_OPTPROBES=y</code> 的时候， <code>sysctl</code> 接口提供一个全局按钮，强制的开启或关闭跳转优化（查看跳转章节）。默认情况下，跳转优化是开启的。如果输出 “0” 到这个文件或者通过 <code>sysctl</code> 设置 <code>debug.kprobes_optimization</code> 为 0 ，所有优化的探针将会变成未优化的，而且在这之后任何新的被注册的探针都不会被优化。</p>
-<p>注意，这个按钮会改变优化状态。表示已优化的探针（标记为 [OPTIMIZED]）将变成未优化的（标记 [OPTIMIZED] 会被移除）。如果按钮被打开，探针将再次被优化。</p>
-<div class="footnotes" role="doc-endnotes">
-<hr />
-<ol>
-<li id="fn:1" role="doc-endnote">
-<p>有部分内核代码是不能被捕获的，详情见<a href="#%E9%BB%91%E5%90%8D%E5%8D%95">黑名单</a> <a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
-</li>
-<li id="fn:2" role="doc-endnote">
-<p>请想象第二个指令被中断，然后优化器在中断回调函数正在运行的时候用跳转地址替换它。当中断返回到原始地址时，没有有效指令，这会导致一个意外的结果。 <a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
-</li>
-<li id="fn:3" role="doc-endnote">
-<p>优化安全检查在 ksplice 用于支持 <code>CONFIG_PREEMPT=y</code> 内核上可以用 stop-machine 方法替换。 <a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
-</li>
-</ol>
+</div><!-- To turn off probing, remove the module: -->
+<p>移除模块关闭探测：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># rmmod uretprobe_example</span>
+</code></pre></td></tr></table>
 </div>
+</div><!-- In /var/log/messages and on the console, you will see a message of the
+form "73 calls, 73 returns". -->
+<p>在 <code>/var/log/messages</code> 文件中和终端上，会看到信息：&ldquo;73 calls, 73 returns&rdquo;。</p>
 
     </article>
     
@@ -2773,6 +2582,10 @@ removed). If the knob is turned on, they will be optimized again.
     <ul class="related-ul">
         
         <li>
+          <a href="/public/posts/kprobes/kernel-kprobes/" class="related__link">译｜2019｜Kernel Probes (Kprobes)</a>
+        </li>
+        
+        <li>
           <a href="/public/posts/kprobes/an-introduction-to-kprobes/" class="related__link">译｜2005｜ An Introduction to Kprobes</a>
         </li>
         
@@ -2783,21 +2596,14 @@ removed). If the knob is turned on, they will be optimized again.
 <nav class="pagination-single">
   
     
-      <a href="https://jayce.github.io/public/posts/kprobes/an-introduction-to-kprobes/" class="pagination-single__left">
+      <a href="https://jayce.github.io/public/posts/kprobes/kernel-kprobes/" class="pagination-single__left">
         <div class="pagination-single__icon">
           <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0V0z"/><path fill="currentColor" d="M19 11H7.83l4.88-4.88c.39-.39.39-1.03 0-1.42-.39-.39-1.02-.39-1.41 0l-6.59 6.59c-.39.39-.39 1.02 0 1.41l6.59 6.59c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L7.83 13H19c.55 0 1-.45 1-1s-.45-1-1-1z"/></svg>
         </div>
-        <div class="pagination-single__left-title">译｜2005｜ An Introduction to Kprobes</div>      
+        <div class="pagination-single__left-title">译｜2019｜Kernel Probes (Kprobes)</div>      
       </a>
     
     <div class="grow"></div>
-    
-      <a href="https://jayce.github.io/public/posts/kprobes/user-space-probes/" class="pagination-single__right">      
-        <div class="pagination-single__right-title">译｜2008｜User-Space Probes (Uprobes)</div>
-        <div class="pagination-single__icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0V0z"/><path fill="currentColor" d="M5 13h11.17l-4.88 4.88c-.39.39-.39 1.03 0 1.42.39.39 1.02.39 1.41 0l6.59-6.59c.39-.39.39-1.02 0-1.41l-6.58-6.6c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41L16.17 11H5c-.55 0-1 .45-1 1s.45 1 1 1z"/></svg>
-        </div>
-      </a>
     
   
 </nav>
@@ -3156,51 +2962,33 @@ document.addEventListener('DOMContentLoaded', function () {
     <nav id="TableOfContents">
   <ul>
     <li><a href="#译者序">译者序</a></li>
-    <li><a href="#概念-kprobes-和-return-probes">概念： Kprobes 和 Return Probes</a>
+    <li><a href="#概念uprobesreturn-探针">概念：Uprobes、Return 探针</a>
       <ul>
-        <li><a href="#kprobe-如何工作">Kprobe 如何工作？</a></li>
-        <li><a href="#改变执行路径">改变执行路径</a></li>
-        <li><a href="#return-探针">Return 探针</a>
-          <ul>
-            <li><a href="#return-探针如何工作的">Return 探针如何工作的？</a></li>
-            <li><a href="#kretprobe-入口回调函数">Kretprobe 入口回调函数</a></li>
-          </ul>
-        </li>
-        <li><a href="#跳转优化如何工作的">跳转优化如何工作的？</a>
-          <ul>
-            <li><a href="#初始化-kprobe">初始化 Kprobe</a></li>
-            <li><a href="#安全检查">安全检查</a></li>
-            <li><a href="#准备-detour-缓冲区">准备 detour 缓冲区</a></li>
-            <li><a href="#优化前">优化前</a></li>
-            <li><a href="#优化">优化</a></li>
-            <li><a href="#取消优化">取消优化</a></li>
-          </ul>
-        </li>
-        <li><a href="#黑名单">黑名单</a></li>
+        <li><a href="#uprobe-是怎么工作的">Uprobe 是怎么工作的？</a></li>
+        <li><a href="#utrace-的作用">Utrace 的作用</a></li>
+        <li><a href="#return-探针怎么工作的">Return 探针怎么工作的？</a></li>
+        <li><a href="#多线程应用">多线程应用</a></li>
+        <li><a href="#探针回调函数內注册探针">探针回调函数內注册探针</a></li>
       </ul>
     </li>
-    <li><a href="#支持的架构">支持的架构</a></li>
-    <li><a href="#配置-kprobes">配置 Kprobes</a></li>
+    <li><a href="#已支持的-cpu-架构">已支持的 CPU 架构</a></li>
+    <li><a href="#配置-uprobes">配置 Uprobes</a></li>
     <li><a href="#api-参考">API 参考</a>
       <ul>
-        <li><a href="#register_kprobe">register_kprobe</a></li>
-        <li><a href="#register_kretprobe">register_kretprobe</a></li>
+        <li><a href="#register_uprobe">register_uprobe</a></li>
+        <li><a href="#register_uretprobe">register_uretprobe</a></li>
         <li><a href="#unregister_probe">unregister_*probe</a></li>
-        <li><a href="#register_probes">register_*probes</a></li>
-        <li><a href="#unregister_probes">unregister_*probes</a></li>
-        <li><a href="#disable_probe">disable_*probe</a></li>
-        <li><a href="#enable_probe">enable_*probe</a></li>
+        <li><a href="#延迟注册回调">延迟注册回调</a></li>
       </ul>
     </li>
-    <li><a href="#kprobes-特性与限制">Kprobes 特性与限制</a></li>
-    <li><a href="#探针的开销">探针的开销</a></li>
-    <li><a href="#已优化探针开销">已优化探针开销</a></li>
+    <li><a href="#uprobes-功能与限制">Uprobes 功能与限制</a></li>
+    <li><a href="#与-kprobes-交互">与 Kprobes 交互</a></li>
+    <li><a href="#与-utrace-交互">与 Utrace 交互</a></li>
+    <li><a href="#探针开销">探针开销</a></li>
     <li><a href="#todo">TODO</a></li>
-    <li><a href="#kprobes-例子">Kprobes 例子</a></li>
-    <li><a href="#kretprobes-例子">Kretprobes 例子</a></li>
-    <li><a href="#已弃用的机制">已弃用的机制</a></li>
-    <li><a href="#kprobes-debugfs-接口">kprobes debugfs 接口</a></li>
-    <li><a href="#kprobes-sysctl-接口">kprobes sysctl 接口</a></li>
+    <li><a href="#uprobes-团队">Uprobes 团队</a></li>
+    <li><a href="#uprobes-例子">Uprobes 例子</a></li>
+    <li><a href="#uretprobes-例子">Uretprobes 例子</a></li>
   </ul>
 </nav>
   </div>
@@ -3217,7 +3005,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   var enableToc = JSON.parse("true");
   var toc = JSON.parse("null");
-  var tocPosition = JSON.parse("null");
+  var tocPosition = JSON.parse("\"inner\"");
   
   var singleMainElem = document.querySelector('.single__main');
   var singleSideElem = document.querySelector('.single__side');
