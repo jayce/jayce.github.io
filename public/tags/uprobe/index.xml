@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" 
+  xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+  xmlns:dc="http://purl.org/dc/elements/1.1/" 
+  xmlns:atom="http://www.w3.org/2005/Atom" 
+  xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" 
+  xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title>uprobe on Blog</title>
+    <link>https://jayce.github.io/public/tags/uprobe/</link>
+    <description>Recent content in uprobe on Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>©{year}, All Rights Reserved</copyright>
+    <lastBuildDate>Thu, 21 May 2020 14:07:20 +0800</lastBuildDate>
+    
+        <atom:link href="https://jayce.github.io/public/tags/uprobe/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    
+
+      
+      <item>
+        <title>译｜2008｜User-Space Probes (Uprobes)</title>
+        <link>https://jayce.github.io/public/posts/trace/user-space-probes/</link>
+        <pubDate>Thu, 21 May 2020 14:07:20 +0800</pubDate>
+        
+        <atom:modified>Fri, 22 May 2020 00:00:00 +0000</atom:modified>
+        <guid>https://jayce.github.io/public/posts/trace/user-space-probes/</guid>
+        <description>译者序 这篇文章翻译自 SystemTap 项目中 uprobes.txt 文件，此文件描述了 Uprobes 的概念、工作原理、限制等内容。用途跟 Kprobes 一样，用来追踪运行在用户态的应用程序的。看提交历史，</description>
+        
+        <dc:creator>jayce</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>uprobe</category>
+            
+          
+            
+              <category>trace</category>
+            
+          
+        
+        
+        
+      </item>
+      
+
+    
+  </channel>
+</rss>

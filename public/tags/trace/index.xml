@@ -6,15 +6,15 @@
   xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" 
   xmlns:media="http://search.yahoo.com/mrss/">
   <channel>
-    <title>Posts on Blog</title>
-    <link>https://jayce.github.io/public/posts/</link>
-    <description>Recent content in Posts on Blog</description>
+    <title>trace on Blog</title>
+    <link>https://jayce.github.io/public/tags/trace/</link>
+    <description>Recent content in trace on Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>©{year}, All Rights Reserved</copyright>
-    <lastBuildDate>Wed, 15 Jan 2020 17:29:47 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 21 May 2020 14:07:20 +0800</lastBuildDate>
     
-        <atom:link href="https://jayce.github.io/public/posts/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="https://jayce.github.io/public/tags/trace/index.xml" rel="self" type="application/rss+xml" />
     
     
     

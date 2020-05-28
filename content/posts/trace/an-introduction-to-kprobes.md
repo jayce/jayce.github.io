@@ -8,6 +8,7 @@ enableToc: false
 enableTocContent: false
 tags:
 - kprobe
+- trace
 
 ---
 

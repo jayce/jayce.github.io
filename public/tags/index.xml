@@ -21,9 +21,45 @@
 
       
       <item>
+        <title>trace</title>
+        <link>https://jayce.github.io/public/tags/trace/</link>
+        <pubDate>Thu, 21 May 2020 14:07:20 +0800</pubDate>
+        
+        
+        <guid>https://jayce.github.io/public/tags/trace/</guid>
+        <description></description>
+        
+        <dc:creator>jayce</dc:creator>
+        
+        
+        
+        
+        
+        
+      </item>
+      
+      <item>
+        <title>uprobe</title>
+        <link>https://jayce.github.io/public/tags/uprobe/</link>
+        <pubDate>Thu, 21 May 2020 14:07:20 +0800</pubDate>
+        
+        
+        <guid>https://jayce.github.io/public/tags/uprobe/</guid>
+        <description></description>
+        
+        <dc:creator>jayce</dc:creator>
+        
+        
+        
+        
+        
+        
+      </item>
+      
+      <item>
         <title>kprobe</title>
         <link>https://jayce.github.io/public/tags/kprobe/</link>
-        <pubDate>Thu, 21 May 2020 14:07:20 +0800</pubDate>
+        <pubDate>Tue, 19 May 2020 11:03:35 +0800</pubDate>
         
         
         <guid>https://jayce.github.io/public/tags/kprobe/</guid>

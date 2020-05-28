@@ -8,27 +8,37 @@
   </url>
   
   <url>
-    <loc>https://jayce.github.io/public/tags/kprobe/</loc>
-    <lastmod>2020-05-22T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://jayce.github.io/public/tags/</loc>
     <lastmod>2020-05-22T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://jayce.github.io/public/posts/kprobes/user-space-probes/</loc>
+    <loc>https://jayce.github.io/public/tags/trace/</loc>
     <lastmod>2020-05-22T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://jayce.github.io/public/posts/kprobes/kernel-kprobes/</loc>
+    <loc>https://jayce.github.io/public/tags/uprobe/</loc>
+    <lastmod>2020-05-22T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jayce.github.io/public/posts/trace/user-space-probes/</loc>
+    <lastmod>2020-05-22T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jayce.github.io/public/tags/kprobe/</loc>
     <lastmod>2020-05-19T11:03:35+08:00</lastmod>
   </url>
   
   <url>
-    <loc>https://jayce.github.io/public/posts/kprobes/an-introduction-to-kprobes/</loc>
+    <loc>https://jayce.github.io/public/posts/trace/kernel-kprobes/</loc>
+    <lastmod>2020-05-19T11:03:35+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jayce.github.io/public/posts/trace/an-introduction-to-kprobes/</loc>
     <lastmod>2020-04-11T15:52:54+08:00</lastmod>
   </url>
   

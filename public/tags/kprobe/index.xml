@@ -12,7 +12,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>©{year}, All Rights Reserved</copyright>
-    <lastBuildDate>Thu, 21 May 2020 14:07:20 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 19 May 2020 11:03:35 +0800</lastBuildDate>
     
         <atom:link href="https://jayce.github.io/public/tags/kprobe/index.xml" rel="self" type="application/rss+xml" />
     
@@ -21,36 +21,12 @@
 
       
       <item>
-        <title>译｜2008｜User-Space Probes (Uprobes)</title>
-        <link>https://jayce.github.io/public/posts/kprobes/user-space-probes/</link>
-        <pubDate>Thu, 21 May 2020 14:07:20 +0800</pubDate>
-        
-        <atom:modified>Fri, 22 May 2020 00:00:00 +0000</atom:modified>
-        <guid>https://jayce.github.io/public/posts/kprobes/user-space-probes/</guid>
-        <description>译者序 这篇文章翻译自 SystemTap 项目中 uprobes.txt 文件，此文件描述了 Uprobes 的概念、工作原理、限制等内容。用途跟 Kprobes 一样，用来追踪运行在用户态的应用程序的。看提交历史，</description>
-        
-        <dc:creator>jayce</dc:creator>
-        
-        
-        
-        
-          
-            
-              <category>kprobe</category>
-            
-          
-        
-        
-        
-      </item>
-      
-      <item>
         <title>译｜2019｜Kernel Probes (Kprobes)</title>
-        <link>https://jayce.github.io/public/posts/kprobes/kernel-kprobes/</link>
+        <link>https://jayce.github.io/public/posts/trace/kernel-kprobes/</link>
         <pubDate>Tue, 19 May 2020 11:03:35 +0800</pubDate>
         
         <atom:modified>Tue, 19 May 2020 11:03:35 +0800</atom:modified>
-        <guid>https://jayce.github.io/public/posts/kprobes/kernel-kprobes/</guid>
+        <guid>https://jayce.github.io/public/posts/trace/kernel-kprobes/</guid>
         <description>译者序 这篇文章翻译自 Linux 内核源码树中的 kprobes.txt 文件，此文件描述了 Kprobes 的概念、工作原理、限制等内容。因为文件的最后一次提交是在 2019 年，所以文章标题中的年份</description>
         
         <dc:creator>jayce</dc:creator>
@@ -63,6 +39,10 @@
               <category>kprobe</category>
             
           
+            
+              <category>trace</category>
+            
+          
         
         
         
@@ -70,11 +50,11 @@
       
       <item>
         <title>译｜2005｜ An Introduction to Kprobes</title>
-        <link>https://jayce.github.io/public/posts/kprobes/an-introduction-to-kprobes/</link>
+        <link>https://jayce.github.io/public/posts/trace/an-introduction-to-kprobes/</link>
         <pubDate>Sat, 11 Apr 2020 15:52:54 +0800</pubDate>
         
         <atom:modified>Sat, 11 Apr 2020 15:52:54 +0800</atom:modified>
-        <guid>https://jayce.github.io/public/posts/kprobes/an-introduction-to-kprobes/</guid>
+        <guid>https://jayce.github.io/public/posts/trace/an-introduction-to-kprobes/</guid>
         <description>译者序 本文翻译自 2005 年在 LWN 发布的，一篇 KProbes 入门级的文章：An introduction to KProbes，当时的内核版本为 2.6.11。文中的配图是用 Omnigraffle.app 重新做了一份，顺着</description>
         
         <dc:creator>jayce</dc:creator>
@@ -85,6 +65,10 @@
           
             
               <category>kprobe</category>
+            
+          
+            
+              <category>trace</category>
             
           
         

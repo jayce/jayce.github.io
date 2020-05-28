@@ -10,7 +10,8 @@ enableTocContent: false
 tocPosition: inner
 tocLevels: ["h2", "h3", "h4"]
 tags:
-- kprobe
+- uprobe
+- trace
 marp: false
 ---
 
