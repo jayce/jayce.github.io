@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>译｜2008｜User-Space Probes (Uprobes) – Blog</title>
+    <title>译｜2017｜Linux 追踪系统&amp;如何组合在一起的 – Blog</title>
     
 
 
@@ -551,7 +551,7 @@
 
   
     
-    var permalink = JSON.parse("\"https://jayce.github.io/public/posts/trace/user-space-probes/\"");
+    var permalink = JSON.parse("\"https://jayce.github.io/public/posts/trace/linux-tracing-system-fit-together/\"");
     var searchResults = null;
     var searchMenu = null;
     var searchText = null;
@@ -1206,18 +1206,18 @@
 <meta name="description" content="" />
 
 
-<meta name="keywords" content="uprobe,trace">
+<meta name="keywords" content="trace">
 
-<meta name="created" content="2020-05-21T14:07:20&#43;0800">
-<meta name="modified" content="2020-05-22T00:00:00&#43;0000">
-<meta property="article:published_time" content="2020-05-21T14:07:20&#43;0800">
+<meta name="created" content="2020-05-28T18:40:02&#43;0800">
+<meta name="modified" content="2020-05-28T18:40:02&#43;0800">
+<meta property="article:published_time" content="2020-05-28T18:40:02&#43;0800">
 
 <meta name="author" content="jayce">
 
 
 <meta property="og:site_name" content="Blog">
-<meta property="og:title" content="译｜2008｜User-Space Probes (Uprobes)">
-<meta property="og:url" content="https://jayce.github.io/public/posts/trace/user-space-probes/">
+<meta property="og:title" content="译｜2017｜Linux 追踪系统&amp;如何组合在一起的">
+<meta property="og:url" content="https://jayce.github.io/public/posts/trace/linux-tracing-system-fit-together/">
 <meta property="og:type" content="article">
 <meta property="og:description" content="">
 
@@ -1230,7 +1230,7 @@
 
 <meta name="apple-mobile-web-app-status-bar-style" content="#fff">
 
-<link rel="canonical" href="https://jayce.github.io/public/posts/trace/user-space-probes/">
+<link rel="canonical" href="https://jayce.github.io/public/posts/trace/linux-tracing-system-fit-together/">
 
 <link rel="manifest" href="/public/manifest.json">
 
@@ -1256,12 +1256,12 @@
   {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    "headline": "译｜2008｜User-Space Probes (Uprobes)",
-    "datePublished": "2020-05-21T14:07:20+08:00",
-    "dateModified": "2020-05-22T00:00:00Z",
-    "url" : "https://jayce.github.io/public/posts/trace/user-space-probes/",
-    "description": "译者序 这篇文章翻译自 SystemTap 项目中 uprobes.txt 文件，此文件描述了 Uprobes 的概念、工作原理、限制等内容。用途跟 Kprobes 一样，用来追踪运行在用户态的应用程序的。看提交历史，",
-    "keywords": ["uprobe","trace"],
+    "headline": "译｜2017｜Linux 追踪系统\u0026如何组合在一起的",
+    "datePublished": "2020-05-28T18:40:02+08:00",
+    "dateModified": "2020-05-28T18:40:02+08:00",
+    "url" : "https://jayce.github.io/public/posts/trace/linux-tracing-system-fit-together/",
+    "description": "译者序 在 Linux 系统上用来追踪、调试的工具有很多，有内核态的、用户态的、网络、IO 等等不同层次的工具。本文翻译自 Linux tracing systems \u0026amp; how they fit together - Julia Evans，这",
+    "keywords": ["trace"],
     "mainEntityOfPage": {
       "@type": "WebPage",
       "@id": "https://jayce.github.io/public/"
@@ -1507,7 +1507,7 @@
   
   <li  class="is-active" >
     
-      <span>译｜2008｜User-Space Probes (Uprobes)</span>
+      <span>译｜2017｜Linux 追踪系统&amp;如何组合在一起的</span>
     
   </li>
   
@@ -1519,15 +1519,13 @@
   <div class="single ">
     <div class="single__nojs">This page looks best with JavaScript enabled</div>
     <script>document.querySelector('.single').classList.remove('hide'); document.querySelector('.single__nojs').classList.add('hide');</script>
-    <h2 class="single__title" data-ani="true">译｜2008｜User-Space Probes (Uprobes)</h2>
+    <h2 class="single__title" data-ani="true">译｜2017｜Linux 追踪系统&amp;如何组合在一起的</h2>
     <div class="single__meta">
       
 <div class="single__infos">
-  <time class="single__info" title="Written At">📅&nbsp;May 21, 2020 </time>
+  <time class="single__info" title="Written At">📅&nbsp;May 28, 2020 </time>
   
-  &nbsp;&middot;&nbsp; <time class="single__info" title="Modified At"> 📝&nbsp;May 22, 2020 </time>
-  
-  &nbsp;&middot;&nbsp; <span class="single__info" title="Reading Time"> ☕&nbsp;14&nbsp;min read </span>
+  &nbsp;&middot;&nbsp; <span class="single__info" title="Reading Time"> ☕&nbsp;13&nbsp;min read </span>
   
   <span class="single__info">
     
@@ -1541,668 +1539,165 @@
 
   <li><a href="https://jayce.github.io/public/tags/trace/" class="single__tag" title="trace">#trace</a></li>
 
-  <li><a href="https://jayce.github.io/public/tags/uprobe/" class="single__tag" title="uprobe">#uprobe</a></li>
-
 </ul>
     </div>
     <article class="single__contents" data-dir="ltr" data-ani="true">
       
-      <h2 id="译者序">译者序</h2>
-<p>这篇文章翻译自 SystemTap 项目中 <a href="https://sourceware.org/git/?p=systemtap.git;a=blob;f=runtime/uprobes/uprobes.txt;h=edd524be022691498c7f38133b0e32192dcbb35f;hb=a2b182f549cf64427a474803f3c02286b8c1b5e1">uprobes.txt</a> 文件，此文件描述了 Uprobes 的概念、工作原理、限制等内容。用途跟 Kprobes 一样，用来追踪运行在用户态的应用程序的。看提交<a href="https://lore.kernel.org/linux-mm/20120209092642.GE16600@linux.vnet.ibm.com/">历史</a>，这个功能在 2012 年才提交到 Linux 内核中。</p>
-<p>文章最后提供的例子，可以修改来玩一玩。</p>
+      <h1 id="译者序">译者序</h1>
+<p>在 Linux 系统上用来追踪、调试的工具有很多，有内核态的、用户态的、网络、IO 等等不同层次的工具。本文翻译自 <a href="https://jvns.ca/blog/2017/07/05/linux-tracing-systems/">Linux tracing systems &amp; how they fit together - Julia Evans</a>，这是在学习 Systemtap 原理时找到的资料，文章中就粗略讲了 Linux 的追踪系统，以及一点点来龙去脉，实际上工作中用到的大部分工具或多或少都是基于文章当中提到的某一种机制实现的。</p>
 <p><strong>注：因为水平有限，文中难免存在遗漏或者错误的地方。如有疑问，建议直接阅读原文。</strong></p>
 <hr />
-<!-- ## Concepts: Uprobes, Return Probes
-Uprobes enables you to dynamically break into any routine in a
-user application and collect debugging and performance information
-non-disruptively. You can trap at any code address, specifying a
-kernel handler routine to be invoked when the breakpoint is hit. -->
-<h2 id="概念uprobesreturn-探针">概念：Uprobes、Return 探针</h2>
-<p>Uprobes 能够动态的介入应用程序的任意函数，采集调试和性能信息，且不引起混乱。你可以在任意地址上，指定断点命中时调用的内核函数。</p>
-<!-- There are currently two types of user-space probes: uprobes and
-uretprobes (also called return probes).  A uprobe can be inserted on
-any instruction in the application’s virtual address space.  A return
-probe fires when a specified user function returns.  These two probe
-types are discussed in more detail later. -->
-<p>目前，用户态探针有两种类型： uprobes 和 uretprobes（也叫 return 探针）。可以在应用程序的虚拟地址空间的任意指令上插入 uprobe 。 当用户函数返回的时候触发 return 探针。后续内容会详细的讨论这两类探针的细节。</p>
-<!-- A registration function such as register_uprobe() specifies which
-process is to be probed, where the probe is to be inserted, and what
-handler is to be called when the probe is hit. -->
-<p><code>register_uprobe()</code> 注册函数设定要探测的进程，探针插入的位置，以及命中探针时调用什么回调函数。</p>
-<!-- Typically, Uprobes-based instrumentation is packaged as a kernel
-module.  In the simplest case, the module’s init function installs
-("registers") one or more probes, and the exit function unregisters
-them.  However, probes can be registered or unregistered in response
-to other events as well.  For example:
-- A probe handler itself can register and/or unregister probes.
-- You can establish Utrace callbacks to register and/or unregister
-probes when a particular process forks, clones a thread,
-execs, enters a system call, receives a signal, exits, etc.
-See Documentation/utrace.txt. -->
-<p>通常，基于 Uprobes 的探测工具是被打包成内核模块。最简单的内核模块，初始化函数安装（&ldquo;注册&rdquo;）一个或多个探针，而后在 exit 函数中注销。其实还可以在响应其他事件中注册或注销探针。例如：</p>
-<ul>
-<li>探针回调函数自身可以注册或注销探针</li>
-<li>可以创建 Utrace 回调函数来注册或注销探针，探测特定的进程什么时候派生子进程、克隆线程、执行、进入系统调用、接收信号、退出等等。参考 <code>Documentation/utrace.txt</code>。</li>
-</ul>
-<!-- ### How Does a Uprobe Work?
-When a uprobe is registered, Uprobes makes a copy of the probed
-instruction, stops the probed application, replaces the first byte(s)
-of the probed instruction with a breakpoint instruction (e.g., int3
-on i386 and x86_64), and allows the probed application to continue.
-(When inserting the breakpoint, Uprobes uses the same copy-on-write
-mechanism that ptrace uses, so that the breakpoint affects only that
-process, and not any other process running that program.  This is
-true even if the probed instruction is in a shared library.) -->
-<h3 id="uprobe-是怎么工作的">Uprobe 是怎么工作的？</h3>
-<p>当一个 uprobe 被注册后，Uprobes 会创建一个被探测指令的副本，停止被探测的应用程序，用断点指令替换被探测指令的首字节（在 i386 和 x86_64 上是 <code>int3</code>），之后让应用程序继续运行。（在插入断点的时候，Uprobes 使用与 ptrace 使用的相同的 <code>copy-on-write</code> 机制，这样断点也只影响那个进程，不会影响其他运行相同程序的进程。甚至是被探测的指令在共享库中也一样。）</p>
-<!-- When a CPU hits the breakpoint instruction, a trap occurs, the CPU’s
-user-mode registers are saved, and a SIGTRAP signal is generated.
-Uprobes `intercepts` the SIGTRAP and finds the associated uprobe.
-It then executes the handler associated with the uprobe, passing the
-handler the addresses of the uprobe struct and the saved registers.
-The handler may block, but `keep in mind` that the probed thread remains
-stopped while your handler runs. -->
-<p>当 CPU 命中断点指令的时候，发生了一个 trap，CPU 用户模式的寄存器都被保存起来，产生了一个 <code>SIGTRAP</code> 信号。Uprobes 拦截 <code>SIGTRAP</code> 信号，找到关联的 uprobe。然后，用 uprobe 结构体和先前保存的寄存器地址调用与 uprobe 关联的回调函数。这个回调函数可能会阻塞，但要记住回调函数执行期间，被探测的线程一直是停止的。</p>
-<!-- Next, Uprobes single-steps its copy of the probed instruction and
-resumes execution of the probed process at the instruction following
-the probepoint.  (It would be simpler to single-step the actual
-instruction in place, but then Uprobes would have to temporarily
-remove the breakpoint instruction.  This would create problems in a
-multithreaded application.  For example, it would open a time window
-when another thread could sail right past the probepoint.) -->
-<p>接下来，Uprobes 会单步执行被探测指令的副本，之后会恢复被探测的程序，让它在探测点之后的指令处继续执行。（实际上单步执行原始指令会更简单，但之后，Uprobes 必须移除断点指令。这在多线程应用程序中会引起问题。比如，当另一个线程执行过探测点的时会打开一个时间窗口。）</p>
-<!-- Instruction copies to be single-stepped are stored in a per-process
-"single-step out of line (SSOL) area," which is a little VM area
-created by Uprobes in each probed process’s address space. -->
-<p>被单步执行的指令副本存储在每个进程的&quot;单步跳出（SSOL）区域&quot;中，它是由 Uprobes 在每个被探测进程的地址空间中创建的很小的 VM 区域。</p>
-<!-- ### The Role of Utrace
-When a probe is registered on a previously unprobed process,
-Uprobes establishes a tracing "engine" with Utrace (see
-Documentation/utrace.txt) for each thread (task) in the process.
-Uprobes uses the Utrace "`quiesce`" mechanism to stop all the threads
-`prior` to insertion or removal of a breakpoint.  Utrace also notifies
-Uprobes of breakpoint and single-step traps and of other interesting
-events in the lifetime of the probed process, such as fork, clone,
-exec, and exit. -->
-<h3 id="utrace-的作用">Utrace 的作用</h3>
-<p>当先前被取消探测的进程上又注册一个探针的时候，Uprobes 用 Utrace 为进程中每个线程建立了一个追踪&quot;引擎&rdquo;。Uprobes 使用 Utrace &ldquo;静默&quot;机制，在插入或移除断点之前停止所有线程。Utrace 在被探测进程的生命周期中（fork, clone, exec, exit），通知 Uprobes 断点和单步执行陷阱以及其他感兴趣的事件。</p>
-<!-- ### How Does a Return Probe Work?
-When you call register_uretprobe(), Uprobes establishes a uprobe
-at the entry to the function.  When the probed function is called
-and this probe is hit, Uprobes saves a copy of the return address,
-and replaces the return address with the address of a "trampoline"
-— a piece of code that contains a breakpoint instruction. -->
-<h3 id="return-探针怎么工作的">Return 探针怎么工作的？</h3>
-<p>当你调用 <code>register_uretprobe()</code> 函数的时候，Uprobes 在函数的入口处创建一个 uprobe 。当调用被探测函数的时候命中这个探针，Uprobes 会保存 return 地址的一个副本，然后用&quot;蹦床&quot;的地址替换 return 地址 —— 一段包含一个断点指令代码。</p>
-<!-- When the probed function executes its return instruction, control
-passes to the trampoline and that breakpoint is hit.  Uprobes’s
-trampoline handler calls the user-specified handler associated with the
-uretprobe, then sets the saved instruction pointer to the saved return
-address, and that’s where execution resumes upon return from the trap. -->
-<p>当被探测的函数执行它的 return 指令时，控制转移到蹦床，命中断点。Uprobes 的蹦床回调函数调用与 uretprobe 关联的回调函数，然后把已保存的指令指针设置为已保存的 return 地址，再然后就从 trap 返回后的地方恢复执行。</p>
-<!-- The trampoline is stored in the SSOL area. -->
-<p>蹦床存储在 SSOL 区域中。</p>
-<!-- ### Multithreaded Applications
-Uprobes supports the probing of multithreaded applications.  Uprobes
-`imposes` no limit on the number of threads in a probed application.
-All threads in a process use the same text pages, so every probe
-in a process affects all threads; of course, each thread hits the
-probepoint (and runs the handler) independently.  Multiple threads
-may run the same handler simultaneously.  If you want a particular
-thread or set of threads to run a particular handler, your handler
-should check current or current->pid to determine which thread has
-hit the probepoint. -->
-<h3 id="多线程应用">多线程应用</h3>
-<p>Uprobes 支持多线程应用的探测。Uprobes 在被探测的应用中没有线程数量的限制。<br />
-在单个进程中的所有线程，使用相同的文本页，所以进程中的每个探针，会影响所有线程；当然，每个线程命中探测点（以及运行回调函数）是相对独立的。多个线程可能同时运行相同的回调函数。如果你想要一个特定的线程或是一组线程运行一个特定的回调函数，那回调函数应该检查 <code>current</code> 或 <code>current-&gt;pid</code> 来确认哪个线程命中了探测点。</p>
-<!-- When a process clones a new thread, that thread automatically shares
-all current and future probes established for that process. -->
-<p>当进程克隆一个新的线程时，该线程自动的共享所有为进程创建的探针。</p>
-<!-- Keep in mind that when you register or unregister a probe, the
-breakpoint is not inserted or removed until Utrace has stopped all
-threads in the process.  The register/unregister function returns
-after the breakpoint has been inserted/removed (but see the next
-section). -->
-<p>要记住，注册或注销探针的时候，要等到 Utrace 停止了进程中的所有线程后，才会插入或删除断点。注册/注销函数在断点已经被插入或移除之后才返回（看下一章节）。</p>
-<!-- ### Registering Probes within Probe Handlers
-A uprobe or uretprobe handler can call any of the functions
-in the Uprobes API ([un]register_uprobe(), [un]register_uretprobe()).
-A handler can even unregister its own probe.  However, when invoked
-from a handler, the actual [un]register operations do not take
-place immediately.  Rather, they are queued up and executed after
-all handlers for that probepoint have been run.  In the handler,
-the [un]register call returns -EINPROGRESS.  If you set the
-registration_callback field in the uprobe object, that callback will
-be called when the [un]register operation completes. -->
-<h3 id="探针回调函数內注册探针">探针回调函数內注册探针</h3>
-<p><code>uprobe</code> 或 <code>uretprobe</code> 回调函数可以调用 Uprobes API 中的任何函数（<code>[un]register_uprobe()</code>, <code>[un]register_uretprobe()</code>）。探针回调函数甚至可以注销它自己。不过，在回调函数中调用的时候，实际的注册/注销操作不会立刻执行。反而，它们会被放入队列，在该探测点已经运行所有回调函数之后执行。在回调函数中，注册/注销函数会返回 <code>-EINPROGRESS</code>。如果在 uprobe 对象中设置了 <code>registration_callback</code> 字段，会在注册/注销操作完成的时候调用。</p>
-<!-- ## Architectures Supported
-Uprobes and uretprobes are implemented on the following
-architectures: -->
-<h2 id="已支持的-cpu-架构">已支持的 CPU 架构</h2>
-<p><code>uprobes</code> 和 <code>uretprobes</code> 被实现，在下面的架构上：</p>
-<ul>
-<li>i386</li>
-<li>x86_64 (AMD-64, EM64T)</li>
-<li>ppc64</li>
-<li>s390x</li>
-</ul>
 <!--
-## Configuring Uprobes
-// TODO: The patch actually puts Uprobes configuration under "Instrumentation
-// Support" with Kprobes.  Need to decide which is the better place. -->
-<h2 id="配置-uprobes">配置 Uprobes</h2>
-<p>// TODO: 补丁实际上把 Uprobes 配置放在 &ldquo;Instrumentation Support&rdquo; 下面与 Kprobes 一起。需要决定哪个更好。</p>
-<!-- When configuring the kernel using make menuconfig/xconfig/oldconfig,
-ensure that CONFIG_UPROBES is set to "y".  Under "Process debugging
-support," select "Infrastructure for tracing and debugging user
-processes" to enable Utrace, then select "Uprobes". -->
-<p>在使用 <code>make menuconfig/xconfig/oldconfig</code> 配置内核的时候，确保 <code>CONFIG_UPROBES</code> 设置为 &ldquo;y&rdquo;。在 &ldquo;Process debugging support&rdquo; 下面，选择 &ldquo;Infrastructure for tracing and debugging user processes&rdquo; 开启 Utrace，然后选择 &ldquo;Uprobes&rdquo;。</p>
-<!-- So that you can load and unload Uprobes-based instrumentation modules,
-make sure "Loadable module support" (CONFIG_MODULES) and "Module
-unloading" (CONFIG_MODULE_UNLOAD) are set to "y". -->
-<p>确保 &ldquo;Loadable module support&rdquo;（CONFIG_MODULES）和 &ldquo;Module unloading&rdquo; (CONFIG_MODULE_UNLOAD) 都被设置为 &ldquo;y&rdquo;，这样就可以加载或卸载基于 Uprobes 的测试工具模块。</p>
-<!-- ## API Reference
-The Uprobes API includes a "register" function and an "unregister"
-function for each type of probe.  Here are `terse`, mini-man-page
-specifications for these functions and the associated probe handlers
-that you'll write.  See the latter half of this document for examples. -->
-<h2 id="api-参考">API 参考</h2>
-<p>Uprobes API 为每种类型的探针分别提供了&quot;注册&quot;和&quot;注销&quot;函数。这有一份这些函数以及相关的探针处理函数的简短说明。例子见文档后半部分。</p>
-<h3 id="register_uprobe">register_uprobe</h3>
+I’ve been confused about Linux tracing systems for *years*. There’s strace, and ltrace, kprobes, and tracepoints, and uprobes, and ftrace, and perf, and eBPF, and how does it all fit together and what does it all MEAN? -->
+<p>我对于 Linux 追踪系统一直很困惑，有好几年了。strace、ltrace、kprobes、tracepoints、uprobes、ftrace、perf、eBPF，它们怎么串联在一起的，又有什么意义呢？</p>
+<!-- Last week I went to Papers We Love and later me & Kamal hung out with [Suchakra](https://twitter.com/tuxology) at [Polytechnique Montréal](http://www.dorsal.polymtl.ca/) (where LTTng comes from) and finally I think I understand how all these pieces fit together, more or less. There are still probably some mistakes in this post, please let me know what they are! (I’m b0rk on twitter). -->
+<p>上周，我去了&rdquo;<a href="https://paperswelove.org/">Papers We Love</a>&quot;<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>，后来我 &amp; Kamal 到<a href="http://www.dorsal.polymtl.ca/">蒙特利尔理工大学</a>（LTTng 项目开始的地方）与 <a href="https://twitter.com/tuxology">Suchakra</a> 一起出去玩，终于我想我理解了所有的这些部件是如何组合在一起的了，或多或少吧。不过，在这篇文章中依然会有一些错误，如果发现了请让我知道！（twitter ID：b0rk）。</p>
+<!-- I’m going to leave strace out of this post (even though it’s my favorite thing) because the overhead is so high – in this post we’re only going to talk about tracing systems that are relatively fast / low overhead. This post also isn’t about sampling `profilers` at all (which is a whole other topic!). Just tracing. -->
+<p>这篇文章我要把 strace 抛开（它是我最喜欢的工具），因为开销太高了 - 在这篇文章中我们只会讨论相对高效/低开销的追踪系统。这篇文章也不是关于样本采集器的（这是另外一个主题！）。只是追踪。</p>
+<!-- The thing I learned last week that helped me really understand was – you can split linux tracing systems into **data sources** (where the tracing data comes from), **mechanisms for collecting data for those sources** (like "ftrace") and **tracing frontends** (the tool you actually interact with to collect/analyse data). The overall picture is still kind of `fragmented` and confusing, but it’s at least a more `approachable` fragmented/confusing system. -->
+<p>我上周学到的东西帮助我真正的了解了 —— 你可以把 linux 追踪系统拆分为数据源（追踪数据的来源），收集数据源的机制（类似 ftrace）和追踪前端（以交互式方式收集/分析数据的工具）。整体看上去还有些零散和模糊，但至少是一个更容易理解的方法。</p>
+<!-- here’s what we’ll talk about: (with links if you want to jump to a specific section). -->
+<p>以下是我们将要讨论的内容：</p>
+<ul>
+<li><a href="#%E5%9B%BE%E7%89%87%E7%89%88%E6%9C%AC">图片版本</a></li>
+<li><a href="#%E8%83%BD%E8%BF%BD%E8%B8%AA%E4%BB%80%E4%B9%88">能追踪什么？</a></li>
+<li><a href="#%E6%95%B0%E6%8D%AE%E6%BA%90kprobes-tracepoints-uprobes-dtrace-probes-%E7%AD%89%E7%AD%89">数据源：kprobes, tracepoints, uprobes, dtrace probes 等等</a>
+<ul>
+<li><a href="#kprobes">kprobes</a></li>
+<li><a href="#uprobes">uprobes</a></li>
+<li><a href="#usdtdtrace-probes">USDT/dtrace probes</a></li>
+<li><a href="#kernel-tracepoints">kernel tracepoints</a></li>
+<li><a href="#lttng-ust">lttng-ust</a></li>
+</ul>
+</li>
+<li><a href="#%E6%94%B6%E9%9B%86%E7%9C%9F%E9%A6%99%E6%95%B0%E6%8D%AE%E7%9A%84%E6%9C%BA%E5%88%B6">收集&quot;真香&quot;数据的机制</a>
+<ul>
+<li><a href="#ftrace">ftrace</a></li>
+<li><a href="#perf_events">perf_events</a></li>
+<li><a href="#ebpf">eBPF</a></li>
+<li><a href="#sysdig">sysdig</a></li>
+<li><a href="#systemtap">systemtap</a></li>
+<li><a href="#lttng">LTTng</a></li>
+</ul>
+</li>
+<li><a href="#%E5%89%8D%E7%AB%AF">前端</a>
+<ul>
+<li><a href="#perf-%E5%89%8D%E7%AB%AF">perf 前端</a></li>
+<li><a href="#ftrace-%E5%89%8D%E7%AB%AF">ftrace 前端</a></li>
+<li><a href="#ebpf-%E5%89%8D%E7%AB%AF-bcc">eBPF 前端: bcc</a></li>
+<li><a href="#lttng--systemtap-%E5%89%8D%E7%AB%AF">LTTng &amp; SystemTap 前端</a></li>
+</ul>
+</li>
+<li><a href="#%E6%89%80%E4%BB%A5%E6%88%91%E5%BA%94%E8%AF%A5%E4%BD%BF%E7%94%A8%E4%BB%80%E4%B9%88%E6%A0%B7%E7%9A%84%E8%BF%BD%E8%B8%AA%E5%B7%A5%E5%85%B7">所以我应该使用什么样的追踪工具</a></li>
+<li><a href="#%E5%B8%8C%E6%9C%9B%E8%BF%99%E7%AF%87%E6%96%87%E7%AB%A0%E6%9C%89%E7%94%A8">希望这篇文章有用！</a></li>
+</ul>
+<!-- It’s still kind of complicated but `breaking it up` this way really helps me understand (thanks to Brendan Gregg for suggesting this `breakdown` on twitter!) -->
+<p>这仍然有点复杂，但以这样的方式分解它，确实有助于我理解（感谢 Brendan Gregg 在 Twitter 上建议这样分解！）</p>
+<!-- ## a picture version
+here are 6 drawings summarizing what this post is about: -->
+<h2 id="图片版本">图片版本</h2>
+<p>这里有 6 个草图，汇总了这篇文章的内容：</p>
+<ul>
+<li>
+<p>数据源、提取方法、前端<br />
+<img src="https://drawings.jvns.ca/drawings/linux-tracing-1.png" alt="" /></p>
+</li>
+<li>
+<p>数据源：kprobes、uprobes、tracepoints、USTD<br />
+<img src="https://drawings.jvns.ca/drawings/linux-tracing-2.png" alt="" /></p>
+</li>
+<li>
+<p>提取方法：ftrace 文件系统、perf_event 系统调用、eBPF 程序<br />
+<img src="https://drawings.jvns.ca/drawings/linux-tracing-3.png" alt="" /></p>
+</li>
+<li>
+<p>更多方式：Systemtap 脚本、LTTng 工具、sysdig 命令<br />
+<img src="https://drawings.jvns.ca/drawings/linux-tracing-4.png" alt="" /></p>
+</li>
+<li>
+<p>前端：更容易使用、更友好的显示数据<br />
+<img src="https://drawings.jvns.ca/drawings/linux-tracing-5.png" alt="" /></p>
+</li>
+<li>
+<p>更现代的前端<br />
+<img src="https://drawings.jvns.ca/drawings/linux-tracing-6.png" alt="" /></p>
+</li>
+</ul>
+<!-- ## What can you trace?
+A few different kinds of things you might want to trace:
+* System calls
+* Linux kernel function calls (which functions in my TCP stack are being called?)
+* Userspace function calls (did `malloc` get called?)
+* Custom "events" that you’ve defined either in userspace or in the kernel -->
+<h2 id="能追踪什么">能追踪什么？</h2>
+<p>你也许想要追踪几种不同类型的事情：</p>
+<ul>
+<li>系统调用</li>
+<li>Linux 内核函数调用（TCP 栈中的哪个函数正在被调用？）</li>
+<li>用户空间函数调用（<code>malloc</code> 被调用了吗？）</li>
+<li>在用户空间或是内核空间自定义的&quot;事件&rdquo;</li>
+</ul>
+<!-- All of these things are possible, but `it turns out` the tracing `landscape` is actually pretty complicated. -->
+<p>以上所有事情都是可能的，不过追踪环境实际上是非常复杂的。</p>
+<!-- ## Data sources: kprobes, tracepoints, uprobes, dtrace probes & more
+Okay, let’s do data sources! This is kind of the most fun part – there are so many EXCITING PLACES you can get data about your programs. -->
+<h2 id="数据源kprobes-tracepoints-uprobes-dtrace-probes-等等">数据源：kprobes, tracepoints, uprobes, dtrace probes 等等</h2>
+<p>Okay，让我们谈谈数据源！这是最有意思的部分——有太多地方可以获取程序的数据。</p>
+<!-- I’m going to split these up into "probes" (kprobes/uprobes) and "tracepoints" (USDT/kernel tracepoints / lttng-ust). I’m think I’m not using the right `terminology` exactly but there are 2 distinct ideas here that are useful to understand -->
+<p>我要把它们分成 &ldquo;probes&rdquo;（kprobes/uprobes）和 &ldquo;tracepoints&rdquo;（USDT/kernel tracepoints/ltng-ust）。实际上，我认为我没有使用正确的术语，这有 2 个不同的概念能帮助你去理解。</p>
+<!-- A **probe** is when the kernel dynamically modifies your assembly program at runtime (like, it changes the instructions) in order to enable tracing. This is super powerful (and kind of scary!) because you can enable a probe on literally any instruction in the program you’re tracing. (though dtrace probes aren’t "probes" in this sense). Kprobes and uprobes are examples of this pattern. -->
+<p>&ldquo;probe&rdquo; 是一种机制，内核可以在运行时修改你的汇编程序（类似，改变指令）来开启追踪。这点非常强大（有点可怕！），因为可以在你追踪的程序任意指令上启用一个 probe。（不过 dtrace probes 不是这种形式的 &ldquo;probes&rdquo;）。Kprobes 和 uprobes 就是这种形式的例子。</p>
+<!-- A **tracepoint** is something you compile into your program. When someone using your program wants to see when that tracepoint is hit and extract data, they can "enable" or "activate" the tracepoint to start using it. Generally a tracepoint in this sense doesn’t cause any extra overhead when it’s not activated, and is relatively low overhead when it is activated. USDT ("dtrace probes"), lttng-ust, and kernel tracepoints are all examples of this pattern. -->
+<p>&ldquo;tracepoint&rdquo; 是一种编译到你的程序中的东西。当使用程序的人，想要看看 tracepoint 什么时候命中及提取数据的时候，他们可以先&quot;启用&quot;或&quot;激活&rdquo; tracepoint 。通常，在 tracepoint 没有被激活的时候不会产生任何额外的开销，甚至在它被激活的时候开销也是相当的低。USDT（&ldquo;dtrace probes&rdquo;）、lttng-ust 、kernel tracepoints 它们都是这种模式的例子。</p>
+<h3 id="kprobes">kprobes</h3>
+<!-- Next up is kprobes! What’s that? [From an LWN article](https://lwn.net/Articles/132196/): -->
+<p>接下来是 kprobes！那是什么？下面这段话来自 <a href="https://lwn.net/Articles/132196/">LWN 的一篇文章</a>:</p>
+<!-- > KProbes are a debugging mechanism for the Linux kernel which can also be used for monitoring events inside a production system. You can use it to weed out performance bottlenecks, log specific events, trace problems etc. -->
+<blockquote>
+<p>KProbes 是一种 Linux 内核调试机制，也可以用来监控生产系统内部的事件。还能用它来发现性能瓶颈、记录特定的事件、追踪问题等等。</p>
+</blockquote>
+<!-- To `reiterate` – basically kprobes let you dynamically change the Linux kernel’s assembly code at runtime (like, insert extra assembly instructions) to trace when a given instruction is called. I usually think of kprobes as tracing Linux kernel function calls, but you can actually trace **any instruction inside the kernel and inspect the registers**. Weird, right? -->
+<p>复述一下，基本上 kprobes 能让你在运行时动态的改变 Linux 内核的汇编代码（比如，插入额外的汇编指令），追踪一个指令什么时候被调用。我以为 kprobes 就是追踪 linux 内核函数调用，实际上它可以追踪<strong>内核中的任意指令以及检查寄存器</strong>。神奇吧？</p>
+<!-- [Brendan Gregg has a kprobe script](https://github.com/brendangregg/perf-tools/blob/master/kernel/kprobe) that you can use to play around with kprobes. -->
+<p><a href="https://github.com/brendangregg/perf-tools/blob/master/kernel/kprobe">Brendan Gregg 有个 krpobe 脚本</a>，可以用来玩一玩 krpboes。</p>
+<!-- For example! Let’s use kprobes to `spy` on which files are being opened on our computer. I ran -->
+<p>例如！让我们用 kprobes 追踪，我们电脑上正在打开的文件。我执行了下面这条命令</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;linux/uprobes.h&gt;</span><span class="cp">
-</span><span class="cp"></span><span class="kt">int</span> <span class="nf">register_uprobe</span><span class="p">(</span><span class="k">struct</span> <span class="n">uprobe</span> <span class="o">*</span><span class="n">u</span><span class="p">);</span>
+<pre class="chroma"><code class="language-bash" data-lang="bash">$ sudo ./kprobe <span class="s1">&#39;p:myopen do_sys_open filename=+0(%si):string&#39;</span>
 </code></pre></td></tr></table>
 </div>
-</div><!-- Sets a breakpoint at virtual address u->vaddr in the process whose
-pid is u->pid.  When the breakpoint is hit, Uprobes calls u->handler. -->
-<p>在 pid 是 <code>u-&gt;pid</code> 的进程中，虚拟地址 <code>u-&gt;vaddr</code>处设置断点。在命中断点的时候，Uprobes 调用 <code>u-&gt;handler</code>。</p>
-<!-- register_uprobe() returns 0 on success, -EINPROGRESS if
-register_uprobe() was called from a uprobe or uretprobe handler
-(and therefore delayed), or a negative errno otherwise. -->
-<p><code>register_uprobe()</code> 调用成功返回 0，如果是在 uprobe 或 uretprobe 回调函数中（因此延迟了）调用返回 <code>-EINPROGRESS</code>，否则返回负的 errno 。</p>
-<!-- Section 4.4, "User's Callback for Delayed Registrations",
-explains how to be notified upon completion of a delayed
-registration. -->
-<p><a href="#%E5%BB%B6%E8%BF%9F%E6%B3%A8%E5%86%8C%E5%9B%9E%E8%B0%83">&ldquo;延迟注册回调&rdquo;</a>，解释了在完成延迟注册后如何通知。</p>
-<!-- User's handler (u->handler): -->
-<p>用户的回调函数（u-&gt;handler）:</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;linux/uprobes.h&gt;</span><span class="cp">
-</span><span class="cp">#include</span> <span class="cpf">&lt;linux/ptrace.h&gt;</span><span class="cp">
-</span><span class="cp"></span><span class="kt">void</span> <span class="nf">handler</span><span class="p">(</span><span class="k">struct</span> <span class="n">uprobe</span> <span class="o">*</span><span class="n">u</span><span class="p">,</span> <span class="k">struct</span> <span class="n">pt_regs</span> <span class="o">*</span><span class="n">regs</span><span class="p">);</span>
-</code></pre></td></tr></table>
-</div>
-</div><!-- Called with u pointing to the uprobe associated with the breakpoint,
-and regs pointing to the struct containing the registers saved when
-the breakpoint was hit. -->
-<p>在断点命中的时候调用，传入指向断点关联的 uprobe 指针 <code>u</code> 和含有保存的寄存器的结构体指针 <code>regs</code>。</p>
-<h3 id="register_uretprobe">register_uretprobe</h3>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;linux/uprobes.h&gt;</span><span class="cp">
-</span><span class="cp"></span><span class="kt">int</span> <span class="nf">register_uretprobe</span><span class="p">(</span><span class="k">struct</span> <span class="n">uretprobe</span> <span class="o">*</span><span class="n">rp</span><span class="p">);</span>
-</code></pre></td></tr></table>
-</div>
-</div><!-- Establishes a return probe in the process whose pid is rp->u.pid for
-the function whose address is rp->u.vaddr.  When that function returns,
-Uprobes calls rp->handler. -->
-<p>在 pid 是 <code>rp-&gt;u.pid</code> 的进程中，函数地址 <code>rp-&gt;u.vaddr</code> 处创建 return 探针。当该函数返回时，Uprobes 调用 <code>rp-&gt;handler</code>。</p>
-<!-- register_uretprobe() returns 0 on success, -EINPROGRESS if
-register_uretprobe() was called from a uprobe or uretprobe handler
-(and therefore delayed), or a negative errno otherwise. -->
-<p><code>register_uretprobe()</code> 成功返回 0 ，如果是在 uprobe 或 uretprobe 回调函数中（因此被延迟）调用返回 <code>-EINPROGRESS</code>，否则返回负的 errno。</p>
-<!-- Section 4.4, "User's Callback for Delayed Registrations",
-explains how to be notified upon completion of a delayed
-registration. -->
-<p><a href="#%E5%BB%B6%E8%BF%9F%E6%B3%A8%E5%86%8C%E5%9B%9E%E8%B0%83">&ldquo;延迟注册回调&rdquo;</a>，解释了在完成延迟注册后如何通知。</p>
-<!-- User's return-probe handler (rp->handler): -->
-<p>用户的 return 探针回调函数（rp-&gt;handler）：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;linux/uprobes.h&gt;</span><span class="cp">
-</span><span class="cp">#include</span> <span class="cpf">&lt;linux/ptrace.h&gt;</span><span class="cp">
-</span><span class="cp"></span><span class="kt">void</span> <span class="nf">uretprobe_handler</span><span class="p">(</span><span class="k">struct</span> <span class="n">uretprobe_instance</span> <span class="o">*</span><span class="n">ri</span><span class="p">,</span> <span class="k">struct</span> <span class="n">pt_regs</span> <span class="o">*</span><span class="n">regs</span><span class="p">);</span>
-</code></pre></td></tr></table>
-</div>
-</div><!-- regs is as described for the user's uprobe handler.  ri points to
-the uretprobe_instance object associated with the particular function
-instance that is currently returning.  The following fields in that
-object may be of interest:
-	- ret_addr: the return address
-	- rp: points to the corresponding uretprobe object -->
-<p><code>regs</code>表示用户的 uprobe 处理函数。<code>ri</code> 指向 <code>uretprobe_instance</code> 对象，其关联了当前正在返回的函数实例。可以关注对象中的两个字段：</p>
-<ul>
-<li><code>ret_addr</code>：return 地址</li>
-<li><code>rp</code>：指向对应的 uretprobe 对象</li>
-</ul>
-<!-- In ptrace.h, the regs_return_value(regs) macro provides a simple
-`abstraction` to extract the return value from the appropriate register
-as defined by the architecture's ABI. -->
-<p>在 <code>ptrace.h</code> 文件中，<code>regs_return_value(regs)</code> 宏提供了一种简单的抽象，从架构的 ABI 定义的相关寄存器中获得返回值。</p>
-<h3 id="unregister_probe">unregister_*probe</h3>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;linux/uprobes.h&gt;</span><span class="cp">
-</span><span class="cp"></span><span class="kt">void</span> <span class="nf">unregister_uprobe</span><span class="p">(</span><span class="k">struct</span> <span class="n">uprobe</span> <span class="o">*</span><span class="n">u</span><span class="p">);</span>
-<span class="kt">void</span> <span class="nf">unregister_uretprobe</span><span class="p">(</span><span class="k">struct</span> <span class="n">uretprobe</span> <span class="o">*</span><span class="n">rp</span><span class="p">);</span>
-</code></pre></td></tr></table>
-</div>
-</div><!-- Removes the specified probe.  The unregister function can be called
-at any time after the probe has been registered, and can be called
-from a uprobe or uretprobe handler. -->
-<p>移除探针。注销函数可以在探针注册之后的任何时间调用，还能在 uprobe 或 uretprobe 回调函数中调用。</p>
-<!-- ### User's Callback for Delayed Registrations -->
-<h3 id="延迟注册回调">延迟注册回调</h3>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;linux/uprobes.h&gt;</span><span class="cp">
-</span><span class="cp"></span><span class="kt">void</span> <span class="nf">registration_callback</span><span class="p">(</span><span class="k">struct</span> <span class="n">uprobe</span> <span class="o">*</span><span class="n">u</span><span class="p">,</span> <span class="kt">int</span> <span class="n">reg</span><span class="p">,</span>
-	<span class="k">enum</span> <span class="n">uprobe_type</span> <span class="n">type</span><span class="p">,</span> <span class="kt">int</span> <span class="n">result</span><span class="p">);</span>
-</code></pre></td></tr></table>
-</div>
-</div><!-- As previously mentioned, the functions described in Section 4 can be
-called from within a uprobe or uretprobe handler.  When that happens,
-the [un]registration operation is delayed until all handlers associated
-with that handler's probepoint have been run.  Upon completion of the
-[un]registration operation, Uprobes checks the registration_callback
-member of the associated uprobe: u->registration_callback
-for [un]register_uprobe or rp->u.registration_callback for
-[un]register_uretprobe.  Uprobes calls that callback function, if any,
-passing it the following values:
-- u = the address of the uprobe object.  (For a uretprobe, you can use
-container_of(u, struct uretprobe, u) to `obtain` the address of the
-uretprobe object.)
-
-- reg = 1 for register_u[ret]probe() or 0 for unregister_u[ret]probe()
-
-- type = UPTY_UPROBE or UPTY_URETPROBE
-
-- result = the return value that register_u[ret]probe() would have
-returned if this weren't a delayed operation.  This is always 0
-for unregister_u[ret]probe(). -->
-<p>像前面提到的函数，可以在 uprobe 或 uretprobe 回调函数内部调用。当发生这种情况的时候，注销/注册操作会被延迟，直到与探测点关联的所有回调函数都已运行之后执行。在完成注销/注册操作之后，Uprobes 会检查 uprobe 关联的 <code>registration_callback</code> 成员变量：uprobe 对应 <code>u-&gt;registration_callback</code> 或者 uretprobe 对应 <code>rp-&gt;u.registration_callback</code>。如果存在 Uprobes 会调用 <code>registration_callback</code> 回调函数，并传入下面的值：</p>
-<ul>
-<li>u = uprobe 对象的地址。（uretprobe 对象，可以使用 <code>container_of(u, struct uretprobe, u)</code> 获得 uretprobe 对象的地址。）</li>
-</ul>
-<ul>
-<li>reg = 1 for register_u[ret]probe() or 0 for unregister_u[ret]probe()</li>
-<li>type = UPTY_UPROBE or UPTY_URETPROBE</li>
-</ul>
-<ul>
-<li>result = 如果不是延迟操作，作为 register_u[ret]probe() 的返回值。对于 unregister_u[ret]probe() 总是返回 0 。</li>
-</ul>
-<!-- NOTE: Uprobes calls the registration_callback ONLY in the case of a
-delayed [un]registration. -->
-<p>注意：Uprobes <strong>只在</strong>延迟注销/注册的情况下调用 <code>registration_callback</code>。</p>
-<!-- ## Uprobes Features and Limitations
-The user is expected to assign values to the following members
-of struct uprobe: pid, vaddr, handler, and (as needed)
-registration_callback.  Other members are `reserved` for Uprobes's use.
-Uprobes may produce unexpected results if you:
-- assign non-zero values to reserved members of struct uprobe;
-- change the contents of a uprobe or uretprobe object while it is registered; or
-- attempt to register a uprobe or uretprobe that is already registered. -->
-<h2 id="uprobes-功能与限制">Uprobes 功能与限制</h2>
-<p>希望用户给 uprobe 结构体的成员赋值：pid, vaddr, handler, （如果需要）registration_callback。其他保留的成员给 Uprobes 使用。如果做了下面这些事情，Uprobes 可能会产生不期望的结果：</p>
-<ul>
-<li>把保留的 uprobe 结构体成员设置为非 0 值</li>
-<li>在注册期间改变 uprobe 或 uretprobe 对象的内容</li>
-<li>注册已注册的 uprobe 或 uretprobe</li>
-</ul>
-<!-- Uprobes allows any number of probes (uprobes and/or uretprobes)
-at a particular address.  For a particular probepoint, handlers are
-run in the order in which they were registered. -->
-<p>Uprobes 允许在特定的地址上注册任意数量的探针（uprobes、uretprobe 都可以）。探针回调函数是按照它们注册的顺序调用的。</p>
-<!-- Any number of kernel modules may probe a particular process
-simultaneously, and a particular module may probe any number of
-processes simultaneously. -->
-<p>任意数量的内核模块可以同时探测一个特定的进程，而特定的模块也可以同时探测任意数量的进程。</p>
-<!-- Probes are shared by all threads in a process (including newly created -->
-<p>threads).<br />
-在进程中的所有线程之间的探针是共享的（包括新创建的线程）。</p>
-<!-- If a probed process exits or execs, Uprobes automatically unregisters
-all uprobes and uretprobes associated with that process.  `Subsequent`
-attempts to unregister these probes will be treated as no-ops. -->
-<p>如果被探测进程退出或执行，Uprobes 会自动注销所有与之关联的 uprobes 和 uretprobes 。之后再注销这些探针将会视为无效。</p>
-<!-- On the other hand, if a probed memory area is removed from the
-process's virtual memory map (e.g., via dlclose(3) or munmap(2)),
-it's currently up to you to unregister the probes first. -->
-<p>另外，如果从进程的虚拟内存映射删除探测的内存区域的话（例如：通过 <code>dlclose(3)</code> 或 <code>munmap(2)</code>），目前需要先主动注销探针。</p>
-<!-- There is no way to specify that probes should be inherited across fork;
-Uprobes removes all probepoints in the newly created child process.
-See Section 7, "Interoperation with Utrace", for more information on
-this topic. -->
-<p>没有方法在 fork 进程时继承探针，Uprobes 会在新创建的子进程中移除所有探测点。关于这点更多的信息见&quot;与 Utrace 交互&rdquo;。</p>
-<!-- On at least some architectures, Uprobes makes no attempt to verify
-that the probe address you specify actually marks the start of an
-instruction.  If you get this wrong, chaos may ensue. -->
-<p>至少在某些架构上，Uprobes 不会尝试校验，指定的探针地址是否是一条指令的开始。如果你弄错了，可能造成会混乱。</p>
-<!-- To avoid `interfering` with interactive debuggers, Uprobes will refuse
-to insert a probepoint where a breakpoint instruction already exists,
-unless it was Uprobes that put it there.  Some architectures may
-refuse to insert probes on other types of instructions. -->
-<p>为避免干扰交互式调试工具，Uprobes 会拒绝在已存在断点指令的地方插入探测点，除非是 Uprobes 放那里的。有一些架构可能会拒绝在其他类型的指令上插入探针。</p>
-<!-- If you install a probe in an inline-able function, Uprobes makes
-no attempt to chase down all inline instances of the function and
-install probes there.  gcc may inline a function without being asked,
-so keep this in mind if you're not seeing the probe hits you expect. -->
-<p>如果在可内联的函数中插入一个探针，Uprobes 并不会尝试给该函数的所有内联实例插入探针。如果没有命中期望的探针，要记住，gcc 可能会自动内联一个函数。</p>
-<!-- A probe handler can modify the environment of the probed function
--- e.g., by modifying data structures, or by modifying the
-contents of the pt_regs struct (which are restored to the registers
-upon return from the breakpoint).  So Uprobes can be used, for example,
-to install a bug fix or to inject faults for testing.  Uprobes, of
-course, has no way to distinguish the deliberately injected faults
-from the accidental ones.  Don't drink and probe. -->
-<p>探针回调函数可以修改目标函数的环境 ——例如：修改数据结构，或修改 <code>pt_regs</code> 结构体的内容（从断点返回之后保存的寄存器）。因此，Uprobes 可以用来，安装补丁或测试时注入错误。当然 Uprobes 没有办法区分错误是故意注入的还是意外发生的。所以不要搞事情。</p>
-<!-- Since a return probe is implemented by replacing the return
-address with the trampoline's address, stack backtraces and calls
-to __builtin_return_address() will typically yield the trampoline's
-address instead of the real return address for uretprobed functions. -->
-<p>因为 return 探针是通过使用蹦床的地址替换 return 地址实现的，那么栈回溯和调用 <code>__builtin_return_address()</code> 产生的是蹦床的地址，而不是uretprobed 函数的实际 return 地址。</p>
-<!-- If the number of times a function is called does not match the
-number of times it returns (e.g., if a function exits via longjmp()),
-registering a return probe on that function may produce undesirable
-results. -->
-<p>如果函数调用的次数与 return 次数不匹配（例如：如果函数调用 <code>longjmp()</code> 退出），在这种函数上注册 return 探针，可能会产生不期望的结果。</p>
-<!-- When you register the first probe at probepoint or unregister the
-last probe probe at a probepoint, Uprobes asks Utrace to "`quiesce`"
-the probed process so that Uprobes can insert or remove the breakpoint
-instruction.  If the process is not already stopped, Utrace stops it.
-If the process is running an interruptible system call, this may cause
-the system call to finish early or fail with EINTR.  (The PTRACE_ATTACH
-request of the ptrace system call has this same limitation.) -->
-<p>当在探测点注册第一个探针或者注销最后一个探针的时候，Uprobes 要求 Utrace 去&quot;暂停&quot;目标进程，这样 Uprobes 就可以插入或者移除断点指令。如果进程还没有停止，Utrace 会停止它。如果进程正在运行一个可中断的系统调用，可能会让系统调用提早完成或失败而产生 <code>EINTR</code> 信号。（ptrace 系统调用的 <code>PTRACE_ATTACH</code> 请求有同样的问题。）</p>
-<!-- When Uprobes establishes a probepoint on a previous unprobed page
-of text, Linux creates a new copy of the page via its copy-on-write
-mechanism.  When probepoints are removed, Uprobes makes no attempt
-to `consolidate` identical copies of the same page.  This could affect
-memory availability if you probe many, many pages in many, many
-long-running processes. -->
-<p>当 Uprobes 在先前的未探测的页面上建立探测点的时候，Linux 会通过 <code>copy-on-write</code> 机制创建了这个页面的新副本。在移除探测点的时候，Uprobes 并不会尝试合并同一个页面的副本。如果探测在大量长时间运行的进程中探测大量的页面，会影响内存可用性。</p>
-<!-- ## Interoperation with Kprobes
-Uprobes is `intended` to interoperate usefully with Kprobes (see
-Documentation/kprobes.txt).  For example, an instrumentation module
-can make calls to both the Kprobes API and the Uprobes API. -->
-<h2 id="与-kprobes-交互">与 Kprobes 交互</h2>
-<p>Uprobes 打算与 Kprobes 进行有效的相互操作（见 <code>Documentation/kprobes.txt</code> 文件）。例如，检测模块可以同时调用 Kprobes API 和 Uprobes API。</p>
-<!-- A uprobe or uretprobe handler can register or unregister kprobes,
-jprobes, and kretprobes, as well as uprobes and uretprobes.  On the
-other hand, a kprobe, jprobe, or kretprobe handler must not sleep, and
-therefore cannot register or unregister any of these types of probes.
-(Ideas for removing this restriction are welcome.) -->
-<p>uprobe 或 uretprobe 回调函数可以注册或注销 kprobes、jprobes、kretprobes，以及 uprobes 和 uretprobes。另外，kprobe、jprobe、kretprobe 回调函数一定不能休眠，不然会无法注册或注销这些探针。（欢迎移除这种限制的想法）</p>
-<!-- Note that the overhead of a u[ret]probe hit is several times that of
-a k[ret]probe hit. -->
-<p>注意，命中 <code>u[ret]probe</code> 的开销是命中 <code>k[ret]probe</code> 的几倍。</p>
-<!-- ## Interoperation with Utrace
-As mentioned in Section 1.2, Uprobes is a client of Utrace.  For each
-probed thread, Uprobes establishes a Utrace engine, and registers
-callbacks for the following types of events: clone/fork, exec, exit,
-and "core-dump" signals (which include breakpoint traps).  Uprobes
-establishes this engine when the process is first probed, or when
-Uprobes is notified of the thread's creation, whichever comes first. -->
-<h2 id="与-utrace-交互">与 Utrace 交互</h2>
-<p>在&quot;Utrace 的作用&quot;章节中提到，Uprobes 是 Utrace 的客户端。Uprobes 为每个被探测的线程建立了一个 Utrace 引擎，及为 clone/fork, exec, exit, &ldquo;core-dump&rdquo; 信号（其包括断点陷阱）这类事件创建寄存器回调函数。Uprobes 是在进程首次被探测的时候创建引擎，或者在创建线程时通知，反正先到先处理。</p>
-<!-- An instrumentation module can use both the Utrace and Uprobes APIs (as
-well as Kprobes).  When you do this, keep the following facts in mind:
-- For a particular event, Utrace callbacks are called in the order in
-which the engines are established.  Utrace does not currently provide
-a mechanism for altering this order.
-- When Uprobes learns that a probed process has forked, it removes
-the breakpoints in the child process. -->
-<p>检测模块可以同时使用 Utrace 和 Uprobes APIs（以及 Kprobes）。这么做的时候，请记住下面的事情：</p>
-<ul>
-<li>对于特定的事件，Utrace 回调函数是按引擎的创建顺序调用的。目前 Utrace 没有机制来改变顺序。</li>
-<li>在 Uprobes 得知目标进程创建了子进程后，会在子进程中移除断点。</li>
-</ul>
-<!-- - When Uprobes learns that a probed process has exec-ed or exited,
-it `disposes of` its data structures for that process (first allowing
-any outstanding [un]registration operations to terminate). -->
-<ul>
-<li>在 Uprobes 得知目标进程已经执行或退出后，将会清理这个进程中的数据结构（先允许终止未完成的注销、注册操作）。</li>
-</ul>
-<!-- - When a probed thread hits a breakpoint or completes single-stepping
-of a probed instruction, engines with the UTRACE_EVENT(SIGNAL_CORE)
-flag set are notified.  The Uprobes signal callback prevents (via
-UTRACE_ACTION_HIDE) this event from being reported to engines later
-in the list.  But if your engine was established before Uprobes's,
-you will see this this event. -->
-<ul>
-<li>当目标线程命中断点或被探测指令单步执行完成的时候，通知已设置 <code>UTRACE_EVENT(SIGNAL_CORE)</code> 标记的引擎。Uprobes 信号回调函数防止（通过 <code>UTRACE_ACTION_HIDE</code>）这个事件，报告给在列表后面的引擎。但，如果你的引擎是在 Uprobes 的引擎之前创建的，还是会收到这个事件。</li>
-</ul>
-<!-- If you want to establish probes in a newly forked child, you can use
-the following `procedure`: -->
-<p>如果你想在新的子进程中创建探针，可以用以下办法：</p>
-<!-- - Register a report_clone callback with Utrace.  In this callback,
-the CLONE_THREAD flag distinguishes between the creation of a new
-thread vs. a new process. -->
-<ul>
-<li>用 Utrace 注册一个 <code>report_clone</code> 回调函数。在这个回调函数中，以 <code>CLONE_THREAD</code> 标记区分创建新线程还是进程。</li>
-</ul>
-<!-- - In your report_clone callback, call utrace_attach() to attach to
-the child process, and set the engine's UTRACE_ACTION_QUIESCE flag.
-The child process will `quiesce` at a point where it is ready to
-be probed. -->
-<ul>
-<li>在你的 <code>report_clone</code> 回调函数中，调用 <code>utrace_attach()</code> 附着到子进程，以及设置引擎的 <code>UTRACE_ACTION_QUIESCE</code> 标记。子进程将会停顿在准备要探测的位置。</li>
-</ul>
-<!-- - In your report_quiesce callback, register the desired probes.
-(Note that you cannot use the same probe object for both parent
-and child.  If you want to duplicate the probepoints, you must
-create a new set of u[ret]probe objects.) -->
-<ul>
-<li>在 <code>report_quiesce</code> 回调函数中，注册所需要的探针。（注意，不能对父子进程使用同一个探测对象。如果想要复制探测点，必须创建一个新的 <code>u[ret]probe</code> 对象集合。）</li>
-</ul>
-<!-- ## Probe Overhead
-// TODO: This is out of date.
-// TODO: Adjust as other architectures are tested.
-On a typical CPU in use in 2007, a uprobe hit takes about 3
-microseconds to process.  Specifically, a benchmark that hits the
-same probepoint repeatedly, firing a simple handler each time, reports
-300,000 to 350,000 hits per second, depending on the architecture.
-A return-probe hit typically takes 50% longer than a uprobe hit.
-When you have a return probe set on a function, adding a uprobe at
-the entry to that function adds essentially no overhead. -->
-<p>Here are sample overhead figures (in usec) for different architectures.</p>
-<h2 id="探针开销">探针开销</h2>
-<p>// TODO: 已经过时。<br />
-// TODO: 根据其他架构的测试整理。<br />
-在 2007 年常见的 CPU 上，处理 uprobe 命中大约需要3微秒的时间。基准测试反复命中相同的探测点，每次触发一个简单的处理程序，每秒报告 30w-35w 次命中，具体取决于架构。通常，return 探针命中比 uprobe 命中多花 50％ 的时间。当在某个函数上设置了 return 探针，会在该函数的入口处添加 uprobe ，本质上不会增加开销。</p>
-<p>下面是些不同架构的样本（纳秒）。</p>
-<pre><code>u = uprobe; r = return probe; ur = uprobe + return probe
-
-i386: Intel Pentium M, 1495 MHz, 2957.31 bogomips
-u = 2.9 usec; r = 4.7 usec; ur = 4.7 usec
-
-x86_64: AMD Opteron 246, 1994 MHz, 3971.48 bogomips
-// TODO
-
-ppc64: POWER5 (gr), 1656 MHz (SMT disabled, 1 virtual CPU per physical CPU)
-// TODO
-</code></pre><h2 id="todo">TODO</h2>
-<!-- * SystemTap (http://sourceware.org/systemtap): Provides a simplified
-programming interface for probe-based instrumentation.  SystemTap
-already supports kernel probes.  It could exploit Uprobes as well.
-* Support for other architectures. -->
-<ul>
-<li><a href="http://sourceware.org/systemtap">Systemtap</a>：基于探针的检测工具，提供简化的编程接口。SystemTap 已经支持内核探针。还可以利用 Uprobes 。</li>
-<li>支持其他 CPU 架构</li>
-</ul>
-<!-- ## Uprobes Team
-The following people have made major contributions to Uprobes: -->
-<h2 id="uprobes-团队">Uprobes 团队</h2>
-<p>下面的成员对 Uprobes 作出了主要的贡献：</p>
-<ul>
-<li>Jim Keniston - <a href="mailto:jkenisto@us.ibm.com">jkenisto@us.ibm.com</a></li>
-<li>Ananth Mavinakayanahalli - <a href="mailto:ananth@in.ibm.com">ananth@in.ibm.com</a></li>
-<li>Prasanna Panchamukhi - <a href="mailto:prasanna@in.ibm.com">prasanna@in.ibm.com</a></li>
-<li>Dave Wilder - <a href="mailto:dwilder@us.ibm.com">dwilder@us.ibm.com</a></li>
-</ul>
-<!-- ## Uprobes Example
-Here's a sample kernel module showing the use of Uprobes to count the
-number of times an instruction at a particular address is executed,
-and optionally (unless verbose=0) report each time it's executed. -->
-<h2 id="uprobes-例子">Uprobes 例子</h2>
-<p>这儿有份内核模块样本，展示 Uprobes 的用法，统计在特定地址的指令执行了多少次，以及可选的（除非 verbose=0）输出每次执行。</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span><span class="lnt">32
-</span><span class="lnt">33
-</span><span class="lnt">34
-</span><span class="lnt">35
-</span><span class="lnt">36
-</span><span class="lnt">37
-</span><span class="lnt">38
-</span><span class="lnt">39
-</span><span class="lnt">40
-</span><span class="lnt">41
-</span><span class="lnt">42
-</span><span class="lnt">43
-</span><span class="lnt">44
-</span><span class="lnt">45
-</span><span class="lnt">46
-</span><span class="lnt">47
-</span><span class="lnt">48
-</span><span class="lnt">49
-</span><span class="lnt">50
-</span><span class="lnt">51
-</span><span class="lnt">52
-</span><span class="lnt">53
-</span><span class="lnt">54
-</span><span class="lnt">55
-</span><span class="lnt">56
-</span><span class="lnt">57
-</span><span class="lnt">58
-</span><span class="lnt">59
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="cm">/* uprobe_example.c */</span>
-<span class="cp">#include</span> <span class="cpf">&lt;linux/module.h&gt;</span><span class="cp">
-</span><span class="cp">#include</span> <span class="cpf">&lt;linux/kernel.h&gt;</span><span class="cp">
-</span><span class="cp">#include</span> <span class="cpf">&lt;linux/init.h&gt;</span><span class="cp">
-</span><span class="cp">#include</span> <span class="cpf">&lt;linux/uprobes.h&gt;</span><span class="cp">
-</span><span class="cp"></span>
-<span class="cm">/*
-</span><span class="cm"> * Usage: insmod uprobe_example.ko pid=&lt;pid&gt; vaddr=&lt;address&gt; [verbose=0]
-</span><span class="cm"> * where &lt;pid&gt; identifies the probed process and &lt;address&gt; is the virtual
-</span><span class="cm"> * address of the probed instruction.
-</span><span class="cm"> */</span>
-
-<span class="k">static</span> <span class="kt">int</span> <span class="n">pid</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-<span class="n">module_param</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
-<span class="n">MODULE_PARM_DESC</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="s">&#34;pid&#34;</span><span class="p">);</span>
-
-<span class="k">static</span> <span class="kt">int</span> <span class="n">verbose</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-<span class="n">module_param</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
-<span class="n">MODULE_PARM_DESC</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="s">&#34;verbose&#34;</span><span class="p">);</span>
-
-<span class="k">static</span> <span class="kt">long</span> <span class="n">vaddr</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-<span class="n">module_param</span><span class="p">(</span><span class="n">vaddr</span><span class="p">,</span> <span class="kt">long</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
-<span class="n">MODULE_PARM_DESC</span><span class="p">(</span><span class="n">vaddr</span><span class="p">,</span> <span class="s">&#34;vaddr&#34;</span><span class="p">);</span>
-
-<span class="k">static</span> <span class="kt">int</span> <span class="n">nhits</span><span class="p">;</span>
-<span class="k">static</span> <span class="k">struct</span> <span class="n">uprobe</span> <span class="n">usp</span><span class="p">;</span>
-
-<span class="k">static</span> <span class="kt">void</span> <span class="nf">uprobe_handler</span><span class="p">(</span><span class="k">struct</span> <span class="n">uprobe</span> <span class="o">*</span><span class="n">u</span><span class="p">,</span> <span class="k">struct</span> <span class="n">pt_regs</span> <span class="o">*</span><span class="n">regs</span><span class="p">)</span>
-<span class="p">{</span>
-	<span class="n">nhits</span><span class="o">++</span><span class="p">;</span>
-	<span class="k">if</span> <span class="p">(</span><span class="n">verbose</span><span class="p">)</span>
-		<span class="n">printk</span><span class="p">(</span><span class="n">KERN_INFO</span> <span class="s">&#34;Hit #%d on probepoint at %#lx</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span>
-			<span class="n">nhits</span><span class="p">,</span> <span class="n">u</span><span class="o">-&gt;</span><span class="n">vaddr</span><span class="p">);</span>
-<span class="p">}</span>
-
-<span class="kt">int</span> <span class="n">__init</span> <span class="nf">init_module</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
-<span class="p">{</span>
-	<span class="kt">int</span> <span class="n">ret</span><span class="p">;</span>
-	<span class="n">usp</span><span class="p">.</span><span class="n">pid</span> <span class="o">=</span> <span class="n">pid</span><span class="p">;</span>
-	<span class="n">usp</span><span class="p">.</span><span class="n">vaddr</span> <span class="o">=</span> <span class="n">vaddr</span><span class="p">;</span>
-	<span class="n">usp</span><span class="p">.</span><span class="n">handler</span> <span class="o">=</span> <span class="n">uprobe_handler</span><span class="p">;</span>
-	<span class="n">printk</span><span class="p">(</span><span class="n">KERN_INFO</span> <span class="s">&#34;Registering uprobe on pid %d, vaddr %#lx</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span>
-		<span class="n">usp</span><span class="p">.</span><span class="n">pid</span><span class="p">,</span> <span class="n">usp</span><span class="p">.</span><span class="n">vaddr</span><span class="p">);</span>
-	<span class="n">ret</span> <span class="o">=</span> <span class="n">register_uprobe</span><span class="p">(</span><span class="o">&amp;</span><span class="n">usp</span><span class="p">);</span>
-	<span class="k">if</span> <span class="p">(</span><span class="n">ret</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-		<span class="n">printk</span><span class="p">(</span><span class="n">KERN_ERR</span> <span class="s">&#34;register_uprobe() failed, returned %d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">ret</span><span class="p">);</span>
-		<span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
-	<span class="p">}</span>
-	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-<span class="p">}</span>
-
-<span class="kt">void</span> <span class="n">__exit</span> <span class="nf">cleanup_module</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
-<span class="p">{</span>
-	<span class="n">printk</span><span class="p">(</span><span class="n">KERN_INFO</span> <span class="s">&#34;Unregistering uprobe on pid %d, vaddr %#lx</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span>
-		<span class="n">usp</span><span class="p">.</span><span class="n">pid</span><span class="p">,</span> <span class="n">usp</span><span class="p">.</span><span class="n">vaddr</span><span class="p">);</span>
-	<span class="n">printk</span><span class="p">(</span><span class="n">KERN_INFO</span> <span class="s">&#34;Probepoint was hit %d times</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">nhits</span><span class="p">);</span>
-	<span class="n">unregister_uprobe</span><span class="p">(</span><span class="o">&amp;</span><span class="n">usp</span><span class="p">);</span>
-<span class="p">}</span>
-<span class="n">MODULE_LICENSE</span><span class="p">(</span><span class="s">&#34;GPL&#34;</span><span class="p">);</span>
-</code></pre></td></tr></table>
-</div>
-</div><!-- You can build the kernel module, uprobe_example.ko, using the following Makefile: -->
-<p>你可以用下面的 Makefile 编译内核模块 <code>uprobe_example.ko</code>：</p>
+</div><!-- from the examples and `right away` it started printing out every file that was being opened on my computer. Neat!!! -->
+<p>之后，我的电脑立即输出正在打开的文件。干净整齐！</p>
+<!-- You’ll notice that the kprobes interface by itself is a little `gnarly` though – like, you have to know that the filename argument to `do_sys_open` is in the `%si` register and dereference that pointer and tell the kprobes system that it’s a string. -->
+<p>你会注意到 kprobes 接口本身有点晦涩 - 比如，你必须知道给 <code>do_sys_open</code> 的 filename 参数是在 <code>%si</code> 寄存器中，还要取消对这个指针的引用，并告诉 kprobes 系统它是一个字符串。</p>
+<!-- I think kprobes are useful in 3 `scenarios`: 1. You’re tracing a system call. System calls all have corresponding kernel functions like `do_sys_open` 2. You’re debugging some performance issue in the network stack or to do with file I/O and you understand the kernel functions that are called well enough that it’s useful for you to trace them (not impossible!!! The linux kernel is just code after all!) 3. You’re a kernel developer,or you’re otherwise trying to debug a kernel bug, which happens sometimes!! (I am not a kernel developer) -->
+<p>我认为 kprobes 在以下 3 种情况中很有用：</p>
+<ol>
+<li>你正在追踪一个系统调用。所有系统调用都有对应的内核函数，比如：<code>do_sys_open</code>。</li>
+<li>你正在调试一些网络栈或者文件 IO 的性能问题，且足够了解被调用的内核函数，对你追踪它们很有帮助（不是不可能！毕竟 linux 内核也是代码）。</li>
+<li>你是一名内核开发者又或者在试着调试不常发生的内核 bug ！（我不是一名内核开发者）</li>
+</ol>
+<h3 id="uprobes">uprobes</h3>
+<!-- Uprobes are kind of like kprobes, except that instead of instrumenting a *kernel* function you’re instrumenting userspace functions (like malloc). [brendan gregg has a good post from 2015](http://www.brendangregg.com/blog/2015-06-28/linux-ftrace-uprobe.html). -->
+<p>Uprobes 有点像 kprobes，只不过它不是检测内核函数的，而是检测用户空间函数的（例如 malloc）。可以阅读 brendan gregg 在 2015 年发布的一篇<a href="http://www.brendangregg.com/blog/2015-06-28/linux-ftrace-uprobe.html">文章</a>.</p>
+<!-- My understanding of how uprobes work is:
+1. You decide you want to trace the `malloc` function in libc
+2. You ask the linux kernel to trace malloc for you from libc
+3. Linux goes and finds the copy of libc that’s loaded into memory (there should be just one, shared across all processes), and changes the code for `malloc` so that it’s traced
+4. Linux reports the data back to you somehow (we’ll talk about how "asking linux" and "getting the data back somehow" works later) -->
+<p>我对 uprobes 工作原理的理解是：</p>
+<ol>
+<li>你决定想要去追踪在 libc 中的 <code>malloc</code> 函数</li>
+<li>你要求 linux 内核为你追踪 libc 中的 <code>malloc</code> 函数</li>
+<li>Linux 找到 libc 被加载到内存中的副本（应该只有一份，共享给所有进程），然后改变 <code>malloc</code> 的代码方便被追踪</li>
+<li>Linux 用某种办法把数据传递给你（稍后我们会谈怎么&quot;要求 linux&quot;以及&quot;用某种办法获取数据&quot;的原理）</li>
+</ol>
+<!-- This is pretty cool! One example of a thing you can do is `spy on` what people are typing into their bash terminals -->
+<p>你可以用它做的一件事情是监视其他人在他们的 bash 终端中输入的内容，很炫哝！</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt">1
@@ -2215,307 +1710,245 @@ and optionally (unless verbose=0) report each time it's executed. -->
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nv">obj-m</span> <span class="o">:=</span> uprobe_example.o
-<span class="nv">KDIR</span> <span class="o">:=</span> /lib/modules/<span class="k">$(</span>shell uname -r<span class="k">)</span>/build
-<span class="nv">PWD</span> <span class="o">:=</span> <span class="k">$(</span>shell <span class="nb">pwd</span><span class="k">)</span>
-<span class="nf">default</span><span class="o">:</span>
-	<span class="k">$(</span>MAKE<span class="k">)</span> -C <span class="k">$(</span>KDIR<span class="k">)</span> <span class="nv">SUBDIRS</span><span class="o">=</span><span class="k">$(</span>PWD<span class="k">)</span> modules
-<span class="nf">clean</span><span class="o">:</span>
-	rm -f *.mod.c *.ko *.o .*.cmd
-	rm -rf .tmp_versions
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="o">[</span>email protected<span class="o">]</span>~/c/perf-tools&gt; sudo ./bin/uprobe <span class="s1">&#39;r:bash:readline +0($retval):string&#39;</span>
+Tracing uprobe readline <span class="o">(</span>r:readline /bin/bash:0x9a520 +0<span class="o">(</span><span class="nv">$retval</span><span class="o">)</span>:string<span class="o">)</span>. Ctrl-C to end.
+            bash-10482 <span class="o">[</span>002<span class="o">]</span> d...  1061.417373: readline: <span class="o">(</span>0x42176e &lt;- 0x49a520<span class="o">)</span> <span class="nv">arg1</span><span class="o">=</span><span class="s2">&#34;hi&#34;</span>
+            bash-10482 <span class="o">[</span>003<span class="o">]</span> d...  1061.770945: readline: <span class="o">(</span>0x42176e &lt;- 0x49a520<span class="o">)</span> <span class="nv">arg1</span><span class="o">=(</span>fault<span class="o">)</span>
+            bash-10717 <span class="o">[</span>002<span class="o">]</span> d...  1063.737625: readline: <span class="o">(</span>0x42176e &lt;- 0x49a520<span class="o">)</span> <span class="nv">arg1</span><span class="o">=</span><span class="s2">&#34;hi&#34;</span>
+            bash-10717 <span class="o">[</span>002<span class="o">]</span> d...  1067.091402: readline: <span class="o">(</span>0x42176e &lt;- 0x49a520<span class="o">)</span> <span class="nv">arg1</span><span class="o">=</span><span class="s2">&#34;yay&#34;</span>
+            bash-10717 <span class="o">[</span>003<span class="o">]</span> d...  1067.738581: readline: <span class="o">(</span>0x42176e &lt;- 0x49a520<span class="o">)</span> <span class="nv">arg1</span><span class="o">=</span><span class="s2">&#34;wow&#34;</span>
+            bash-10717 <span class="o">[</span>001<span class="o">]</span> d...  1165.196673: readline: <span class="o">(</span>0x42176e &lt;- 0x49a520<span class="o">)</span> <span class="nv">arg1</span><span class="o">=</span><span class="s2">&#34;cool-command&#34;</span>
 </code></pre></td></tr></table>
 </div>
-</div><!-- For example, if you want to run myprog and monitor its calls to myfunc(),
-you can do the following: -->
-<p>例如，如果你想要运行 <code>myprog</code> ，然后监控 <code>myfunc()</code> 的调用情况，你可以这样做：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell">$ make			// Build the uprobe_example module.
-...
-$ nm -p myprog <span class="p">|</span> awk <span class="s1">&#39;$3==&#34;myfunc&#34;&#39;</span>
-080484a8 T myfunc
-$ ./myprog <span class="p">&amp;</span>
-$ ps
-  PID TTY          TIME CMD
- <span class="m">4367</span> pts/3    00:00:00 bash
- <span class="m">8156</span> pts/3    00:00:00 myprog
- <span class="m">8157</span> pts/3    00:00:00 ps
-$ su -
-...
-<span class="c1"># insmod uprobe_example.ko pid=8156 vaddr=0x080484a8</span>
-</code></pre></td></tr></table>
-</div>
-</div><!-- In /var/log/messages and on the console, you will see a message of the
-form "kernel: Hit #1 on probepoint at 0x80484a8" each time myfunc()
-is called.  To turn off probing, remove the module: -->
-<p>每次调用 <code>myfunc()</code> 函数，将会在 <code>/var/log/messages</code> 文件中和终端上，看到这种信息：&ldquo;kernel: Hit #1 on probepoint at 0x80484a8&rdquo;。要关闭探测，就移除模块：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># rmmod uprobe_example</span>
-</code></pre></td></tr></table>
-</div>
-</div><!-- In /var/log/messages and on the console, you will see a message of the
-form "Probepoint was hit 5 times". -->
-<p>将会在 <code>/var/log/messages</code> 文件中和终端上看见这种信息：&ldquo;Probepoint was hit 5 times&rdquo;。</p>
-<!-- ## Uretprobes Example
-Here's a sample kernel module showing the use of a return probe to
-report a function's return values. -->
-<h2 id="uretprobes-例子">Uretprobes 例子</h2>
-<p>这是展示 return 探针用法的内核模块样本，输出函数的返回值。</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span><span class="lnt">32
-</span><span class="lnt">33
-</span><span class="lnt">34
-</span><span class="lnt">35
-</span><span class="lnt">36
-</span><span class="lnt">37
-</span><span class="lnt">38
-</span><span class="lnt">39
-</span><span class="lnt">40
-</span><span class="lnt">41
-</span><span class="lnt">42
-</span><span class="lnt">43
-</span><span class="lnt">44
-</span><span class="lnt">45
-</span><span class="lnt">46
-</span><span class="lnt">47
-</span><span class="lnt">48
-</span><span class="lnt">49
-</span><span class="lnt">50
-</span><span class="lnt">51
-</span><span class="lnt">52
-</span><span class="lnt">53
-</span><span class="lnt">54
-</span><span class="lnt">55
-</span><span class="lnt">56
-</span><span class="lnt">57
-</span><span class="lnt">58
-</span><span class="lnt">59
-</span><span class="lnt">60
-</span><span class="lnt">61
-</span><span class="lnt">62
-</span><span class="lnt">63
-</span><span class="lnt">64
-</span><span class="lnt">65
-</span><span class="lnt">66
-</span><span class="lnt">67
-</span><span class="lnt">68
-</span><span class="lnt">69
-</span><span class="lnt">70
-</span><span class="lnt">71
-</span><span class="lnt">72
-</span><span class="lnt">73
-</span><span class="lnt">74
-</span><span class="lnt">75
-</span><span class="lnt">76
-</span><span class="lnt">77
-</span><span class="lnt">78
-</span><span class="lnt">79
-</span><span class="lnt">80
-</span><span class="lnt">81
-</span><span class="lnt">82
-</span><span class="lnt">83
-</span><span class="lnt">84
-</span><span class="lnt">85
-</span><span class="lnt">86
-</span><span class="lnt">87
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="cm">/* uretprobe_example.c */</span>
-<span class="cp">#include</span> <span class="cpf">&lt;linux/module.h&gt;</span><span class="cp">
-</span><span class="cp">#include</span> <span class="cpf">&lt;linux/kernel.h&gt;</span><span class="cp">
-</span><span class="cp">#include</span> <span class="cpf">&lt;linux/init.h&gt;</span><span class="cp">
-</span><span class="cp">#include</span> <span class="cpf">&lt;linux/uprobes.h&gt;</span><span class="cp">
-</span><span class="cp">#include</span> <span class="cpf">&lt;linux/ptrace.h&gt;</span><span class="cp">
-</span><span class="cp"></span>
-<span class="cm">/*
-</span><span class="cm"> * Usage:
-</span><span class="cm"> * insmod uretprobe_example.ko pid=&lt;pid&gt; func=&lt;addr&gt; [verbose=0]
-</span><span class="cm"> * where &lt;pid&gt; identifies the probed process, and &lt;addr&gt; is the virtual
-</span><span class="cm"> * address of the probed function.
-</span><span class="cm"> */</span>
-
-<span class="k">static</span> <span class="kt">int</span> <span class="n">pid</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-<span class="n">module_param</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
-<span class="n">MODULE_PARM_DESC</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="s">&#34;pid&#34;</span><span class="p">);</span>
-
-<span class="k">static</span> <span class="kt">int</span> <span class="n">verbose</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-<span class="n">module_param</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
-<span class="n">MODULE_PARM_DESC</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="s">&#34;verbose&#34;</span><span class="p">);</span>
-
-<span class="k">static</span> <span class="kt">long</span> <span class="n">func</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-<span class="n">module_param</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="kt">long</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
-<span class="n">MODULE_PARM_DESC</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s">&#34;func&#34;</span><span class="p">);</span>
-
-<span class="k">static</span> <span class="kt">int</span> <span class="n">ncall</span><span class="p">,</span> <span class="n">nret</span><span class="p">;</span>
-<span class="k">static</span> <span class="k">struct</span> <span class="n">uprobe</span> <span class="n">usp</span><span class="p">;</span>
-<span class="k">static</span> <span class="k">struct</span> <span class="n">uretprobe</span> <span class="n">rp</span><span class="p">;</span>
-
-<span class="k">static</span> <span class="kt">void</span> <span class="nf">uprobe_handler</span><span class="p">(</span><span class="k">struct</span> <span class="n">uprobe</span> <span class="o">*</span><span class="n">u</span><span class="p">,</span> <span class="k">struct</span> <span class="n">pt_regs</span> <span class="o">*</span><span class="n">regs</span><span class="p">)</span>
-<span class="p">{</span>
-	<span class="n">ncall</span><span class="o">++</span><span class="p">;</span>
-	<span class="k">if</span> <span class="p">(</span><span class="n">verbose</span><span class="p">)</span>
-		<span class="n">printk</span><span class="p">(</span><span class="n">KERN_INFO</span> <span class="s">&#34;Function at %#lx called</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">u</span><span class="o">-&gt;</span><span class="n">vaddr</span><span class="p">);</span>
-<span class="p">}</span>
-
-<span class="k">static</span> <span class="kt">void</span> <span class="nf">uretprobe_handler</span><span class="p">(</span><span class="k">struct</span> <span class="n">uretprobe_instance</span> <span class="o">*</span><span class="n">ri</span><span class="p">,</span>
-	<span class="k">struct</span> <span class="n">pt_regs</span> <span class="o">*</span><span class="n">regs</span><span class="p">)</span>
-<span class="p">{</span>
-	<span class="n">nret</span><span class="o">++</span><span class="p">;</span>
-	<span class="k">if</span> <span class="p">(</span><span class="n">verbose</span><span class="p">)</span>
-		<span class="n">printk</span><span class="p">(</span><span class="n">KERN_INFO</span> <span class="s">&#34;Function at %#lx returns %#lx</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span>
-			<span class="n">ri</span><span class="o">-&gt;</span><span class="n">rp</span><span class="o">-&gt;</span><span class="n">u</span><span class="p">.</span><span class="n">vaddr</span><span class="p">,</span> <span class="n">regs_return_value</span><span class="p">(</span><span class="n">regs</span><span class="p">));</span>
-<span class="p">}</span>
-
-<span class="kt">int</span> <span class="n">__init</span> <span class="nf">init_module</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
-<span class="p">{</span>
-	<span class="kt">int</span> <span class="n">ret</span><span class="p">;</span>
-
-	<span class="cm">/* Register the entry probe. */</span>
-	<span class="n">usp</span><span class="p">.</span><span class="n">pid</span> <span class="o">=</span> <span class="n">pid</span><span class="p">;</span>
-	<span class="n">usp</span><span class="p">.</span><span class="n">vaddr</span> <span class="o">=</span> <span class="n">func</span><span class="p">;</span>
-	<span class="n">usp</span><span class="p">.</span><span class="n">handler</span> <span class="o">=</span> <span class="n">uprobe_handler</span><span class="p">;</span>
-	<span class="n">printk</span><span class="p">(</span><span class="n">KERN_INFO</span> <span class="s">&#34;Registering uprobe on pid %d, vaddr %#lx</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span>
-		<span class="n">usp</span><span class="p">.</span><span class="n">pid</span><span class="p">,</span> <span class="n">usp</span><span class="p">.</span><span class="n">vaddr</span><span class="p">);</span>
-	<span class="n">ret</span> <span class="o">=</span> <span class="n">register_uprobe</span><span class="p">(</span><span class="o">&amp;</span><span class="n">usp</span><span class="p">);</span>
-	<span class="k">if</span> <span class="p">(</span><span class="n">ret</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-		<span class="n">printk</span><span class="p">(</span><span class="n">KERN_ERR</span> <span class="s">&#34;register_uprobe() failed, returned %d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">ret</span><span class="p">);</span>
-		<span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
-	<span class="p">}</span>
-
-	<span class="cm">/* Register the return probe. */</span>
-	<span class="n">rp</span><span class="p">.</span><span class="n">u</span><span class="p">.</span><span class="n">pid</span> <span class="o">=</span> <span class="n">pid</span><span class="p">;</span>
-	<span class="n">rp</span><span class="p">.</span><span class="n">u</span><span class="p">.</span><span class="n">vaddr</span> <span class="o">=</span> <span class="n">func</span><span class="p">;</span>
-	<span class="n">rp</span><span class="p">.</span><span class="n">handler</span> <span class="o">=</span> <span class="n">uretprobe_handler</span><span class="p">;</span>
-	<span class="n">printk</span><span class="p">(</span><span class="n">KERN_INFO</span> <span class="s">&#34;Registering return probe on pid %d, vaddr %#lx</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span>
-		<span class="n">rp</span><span class="p">.</span><span class="n">u</span><span class="p">.</span><span class="n">pid</span><span class="p">,</span> <span class="n">rp</span><span class="p">.</span><span class="n">u</span><span class="p">.</span><span class="n">vaddr</span><span class="p">);</span>
-	<span class="n">ret</span> <span class="o">=</span> <span class="n">register_uretprobe</span><span class="p">(</span><span class="o">&amp;</span><span class="n">rp</span><span class="p">);</span>
-	<span class="k">if</span> <span class="p">(</span><span class="n">ret</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-		<span class="n">printk</span><span class="p">(</span><span class="n">KERN_ERR</span> <span class="s">&#34;register_uretprobe() failed, returned %d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span>
-			<span class="n">ret</span><span class="p">);</span>
-		<span class="n">unregister_uprobe</span><span class="p">(</span><span class="o">&amp;</span><span class="n">usp</span><span class="p">);</span>
-		<span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
-	<span class="p">}</span>
-	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-<span class="p">}</span>
-
-<span class="kt">void</span> <span class="n">__exit</span> <span class="nf">cleanup_module</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
-<span class="p">{</span>
-	<span class="n">printk</span><span class="p">(</span><span class="n">KERN_INFO</span> <span class="s">&#34;Unregistering probes on pid %d, vaddr %#lx</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span>
-		<span class="n">usp</span><span class="p">.</span><span class="n">pid</span><span class="p">,</span> <span class="n">usp</span><span class="p">.</span><span class="n">vaddr</span><span class="p">);</span>
-	<span class="n">printk</span><span class="p">(</span><span class="n">KERN_INFO</span> <span class="s">&#34;%d calls, %d returns</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">ncall</span><span class="p">,</span> <span class="n">nret</span><span class="p">);</span>
-	<span class="n">unregister_uprobe</span><span class="p">(</span><span class="o">&amp;</span><span class="n">usp</span><span class="p">);</span>
-	<span class="n">unregister_uretprobe</span><span class="p">(</span><span class="o">&amp;</span><span class="n">rp</span><span class="p">);</span>
-<span class="p">}</span>
-<span class="n">MODULE_LICENSE</span><span class="p">(</span><span class="s">&#34;GPL&#34;</span><span class="p">);</span>
-</code></pre></td></tr></table>
-</div>
-</div><!-- Build the kernel module as shown in the above uprobe example. -->
-<p>像在上面的 uprobe 例子那样编译内核模块。</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell">$ nm -p myprog <span class="p">|</span> awk ‘<span class="nv">$3</span><span class="o">==</span><span class="s2">&#34;myfunc&#34;</span>’
-080484a8 T myfunc
-$ ./myprog <span class="p">&amp;</span>
-$ ps
-  PID TTY          TIME CMD
- <span class="m">4367</span> pts/3    00:00:00 bash
- <span class="m">9156</span> pts/3    00:00:00 myprog
- <span class="m">9157</span> pts/3    00:00:00 ps
-$ su -
-…
-<span class="c1"># insmod uretprobe_example.ko pid=9156 func=0x080484a8</span>
-</code></pre></td></tr></table>
-</div>
-</div><!-- In /var/log/messages and on the console, you will see messages such
-as the following: -->
-<p>在 <code>/var/log/messages</code> 文件中和终端上，会看到如下信息：</p>
+</div><h3 id="usdtdtrace-probes">USDT/dtrace probes</h3>
+<!-- USDT `stands for` "Userland Statically Defined Tracing", and "USDT probe" means the same thing as "dtrace probe" (which was surprising to me!). You might have heard of dtrace on BSD/Solaris, but you can actually also use dtrace probes on Linux, though the system is different. It’s basically a way to expose custom events. For example! [Python 3 has dtrace probes](https://docs.python.org/3/howto/instrumentation.html), if you compile it right. -->
+<p>USDT 全称为&quot;用户级静态定义的追踪&rdquo;，&ldquo;USDT 探针&rdquo; 和 &ldquo;dtrace 探针&quot;是一个东西（有点出乎我的意料！）。你也许已经听过 BSD/Solaris 上 dtrace，其实你也能在 Linux 上用 dtrace 探针。其实，它是一种暴露自定义事件的方法。举个例子，假如你编译正确的话， <a href="https://docs.python.org/3/howto/instrumentation.html">Python 3 是有 dtrace 探针的</a>。</p>
+<p><code>python.function.entry(str filename, str funcname, int lineno, frameptr)</code></p>
+<!-- This means that if you have a tool that can consume dtrace probes, (like eBPF / systemtap), and a version of Python compiled with dtrace support, you can automagically trace Python function calls. That’s really cool! (though this is a little bit of an "if" – not all Pythons are compiled with dtrace support, and the version of Python I have in Ubuntu 16.04 doesn’t seem to be) -->
+<p>如果有一个能够消费 dtrace 探针的工具（例如： eBPF/systemtap），和支持 dtrace 的 Python 版本，你就可以自动的追踪 Python 函数调用。很棒对吧！（然而这是一种&quot;假设&rdquo;————并不是所有编译的 Python 都支持 dtrace 探针的，在 Ubuntu 16.04 中的 Python 就不支持）</p>
+<!-- **How to tell if you have dtrace probes**, from [the Python docs](https://docs.python.org/3/howto/instrumentation.html). Basically you poke around in the binaries with readelf and look for the string "stap" in the notes. -->
+<p>怎么判断支不支持 dtrace 探针，根据 <a href="https://docs.python.org/3/howto/instrumentation.html">Python 文档</a>，其实你可以用 readelf 工具在二进制文件中查找的 &ldquo;stap&rdquo; 字符串。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell">kernel: Function at 0x80484a8 called
-kernel: Function at 0x80484a8 returns 0x3
+<pre class="chroma"><code class="language-bash" data-lang="bash">$ readelf -S ./python <span class="p">|</span> grep .note.stapsdt
+<span class="o">[</span>30<span class="o">]</span> .note.stapsdt        NOTE         <span class="m">0000000000000000</span> 00308d78
+<span class="c1"># sometimes you need to look in the .so file instead of the binary</span>
+$ readelf -S libpython3.3dm.so.1.0 <span class="p">|</span> grep .note.stapsdt
+<span class="o">[</span>29<span class="o">]</span> .note.stapsdt        NOTE         <span class="m">0000000000000000</span> 00365b68
+$ readelf -n ./python
 </code></pre></td></tr></table>
 </div>
-</div><!-- To turn off probing, remove the module: -->
-<p>移除模块关闭探测：</p>
+</div><!-- If you want to read more about dtrace you can read [this paper from 2004](https://www.cs.princeton.edu/courses/archive/fall05/cos518/papers/dtrace.pdf) but I’m not actually sure what the best reference is. -->
+<p>如果想阅读更多关于 dtrace 的内容，你可以阅读 <a href="https://www.cs.princeton.edu/courses/archive/fall05/cos518/papers/dtrace.pdf">2004 年的论文</a>，不过我不知道是不是最好的参考。</p>
+<h3 id="kernel-tracepoints">kernel tracepoints</h3>
+<!-- Tracepoints are also in the Linux kernel. (here’s an [LWN article](https://lwn.net/Articles/379903/) ). The system was written by Mathieu Desnoyers (who’s from Montreal! :)). Basically there’s a `TRACE_EVENT` macro that lets you define tracepoints like this one (which has something to do with UDP… queue failures?): -->
+<p>Tracepoints 也在 Linux 内核中（这有篇<a href="https://lwn.net/Articles/379903/">LWN 的文章</a>）。这个方法是 Mathieu Desnoyers（他来自 Montreal！）写的。简单来讲，有一个 <code>TRACE_EVENT</code> 宏，它能让你定义追踪点，像下面这样（它对 UDP 失败队列做些事情？）</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># rmmod uretprobe_example</span>
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="n">TRACE_EVENT</span><span class="p">(</span><span class="n">udp_fail_queue_rcv_skb</span><span class="p">,</span>
+           <span class="n">TP_PROTO</span><span class="p">(</span><span class="kt">int</span> <span class="n">rc</span><span class="p">,</span> <span class="k">struct</span> <span class="n">sock</span> <span class="o">*</span><span class="n">sk</span><span class="p">),</span>
+        <span class="n">TP_ARGS</span><span class="p">(</span><span class="n">rc</span><span class="p">,</span> <span class="n">sk</span><span class="p">),</span>
+        <span class="n">TP_STRUCT__entry</span><span class="p">(</span>
+                <span class="n">__field</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="n">rc</span><span class="p">)</span>
+                <span class="n">__field</span><span class="p">(</span><span class="n">__u16</span><span class="p">,</span> <span class="n">lport</span><span class="p">)</span>
+        <span class="p">),</span>
 </code></pre></td></tr></table>
 </div>
-</div><!-- In /var/log/messages and on the console, you will see a message of the
-form "73 calls, 73 returns". -->
-<p>在 <code>/var/log/messages</code> 文件中和终端上，会看到信息：&ldquo;73 calls, 73 returns&rdquo;。</p>
+</div><!-- I don’t really understand how it works (I think it’s pretty involved) but basically tracepoints:
+* Are better than kprobes because they stay more constant across kernel versions (kprobes just depend on whatever code happens to be in the kernel at that time)
+* Are worse than kprobes because somebody has to write them explicitly -->
+<p>我不太明白它是怎么工作的（我认为它涉及面很广），但基本上追踪点：</p>
+<ul>
+<li>比 kprobes 好的一点，因为它们在内核版本之间更稳定（kprobes 依赖内核代码）（译注：换句话说就是不同内核版本函数会有很大变化，而 kprobes 又依赖于内核符号）</li>
+<li>比 kprobes 差的一点，因为必须有人维护它们（译注：一般是内核开发人员或者是模块开发人员在关键的位置放置追踪点，以便可以读取关键数据）。</li>
+</ul>
+<h3 id="lttng-ust">lttng-ust</h3>
+<!-- I don’t understand LTTng super well yet but – my understanding is that all of the 4 above things (dtrace probes, kprobes, uprobes, and tracepoints) all need to go through the kernel at some point. `lttng-ust` is a tracing system that lets you compile tracing probes into your programs, and all of the tracing happens in userspace. This means it’s faster because you don’t have to do context switching. I’ve still used LTTng 0 times so that’s mostly all I’m going to say about that. -->
+<p>我还不太了解 LTTng，但我的理解是，以上 4 种东西（dtrace probes，kprobes，uprobes，tracepoints）在某种程度上都需要内核的支持。<code>lttng-ust</code> 是一个追踪系统，它能让你把追踪探针编译到你的程序中，而且所有追踪都发生在用户空间。意味着它更快开销更小，因为你不必做上下文切换。我还没使用过 LTTng，所以这些就是我要说的内容。</p>
+<!-- ## Mechanisms for collecting your delicious delicious data
+To understand the frontend tools you use to collect & analyze tracing data, it’s important to understand the `fundamental` mechanisms by which tracing data gets out of the kernel and into your grubby hands. Here they are. (there are just 5! ftrace, perf_events, eBPF, systemtap, and lttng).
+
+Let’s start with the 3 that are actually part of the core Linux kernel: ftrace, perf_events, and eBPF. -->
+<h2 id="收集真香数据的机制">收集&quot;真香&quot;数据的机制</h2>
+<p>要理解你用来收集&amp;分析追踪数据的前端工具，理解把内核中的追踪数据取出来的基础机制是非常重要的。（这就只有 ftrace、perf_events、eBPF、systemtap、lttng 5 个工具）。</p>
+<p>让我们从 ftrac，perf_events，eBPF 开始，实际上它们是 Linux 内核的一部分。</p>
+<h3 id="ftrace">ftrace</h3>
+<!-- Those `./kprobe` and `./uprobe` scripts up there? Those both use `ftrace` to get data out of the kernel. Ftrace is a kind of `janky` interface which is a pain to use directly. Basically there’s a filesystem at `/sys/kernel/debug/tracing/` that lets you get various tracing data out of the kernel. -->
+<p>上面的 <code>./kprobe</code> 和 <code>./uprobe</code> 脚本？它们都使用 <code>ftrace</code> 从内核中获取数据。Ftrace 有点像一种名称接口，直接使用它有点痛苦。在 <code>/sys/kernel/debug/tracing/</code> 内有个文件系统，能让你从内核中获得各式各样的追踪数据。</p>
+<!-- The way you fundamentally interact with ftrace is
+1. Write to files in `/sys/kernel/debug/tracing/`
+2. Read output from files in `/sys/kernel/debug/tracing/` -->
+<p>与 ftrace 交互的基本方法是：</p>
+<ol>
+<li>把数据写入在 <code>/sys/kernel/debug/tracing/</code> 中的文件</li>
+<li>从 <code>/sys/kernel/debug/tracing/</code> 中的文件读出数据</li>
+</ol>
+<!-- Ftrace supports: * Kprobes * Tracepoints * Uprobes * I think that’s it. -->
+<p>Ftrace 支持：Kprobes、Tracepoints、Uprobes，我认为就是这样。</p>
+<!-- Ftrace’s output looks like this and it’s a pain to parse and `build on top of`: -->
+<p>基于下面 Ftrace 的输出很难做分析：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">bash-10482 <span class="o">[</span>002<span class="o">]</span> d...  1061.417373: readline: <span class="o">(</span>0x42176e &lt;- 0x49a520<span class="o">)</span> <span class="nv">arg1</span><span class="o">=</span><span class="s2">&#34;hi&#34;</span>
+            bash-10482 <span class="o">[</span>003<span class="o">]</span> d...  1061.770945: readline: <span class="o">(</span>0x42176e &lt;- 0x49a520<span class="o">)</span> <span class="nv">arg1</span><span class="o">=(</span>fault<span class="o">)</span>
+            bash-10717 <span class="o">[</span>002<span class="o">]</span> d...  1063.737625: readline: <span class="o">(</span>0x42176e &lt;- 0x49a520<span class="o">)</span> <span class="nv">arg1</span><span class="o">=</span><span class="s2">&#34;hi&#34;</span>
+            bash-10717 <span class="o">[</span>002<span class="o">]</span> d...  1067.091402: readline: <span class="o">(</span>0x42176e &lt;- 0x49a520<span class="o">)</span> <span class="nv">arg1</span><span class="o">=</span><span class="s2">&#34;yay&#34;</span>
+            bash-10717 <span class="o">[</span>003<span class="o">]</span> d...  1067.738581: readline: <span class="o">(</span>0x42176e &lt;- 0x49a520<span class="o">)</span> <span class="nv">arg1</span><span class="o">=</span><span class="s2">&#34;wow&#34;</span>
+            bash-10717 <span class="o">[</span>001<span class="o">]</span> d...  1165.196673: readline: <span class="o">(</span>0x42176e &lt;- 0x49a520<span class="o">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="perf_events">perf_events</h3>
+<!-- The second way to get data out of the kernel is with the `perf_event_open` system call. The way this works is:
+1. You call the `perf_event_open` system call
+2. The kernel writes events to a ring buffer in user memory, which you can read from -->
+<p>从内核中获取数据的第二种方法，是使用 <code>perf_event_open</code> 系统调用。原理是：</p>
+<ol>
+<li>调用 <code>perf_event_open</code> 系统调用</li>
+<li>内核写把事件到一个在用户空间的环形缓冲区中，应用程序可以从中读取数据</li>
+</ol>
+<!-- As far as I can tell the only thing you can read this way is tracepoints. This is what running `sudo perf trace` does (there’s a tracepoint for every system call) -->
+<p>我知道的唯一的一件事情是，你可以以这种方式读取 tracepoints。这也就是执行 <code>sudo perf trace</code>  命令时做的事情（每个系统调用都有一个 tracepoints）</p>
+<h3 id="ebpf">eBPF</h3>
+<!-- eBPF is a VERY EXCITING WAY to get data. Here’s how it works.
+1. You write an "eBPF program" (often in C, or likely you use a tool that generates that program for you).
+2. You ask the kernel to attach that probe to a kprobe/uprobe/tracepoint/dtrace probe
+3. Your program writes out data to an eBPF map / ftrace / perf buffer
+4. You have your `precious` precious data! -->
+<p>eBPF 是一种非常先进的获取数据的方式。它的工作原理。</p>
+<ol>
+<li>你写一段 &ldquo;eBPF 程序&rdquo;（通常是 C 语言，或者用一种生成这种程序的工具）</li>
+<li>要求内核把探针附着到 kprobe/uprobe/tracepoint/dtrace 探针</li>
+<li>&ldquo;eBPF 程序&quot;把数据输出到一个 eBPF map/ftrace/perf 缓冲区</li>
+<li>你拥有了自己的数据！</li>
+</ol>
+<!-- eBPF is cool because it’s part of Linux (you don’t have to install any kernel modules) and you can define your own programs to do any fancy `aggregation` you want so it’s really powerful. You usually use it with the [bcc](https://github.com/iovisor/bcc) frontend which we’ll talk about a bit later. It’s only available on newer kernels though (the kernel version you need depends on what data sources you want to attach your eBPF programs to) -->
+<p>eBPF 非常好，因为它是 Linux 的一部分（不用安装内核模块），而且你可以定义自己的程序，去做任何你想做的奇怪的事情，因此它非常强大。平时是通过 <a href="https://github.com/iovisor/bcc">bcc</a> 前端间接使用它，稍后再讨论 bcc。不过  eBPF 只在较新的内核上可用（选择内核的哪个版本，取决于想把 eBPF 程序附着到什么样的数据源）</p>
+<!-- Different eBPF features are available at different kernel versions, here’s a slide with an awesome summary: -->
+<p>不同的内核版本提供不同的 eBPF 特性，以下是一份很好的总结：</p>
+<script async class="speakerdeck-embed" data-id="130bc7df16db4556a55105af45cdf3ba" data-ratio="1.33333333333333" src="//speakerdeck.com/assets/embed.js"></script>
+<h3 id="sysdig">sysdig</h3>
+<!-- Sysdig is a kernel module + tracing system. It lets you trace system calls and maybe some other things? I find their site kind of confusing to navigate, but I think [this file](https://github.com/draios/sysdig/blob/dev/driver/event_table.c) contains the list of all the events sysdig supports. So it will tell you what files are being opened but not the weird internal details of what your TCP stack is doing. -->
+<p>Sysdig 是一个内核模块 + 追踪系统。它能让你追踪系统调用和一些其他的事情？我发现他们的站点有点难用，不过我认为<a href="https://github.com/draios/sysdig/blob/dev/driver/event_table.c">这个文件</a>包含所有 sysydig 支持的事件列表。Sysdig 会告诉你正在打开文件描述符，但不告诉你 TCP 栈的内部细节。</p>
+<h3 id="systemtap">systemtap</h3>
+<!-- I’m a little fuzzy how SystemTap works so we’re going to go from this [architecture document](https://sourceware.org/systemtap/archpaper.pdf)
+	1. You decide you want to trace a kprobe
+	2. You write a "systemtap program" & compile it into a kernel module
+	3. That kernel module, when inserted, creates kprobes that call code from your kernel module when triggered (it calls [register_kprobe](https://github.com/torvalds/linux/blob/v4.10/Documentation/kprobes.txt) )
+	4. You kernel modules prints output to userspace (using [relayfs or something](https://lwn.net/Articles/174669/) ) -->
+<p>我对 SystemTap 的工作原理有点不清楚，所以我们从<a href="https://sourceware.org/systemtap/archpaper.pdf">架构文档</a>开始</p>
+<ol>
+<li>你决定要追踪一个 kprobe</li>
+<li>编写一个 &ldquo;systemtap 程序&rdquo;，把它编译到一个内核模块中</li>
+<li>内核模块在插入后，在激活时会从你的内核模块中调用代码创建 kprobes（调用 <a href="https://github.com/torvalds/linux/blob/v4.10/Documentation/kprobes.txt">register_kprobe</a>）</li>
+<li>内核模块（使用 <a href="https://lwn.net/Articles/174669/">relayfs or something</a>）打印输出到用户空间</li>
+</ol>
+<!-- SystemTap supports: * tracepoints * kprobes * uprobes * USDT -->
+<p>SystemTap 支持：tracepoints、kprobes、uprobes、USDT</p>
+<!-- Basically lots of things! There are some more useful words about systemtap in [choosing a linux tracer](http://www.brendangregg.com/blog/2015-07-08/choosing-a-linux-tracer.html) -->
+<p>支持许多东西！在这篇 <a href="http://www.brendangregg.com/blog/2015-07-08/choosing-a-linux-tracer.html">选择一个 linux 追踪工具</a> 的文章中对 systemtap 有更多的描述</p>
+<h3 id="lttng">LTTng</h3>
+<!-- [LTTng](https://lttng.org/) (linux tracing: the next generation) is from Montreal (a lab at ecole polytechnique)!! which makes me super happy (montreal!!). I saw an AMAZING demo of tool called [trace compass](http://tracecompass.org/) the other day that reads data that comes from LTTng. Basically it was able to show all the `sched_switch` `transitions` between programs and system calls when running `tar -xzf somefile.tar.gz`, and you could really see exactly what was happening in a super clear way. -->
+<p><a href="https://lttng.org/">LTTng</a> (linux tracing: the next generation) 是出自 Montreal （巴黎高等理工学院的实验室）！！，让我超级高兴。前几天，我见过一个被称作<a href="http://tracecompass.org/">追踪罗盘</a>的了不起的 demo 工具，它从 LTTng 读取数据。在执行 <code>tar -zxf somefile.tar.gz</code> 命令时，它可以显示程序与系统调用之间的所有 <code>sched_switch</code> 变化过程，而且真的可以以一种非常清晰的方式看见正在发生的事情。</p>
+<!-- The downside of LTTng (like SystemTap) is that you have to install a kernel module for the kernel parts to work. With `lttng-ust` everything happens in userspace and there’s no kernel module needed. -->
+<p>LTTng 的缺点（类似 SystemTap）是，你必须安装一个内核模块才能使内核的部分正常工作。使用 <code>lttng-ust</code> 时发生的一切都在用户空间，而且没有内核模块（译注：systemtap 会编译出一个内核模块）。</p>
+<!-- ## Frontends
+Okay! Time for frontends! I’m going to categorize them by mechanism (how the data gets out of the kernel) to make it easier -->
+<h2 id="前端">前端</h2>
+<p>Okay！该谈前端了！我要把他们按照机制（怎么将数据从内核中取出来）分类，理解起来更容易一点</p>
+<!-- ### perf frontends
+The only frontend here is `perf`, it’s simple.
+
+`perf trace` will trace system calls for you, fast. That’s great and I love it. `perf trace` is the only one of these I actually use day to day right now. (the ftrace stuff is more powerful and also more confusing / difficult to use) -->
+<h3 id="perf-前端">perf 前端</h3>
+<p>这儿唯一简单的前端是 <code>perf</code> 。</p>
+<p><code>perf trace</code> 迅速为你追踪系统调用。简单，喜欢。实际上，现在 <code>perf trace</code> 是这些前端当中的唯一一个我每天都在使用的工具。（ftrace 这个东西非常强大，但也更难以使用）</p>
+<!-- ### ftrace frontends
+Ftrace is a pain to use on its own and so there are various frontend tools to help you. I haven’t found the best thing to use yet but here are some starting points: -->
+<h3 id="ftrace-前端">ftrace 前端</h3>
+<p>Ftrace 用起来有点痛苦，因此也有各式各样的前端工具可以帮到你。我还没发现最好的工具，不过可以从下面这些开始：</p>
+<!-- * **trace-cmd** is a frontend for ftrace, you can use it to collect and display ftrace data. I wrote about it a bit in [this blog post](https://jvns.ca/blog/2017/03/19/getting-started-with-ftrace/) and there’s an [article on LWN](https://lwn.net/Articles/410200/) about it
+* [Catapult](https://github.com/catapult-project/catapult) lets you analyze ftrace output. It’s for Android / chrome performance originally but you can also just analyze ftrace. So far the only thing I’ve gotten it to do is graph `sched_switch` events so you know which processes were running at what time exactly, and which CPU they were on. Which is pretty cool but I don’t really have a use for yet?
+* [kernelshark](http://rostedt.homelinux.com/kernelshark/) consumes ftrace output but I haven’t tried it yet
+* The **perf** command line tool is a perf frontend and (confusingly) also a frontend for some ftrace functionality (see [perf ftrace](http://man7.org/linux/man-pages/man1/perf-ftrace.1.html) ) -->
+<ul>
+<li><strong>trace-cmd</strong> 作为 ftrace 的一种前端，你可以用它收集和显示 ftrace 数据。在这篇<a href="https://jvns.ca/blog/2017/03/19/getting-started-with-ftrace/">文章</a>中我写了一点，另外在 <a href="https://lwn.net/Articles/410200/">LWN</a> 上有一篇关于它的文章</li>
+<li><a href="https://github.com/catapult-project/catapult">Catapult</a> 能让你分析 ftrace 的输出。最初它是为了分析 Android/chrome 性能，但你也可以只分析 ftrace 。目前为止，唯一要做的事情就是绘制 <code>sched_switch</code> 事件图，以便知道实际是哪些进程在运行，以及它们在哪个 CPU 上。我还没有真的使用过，哪个更好？</li>
+<li><a href="http://rostedt.homelinux.com/kernelshark/">kernelshark</a> 消费 ftrace 的输出，只是我还没有尝试过</li>
+<li><strong>perf</strong> 命令行工具是一个 perf 前端，并且还是一些 ftrace 功能的前端（有点乱）（见 <a href="http://man7.org/linux/man-pages/man1/perf-ftrace.1.html">perf ftrace</a>）</li>
+</ul>
+<!-- ### eBPF frontends: bcc
+The only I know of is the **bcc** framework: [https://github.com/iovisor/bcc](https://github.com/iovisor/bcc). It lets you write eBPF programs, it’ll insert them into the kernel for you, and it’ll help you get the data out of the kernel so you can process it with a Python script. It’s pretty easy to get started with. -->
+<h3 id="ebpf-前端-bcc">eBPF 前端: bcc</h3>
+<p>我唯一了解的是 <strong>bcc</strong> 框架：<a href="https://github.com/iovisor/bcc">https://github.com/iovisor/bcc</a>。它能够让你编写 eBPF 程序，帮你把它们插入到内核中，然后它会帮你把数据从内核中读出来，让你可以用 Python 脚本来处理。这框架非常容易上手。</p>
+<!-- If you’re `curious` about the relationship between eBPF and the BPF you use in tcpdump I wrote a [post about eBPF & its relationship with BPF for packet filtering the other day](https://jvns.ca/blog/2017/06/28/notes-on-bpf---ebpf/). I think it might be easiest though to think of them as `unrelated` because eBPF is so much more powerful. -->
+<p>如果你好奇 tcpdump 中的 BPF 和 eBPF 的关系，可以看看前几天我写过一篇它们之间关系的<a href="https://jvns.ca/blog/2017/06/28/notes-on-bpf---ebpf/">文章</a>。不过我认为最简单的是把它们看作是两个东西就好，因为 eBPF 强大的多。</p>
+<!-- bcc is a bit weird because you write a C program inside a Python program but there are a lot of examples. Kamal and I wrote a program with bcc the other day for the first time and it was pretty easy. -->
+<p>bcc 有点怪异，因为你要在 Python 程序内部写一个 C 程序，不过倒是有很多例子可以参考。前几天 Kamal 和我第一次用 bcc 编写了一个非常简单的程序。</p>
+<!-- ### LTTng & SystemTap frontends
+LTTng & SystemTap both have their own sets of tools that I don’t really understand. THAT SAID – there’s this cool graphical tool called [Trace Compass](http://tracecompass.org/) that seems really powerful. It consumes a trace format called CTF ("common trace format") that LTTng emits. -->
+<h3 id="lttng--systemtap-前端">LTTng &amp; SystemTap 前端</h3>
+<p>LTTng &amp; SystemTap 都有一套它们自己的工具，我不太了解。说真的————这个被称作<a href="http://tracecompass.org/">追踪罗盘</a>的图形工具，它好像真的很强大。它消费一种 LTTng 产生的数据，称作 CTF（&ldquo;通用追踪格式&rdquo;）追踪格式。</p>
+<!-- ### what tracing tool should I use though
+Here’s kind of how I think about it right now (though you should note that I only just figured out how all this stuff fits together very recently so I’m not an expert):
+* if you’re mostly interested in computers running kernels > linux 4.9, probably just learn about eBPF
+* `perf trace` is good, it will trace system calls with low overhead and it’s super simple, there’s not much to learn. A+.
+* For everything else, they’re, well, an investment, they take time to get used to.
+* I think playing with kprobes is a good idea (via eBPF/ftrace/systemtap/lttng/whatever, for me right now ftrace is easiest). Being able to know what’s going on in the kernel is a good superpower.
+* eBPF is only available in kernel versions above 4.4, and some features only above 4.7. I think it makes sense to invest in learning it but on older systems it won’t help you out yet
+* ftrace is kind of a huge pain, I think it would be worth it for me if I could find a good frontend tool but I haven’t managed it yet. -->
+<h2 id="所以我应该使用什么样的追踪工具">所以我应该使用什么样的追踪工具</h2>
+<p>我现在的想法是（你应该知道，我只是刚刚弄清楚它们如何组装在一起的，我不是专家）：</p>
+<ul>
+<li>如果你计算机中主要运行 &gt; linux 4.9 版本的内核，可能只用学习 eBPF</li>
+<li><code>perf trace</code> 它可以追踪系统调用，低开销，且非常简单，么有太多要学的。A+。</li>
+<li>至于其他的，都是一种投资，要花些时间来学习。</li>
+<li>我认为 kprobes 用来玩玩还是可以的（eBPF/ftrace/systemtap/lttng/ 等方式，对于我来说 ftrace 是最简单的）。能够知道在内核中发生的一切是一种很好的超能力。</li>
+<li>eBPF 只在 4.4 以上的内核版本中可用，且有些特性只在 4.7 以上。我想是有意义的，投资学习它，但在比较旧的系统上，它还不能帮助你</li>
+<li>ftrace 有点太痛苦了，不过对于我来说如果可以找到一个好的前端工具它是有价值的，但是还没找到</li>
+</ul>
+<!-- ### I hope this helped!
+I’m really excited that now I (mostly) understand how all these pieces fit together, I am literally typing some of this post at a free show at the jazz `festival` and listening to blues and having a fun time. -->
+<h2 id="希望这篇文章有用">希望这篇文章有用！</h2>
+<p>我真的很高兴，现在我了解了（大部分）所有的组件是如何组装在一起的，这篇文章是我在爵士音乐节上的一场免费的表演中写的，听着布鲁斯过的很愉快。</p>
+<!-- Now that I know how everything fits together, I think I’ll have a much easier time navigating the landscape of tracing frontends! -->
+<p>现在，我知道它们是如何组合在一起的，我认为我可以更轻松的跟进追踪前端的进展！</p>
+<!-- [Brendan Gregg](http://www.brendangregg.com/blog/index.html) ’s awesome blog discusses a ton of these topics in a lot of detail – if you’re interested in hearing about improvements in the Linux tracing ecosystem as they happen (it’s always changing!), that’s the best place to subscribe. -->
+<p><a href="http://www.brendangregg.com/blog/index.html">Brendan Gregg</a> 的博客中有大量的这些主题中的细节——如果你有兴趣了解 linux 追踪生态中的改进（一直在变化！），那是最好的博客。</p>
+<!-- thanks to Annie Cherkaev, Harold Treen, Iain McCoy, and David Turner for reading a draft of this. -->
+<p>感谢 Annie Cherkaev, Harold Treen, Iain McCoy, David Turner 阅读这篇文章的草稿。</p>
+<div class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p>译注：Papers We Love 是一个计算机科学论文网站，经常组织线下活动 <a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
 
     </article>
     
@@ -2584,6 +2017,10 @@ form "73 calls, 73 returns". -->
     <ul class="related-ul">
         
         <li>
+          <a href="/public/posts/trace/user-space-probes/" class="related__link">译｜2008｜User-Space Probes (Uprobes)</a>
+        </li>
+        
+        <li>
           <a href="/public/posts/trace/kernel-kprobes/" class="related__link">译｜2019｜Kernel Probes (Kprobes)</a>
         </li>
         
@@ -2598,21 +2035,14 @@ form "73 calls, 73 returns". -->
 <nav class="pagination-single">
   
     
-      <a href="https://jayce.github.io/public/posts/trace/kernel-kprobes/" class="pagination-single__left">
+      <a href="https://jayce.github.io/public/posts/trace/user-space-probes/" class="pagination-single__left">
         <div class="pagination-single__icon">
           <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0V0z"/><path fill="currentColor" d="M19 11H7.83l4.88-4.88c.39-.39.39-1.03 0-1.42-.39-.39-1.02-.39-1.41 0l-6.59 6.59c-.39.39-.39 1.02 0 1.41l6.59 6.59c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L7.83 13H19c.55 0 1-.45 1-1s-.45-1-1-1z"/></svg>
         </div>
-        <div class="pagination-single__left-title">译｜2019｜Kernel Probes (Kprobes)</div>      
+        <div class="pagination-single__left-title">译｜2008｜User-Space Probes (Uprobes)</div>      
       </a>
     
     <div class="grow"></div>
-    
-      <a href="https://jayce.github.io/public/posts/trace/linux-tracing-system-fit-together/" class="pagination-single__right">      
-        <div class="pagination-single__right-title">译｜2017｜Linux 追踪系统&amp;如何组合在一起的</div>
-        <div class="pagination-single__icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0V0z"/><path fill="currentColor" d="M5 13h11.17l-4.88 4.88c-.39.39-.39 1.03 0 1.42.39.39 1.02.39 1.41 0l6.59-6.59c.39-.39.39-1.02 0-1.41l-6.58-6.6c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41L16.17 11H5c-.55 0-1 .45-1 1s.45 1 1 1z"/></svg>
-        </div>
-      </a>
     
   
 </nav>
@@ -2970,34 +2400,37 @@ document.addEventListener('DOMContentLoaded', function () {
   <div class="toc " data-dir="ltr" data-folding="false" data-ani="true">
     <nav id="TableOfContents">
   <ul>
-    <li><a href="#译者序">译者序</a></li>
-    <li><a href="#概念uprobesreturn-探针">概念：Uprobes、Return 探针</a>
+    <li><a href="#图片版本">图片版本</a></li>
+    <li><a href="#能追踪什么">能追踪什么？</a></li>
+    <li><a href="#数据源kprobes-tracepoints-uprobes-dtrace-probes-等等">数据源：kprobes, tracepoints, uprobes, dtrace probes 等等</a>
       <ul>
-        <li><a href="#uprobe-是怎么工作的">Uprobe 是怎么工作的？</a></li>
-        <li><a href="#utrace-的作用">Utrace 的作用</a></li>
-        <li><a href="#return-探针怎么工作的">Return 探针怎么工作的？</a></li>
-        <li><a href="#多线程应用">多线程应用</a></li>
-        <li><a href="#探针回调函数內注册探针">探针回调函数內注册探针</a></li>
+        <li><a href="#kprobes">kprobes</a></li>
+        <li><a href="#uprobes">uprobes</a></li>
+        <li><a href="#usdtdtrace-probes">USDT/dtrace probes</a></li>
+        <li><a href="#kernel-tracepoints">kernel tracepoints</a></li>
+        <li><a href="#lttng-ust">lttng-ust</a></li>
       </ul>
     </li>
-    <li><a href="#已支持的-cpu-架构">已支持的 CPU 架构</a></li>
-    <li><a href="#配置-uprobes">配置 Uprobes</a></li>
-    <li><a href="#api-参考">API 参考</a>
+    <li><a href="#收集真香数据的机制">收集&quot;真香&quot;数据的机制</a>
       <ul>
-        <li><a href="#register_uprobe">register_uprobe</a></li>
-        <li><a href="#register_uretprobe">register_uretprobe</a></li>
-        <li><a href="#unregister_probe">unregister_*probe</a></li>
-        <li><a href="#延迟注册回调">延迟注册回调</a></li>
+        <li><a href="#ftrace">ftrace</a></li>
+        <li><a href="#perf_events">perf_events</a></li>
+        <li><a href="#ebpf">eBPF</a></li>
+        <li><a href="#sysdig">sysdig</a></li>
+        <li><a href="#systemtap">systemtap</a></li>
+        <li><a href="#lttng">LTTng</a></li>
       </ul>
     </li>
-    <li><a href="#uprobes-功能与限制">Uprobes 功能与限制</a></li>
-    <li><a href="#与-kprobes-交互">与 Kprobes 交互</a></li>
-    <li><a href="#与-utrace-交互">与 Utrace 交互</a></li>
-    <li><a href="#探针开销">探针开销</a></li>
-    <li><a href="#todo">TODO</a></li>
-    <li><a href="#uprobes-团队">Uprobes 团队</a></li>
-    <li><a href="#uprobes-例子">Uprobes 例子</a></li>
-    <li><a href="#uretprobes-例子">Uretprobes 例子</a></li>
+    <li><a href="#前端">前端</a>
+      <ul>
+        <li><a href="#perf-前端">perf 前端</a></li>
+        <li><a href="#ftrace-前端">ftrace 前端</a></li>
+        <li><a href="#ebpf-前端-bcc">eBPF 前端: bcc</a></li>
+        <li><a href="#lttng--systemtap-前端">LTTng &amp; SystemTap 前端</a></li>
+      </ul>
+    </li>
+    <li><a href="#所以我应该使用什么样的追踪工具">所以我应该使用什么样的追踪工具</a></li>
+    <li><a href="#希望这篇文章有用">希望这篇文章有用！</a></li>
   </ul>
 </nav>
   </div>
