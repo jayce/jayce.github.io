@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>译｜2008｜User-Space Probes (Uprobes) – Blog</title>
+    <title>Nginx Slice 模块支持 multi-ranges – Blog</title>
     
 
 
@@ -556,7 +556,7 @@
     
     var baseurl = JSON.parse("\"https://jayce.github.io/public/\"");
     
-    var permalink = JSON.parse("\"https://jayce.github.io/public/posts/trace/user-space-probes/\"");
+    var permalink = JSON.parse("\"https://jayce.github.io/public/posts/nginx/multi-ranges-with-slice/\"");
     
     var langprefix = JSON.parse("\"\"");
     var searchResults = null;
@@ -1224,18 +1224,18 @@
 <meta name="description" content="" />
 
 
-<meta name="keywords" content="uprobe,trace">
+<meta name="keywords" content="nginx">
 
-<meta name="created" content="2020-05-21T14:07:20&#43;0800">
-<meta name="modified" content="2020-05-22T00:00:00&#43;0000">
-<meta property="article:published_time" content="2020-05-21T14:07:20&#43;0800">
+<meta name="created" content="2020-07-01T12:09:15&#43;0800">
+<meta name="modified" content="2020-07-01T12:09:15&#43;0800">
+<meta property="article:published_time" content="2020-07-01T12:09:15&#43;0800">
 
 <meta name="author" content="jayce">
 
 
 <meta property="og:site_name" content="Blog">
-<meta property="og:title" content="译｜2008｜User-Space Probes (Uprobes)">
-<meta property="og:url" content="https://jayce.github.io/public/posts/trace/user-space-probes/">
+<meta property="og:title" content="Nginx Slice 模块支持 multi-ranges">
+<meta property="og:url" content="https://jayce.github.io/public/posts/nginx/multi-ranges-with-slice/">
 <meta property="og:type" content="article">
 <meta property="og:description" content="">
 
@@ -1248,7 +1248,7 @@
 
 <meta name="apple-mobile-web-app-status-bar-style" content="#fff">
 
-<link rel="canonical" href="https://jayce.github.io/public/posts/trace/user-space-probes/">
+<link rel="canonical" href="https://jayce.github.io/public/posts/nginx/multi-ranges-with-slice/">
 
 <link rel="manifest" href="/public/manifest.json">
 
@@ -1274,12 +1274,12 @@
   {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    "headline": "译｜2008｜User-Space Probes (Uprobes)",
-    "datePublished": "2020-05-21T14:07:20+08:00",
-    "dateModified": "2020-05-22T00:00:00Z",
-    "url" : "https://jayce.github.io/public/posts/trace/user-space-probes/",
-    "description": "译者序 这篇文章翻译自 SystemTap 项目中 uprobes.txt 文件，此文件描述了 Uprobes 的概念、工作原理、限制等内容。用途跟 Kprobes 一样，用来追踪运行在用户态的应用程序的。看提交历史，",
-    "keywords": ["uprobe","trace"],
+    "headline": "Nginx Slice 模块支持 multi-ranges",
+    "datePublished": "2020-07-01T12:09:15+08:00",
+    "dateModified": "2020-07-01T12:09:15+08:00",
+    "url" : "https://jayce.github.io/public/posts/nginx/multi-ranges-with-slice/",
+    "description": "起因 起因是对一个旧项目的技术更迭。这种项目的初期，自然是要花了很长的时间来做调研。因为都是 HTTP 协议，可以先抓包观察请求和响应的内容，从中找到异",
+    "keywords": ["nginx"],
     "mainEntityOfPage": {
       "@type": "WebPage",
       "@id": "https://jayce.github.io/public/"
@@ -1525,7 +1525,7 @@
   
   <li  class="is-active" >
     
-      <span>译｜2008｜User-Space Probes (Uprobes)</span>
+      <span>Nginx Slice 模块支持 multi-ranges</span>
     
   </li>
   
@@ -1537,15 +1537,13 @@
   <div class="single ">
     <div class="single__nojs">This page looks best with JavaScript enabled</div>
     <script>document.querySelector('.single').classList.remove('hide'); document.querySelector('.single__nojs').classList.add('hide');</script>
-    <h2 class="single__title" data-ani="true">译｜2008｜User-Space Probes (Uprobes)</h2>
+    <h2 class="single__title" data-ani="true">Nginx Slice 模块支持 multi-ranges</h2>
     <div class="single__meta">
       
 <div class="single__infos">
-  <time class="single__info" title="Written At">📅&nbsp;May 21, 2020 </time>
+  <time class="single__info" title="Written At">📅&nbsp;Jul 1, 2020 </time>
   
-  &nbsp;&middot;&nbsp; <time class="single__info" title="Modified At"> 📝&nbsp;May 22, 2020 </time>
-  
-  &nbsp;&middot;&nbsp; <span class="single__info" title="Reading Time"> ☕&nbsp;14&nbsp;min read </span>
+  &nbsp;&middot;&nbsp; <span class="single__info" title="Reading Time"> ☕&nbsp;5&nbsp;min read </span>
   
   <span class="single__info">
     
@@ -1557,544 +1555,74 @@
   🏷️
   
 
-  <li><a href="https://jayce.github.io/public/tags/trace/" class="single__tag" title="trace">#trace</a></li>
-
-  <li><a href="https://jayce.github.io/public/tags/uprobe/" class="single__tag" title="uprobe">#uprobe</a></li>
+  <li><a href="https://jayce.github.io/public/tags/nginx/" class="single__tag" title="nginx">#nginx</a></li>
 
 </ul>
     </div>
     <article class="single__contents" data-dir="ltr" data-ani="true">
       
-      <h2 id="译者序">译者序</h2>
-<p>这篇文章翻译自 SystemTap 项目中 <a href="https://sourceware.org/git/?p=systemtap.git;a=blob;f=runtime/uprobes/uprobes.txt;h=edd524be022691498c7f38133b0e32192dcbb35f;hb=a2b182f549cf64427a474803f3c02286b8c1b5e1">uprobes.txt</a> 文件，此文件描述了 Uprobes 的概念、工作原理、限制等内容。用途跟 Kprobes 一样，用来追踪运行在用户态的应用程序的。看提交<a href="https://lore.kernel.org/linux-mm/20120209092642.GE16600@linux.vnet.ibm.com/">历史</a>，这个功能在 2012 年才提交到 Linux 内核中。</p>
-<p>文章最后提供的例子，可以修改来玩一玩。</p>
-<p><strong>注：因为水平有限，文中难免存在遗漏或者错误的地方。如有疑问，建议直接阅读原文。</strong></p>
-<hr />
-<!-- ## Concepts: Uprobes, Return Probes
-Uprobes enables you to dynamically break into any routine in a
-user application and collect debugging and performance information
-non-disruptively. You can trap at any code address, specifying a
-kernel handler routine to be invoked when the breakpoint is hit. -->
-<h2 id="概念uprobesreturn-探针">概念：Uprobes、Return 探针</h2>
-<p>Uprobes 能够动态的介入应用程序的任意函数，采集调试和性能信息，且不引起混乱。你可以在任意地址上，指定断点命中时调用的内核函数。</p>
-<!-- There are currently two types of user-space probes: uprobes and
-uretprobes (also called return probes).  A uprobe can be inserted on
-any instruction in the application’s virtual address space.  A return
-probe fires when a specified user function returns.  These two probe
-types are discussed in more detail later. -->
-<p>目前，用户态探针有两种类型： uprobes 和 uretprobes（也叫 return 探针）。可以在应用程序的虚拟地址空间的任意指令上插入 uprobe 。 当用户函数返回的时候触发 return 探针。后续内容会详细的讨论这两类探针的细节。</p>
-<!-- A registration function such as register_uprobe() specifies which
-process is to be probed, where the probe is to be inserted, and what
-handler is to be called when the probe is hit. -->
-<p><code>register_uprobe()</code> 注册函数设定要探测的进程，探针插入的位置，以及命中探针时调用什么回调函数。</p>
-<!-- Typically, Uprobes-based instrumentation is packaged as a kernel
-module.  In the simplest case, the module’s init function installs
-("registers") one or more probes, and the exit function unregisters
-them.  However, probes can be registered or unregistered in response
-to other events as well.  For example:
-- A probe handler itself can register and/or unregister probes.
-- You can establish Utrace callbacks to register and/or unregister
-probes when a particular process forks, clones a thread,
-execs, enters a system call, receives a signal, exits, etc.
-See Documentation/utrace.txt. -->
-<p>通常，基于 Uprobes 的探测工具是被打包成内核模块。最简单的内核模块，初始化函数安装（&ldquo;注册&rdquo;）一个或多个探针，而后在 exit 函数中注销。其实还可以在响应其他事件中注册或注销探针。例如：</p>
-<ul>
-<li>探针回调函数自身可以注册或注销探针</li>
-<li>可以创建 Utrace 回调函数来注册或注销探针，探测特定的进程什么时候派生子进程、克隆线程、执行、进入系统调用、接收信号、退出等等。参考 <code>Documentation/utrace.txt</code>。</li>
-</ul>
-<!-- ### How Does a Uprobe Work?
-When a uprobe is registered, Uprobes makes a copy of the probed
-instruction, stops the probed application, replaces the first byte(s)
-of the probed instruction with a breakpoint instruction (e.g., int3
-on i386 and x86_64), and allows the probed application to continue.
-(When inserting the breakpoint, Uprobes uses the same copy-on-write
-mechanism that ptrace uses, so that the breakpoint affects only that
-process, and not any other process running that program.  This is
-true even if the probed instruction is in a shared library.) -->
-<h3 id="uprobe-是怎么工作的">Uprobe 是怎么工作的？</h3>
-<p>当一个 uprobe 被注册后，Uprobes 会创建一个被探测指令的副本，停止被探测的应用程序，用断点指令替换被探测指令的首字节（在 i386 和 x86_64 上是 <code>int3</code>），之后让应用程序继续运行。（在插入断点的时候，Uprobes 使用与 ptrace 使用的相同的 <code>copy-on-write</code> 机制，这样断点也只影响那个进程，不会影响其他运行相同程序的进程。甚至是被探测的指令在共享库中也一样。）</p>
-<!-- When a CPU hits the breakpoint instruction, a trap occurs, the CPU’s
-user-mode registers are saved, and a SIGTRAP signal is generated.
-Uprobes `intercepts` the SIGTRAP and finds the associated uprobe.
-It then executes the handler associated with the uprobe, passing the
-handler the addresses of the uprobe struct and the saved registers.
-The handler may block, but `keep in mind` that the probed thread remains
-stopped while your handler runs. -->
-<p>当 CPU 命中断点指令的时候，发生了一个 trap，CPU 用户模式的寄存器都被保存起来，产生了一个 <code>SIGTRAP</code> 信号。Uprobes 拦截 <code>SIGTRAP</code> 信号，找到关联的 uprobe。然后，用 uprobe 结构体和先前保存的寄存器地址调用与 uprobe 关联的回调函数。这个回调函数可能会阻塞，但要记住回调函数执行期间，被探测的线程一直是停止的。</p>
-<!-- Next, Uprobes single-steps its copy of the probed instruction and
-resumes execution of the probed process at the instruction following
-the probepoint.  (It would be simpler to single-step the actual
-instruction in place, but then Uprobes would have to temporarily
-remove the breakpoint instruction.  This would create problems in a
-multithreaded application.  For example, it would open a time window
-when another thread could sail right past the probepoint.) -->
-<p>接下来，Uprobes 会单步执行被探测指令的副本，之后会恢复被探测的程序，让它在探测点之后的指令处继续执行。（实际上单步执行原始指令会更简单，但之后，Uprobes 必须移除断点指令。这在多线程应用程序中会引起问题。比如，当另一个线程执行过探测点的时会打开一个时间窗口。）</p>
-<!-- Instruction copies to be single-stepped are stored in a per-process
-"single-step out of line (SSOL) area," which is a little VM area
-created by Uprobes in each probed process’s address space. -->
-<p>被单步执行的指令副本存储在每个进程的&quot;单步跳出（SSOL）区域&quot;中，它是由 Uprobes 在每个被探测进程的地址空间中创建的很小的 VM 区域。</p>
-<!-- ### The Role of Utrace
-When a probe is registered on a previously unprobed process,
-Uprobes establishes a tracing "engine" with Utrace (see
-Documentation/utrace.txt) for each thread (task) in the process.
-Uprobes uses the Utrace "`quiesce`" mechanism to stop all the threads
-`prior` to insertion or removal of a breakpoint.  Utrace also notifies
-Uprobes of breakpoint and single-step traps and of other interesting
-events in the lifetime of the probed process, such as fork, clone,
-exec, and exit. -->
-<h3 id="utrace-的作用">Utrace 的作用</h3>
-<p>当先前被取消探测的进程上又注册一个探针的时候，Uprobes 用 Utrace 为进程中每个线程建立了一个追踪&quot;引擎&rdquo;。Uprobes 使用 Utrace &ldquo;静默&quot;机制，在插入或移除断点之前停止所有线程。Utrace 在被探测进程的生命周期中（fork, clone, exec, exit），通知 Uprobes 断点和单步执行陷阱以及其他感兴趣的事件。</p>
-<!-- ### How Does a Return Probe Work?
-When you call register_uretprobe(), Uprobes establishes a uprobe
-at the entry to the function.  When the probed function is called
-and this probe is hit, Uprobes saves a copy of the return address,
-and replaces the return address with the address of a "trampoline"
-— a piece of code that contains a breakpoint instruction. -->
-<h3 id="return-探针怎么工作的">Return 探针怎么工作的？</h3>
-<p>当你调用 <code>register_uretprobe()</code> 函数的时候，Uprobes 在函数的入口处创建一个 uprobe 。当调用被探测函数的时候命中这个探针，Uprobes 会保存 return 地址的一个副本，然后用&quot;蹦床&quot;的地址替换 return 地址 —— 一段包含一个断点指令代码。</p>
-<!-- When the probed function executes its return instruction, control
-passes to the trampoline and that breakpoint is hit.  Uprobes’s
-trampoline handler calls the user-specified handler associated with the
-uretprobe, then sets the saved instruction pointer to the saved return
-address, and that’s where execution resumes upon return from the trap. -->
-<p>当被探测的函数执行它的 return 指令时，控制转移到蹦床，命中断点。Uprobes 的蹦床回调函数调用与 uretprobe 关联的回调函数，然后把已保存的指令指针设置为已保存的 return 地址，再然后就从 trap 返回后的地方恢复执行。</p>
-<!-- The trampoline is stored in the SSOL area. -->
-<p>蹦床存储在 SSOL 区域中。</p>
-<!-- ### Multithreaded Applications
-Uprobes supports the probing of multithreaded applications.  Uprobes
-`imposes` no limit on the number of threads in a probed application.
-All threads in a process use the same text pages, so every probe
-in a process affects all threads; of course, each thread hits the
-probepoint (and runs the handler) independently.  Multiple threads
-may run the same handler simultaneously.  If you want a particular
-thread or set of threads to run a particular handler, your handler
-should check current or current->pid to determine which thread has
-hit the probepoint. -->
-<h3 id="多线程应用">多线程应用</h3>
-<p>Uprobes 支持多线程应用的探测。Uprobes 在被探测的应用中没有线程数量的限制。<br />
-在单个进程中的所有线程，使用相同的文本页，所以进程中的每个探针，会影响所有线程；当然，每个线程命中探测点（以及运行回调函数）是相对独立的。多个线程可能同时运行相同的回调函数。如果你想要一个特定的线程或是一组线程运行一个特定的回调函数，那回调函数应该检查 <code>current</code> 或 <code>current-&gt;pid</code> 来确认哪个线程命中了探测点。</p>
-<!-- When a process clones a new thread, that thread automatically shares
-all current and future probes established for that process. -->
-<p>当进程克隆一个新的线程时，该线程自动的共享所有为进程创建的探针。</p>
-<!-- Keep in mind that when you register or unregister a probe, the
-breakpoint is not inserted or removed until Utrace has stopped all
-threads in the process.  The register/unregister function returns
-after the breakpoint has been inserted/removed (but see the next
-section). -->
-<p>要记住，注册或注销探针的时候，要等到 Utrace 停止了进程中的所有线程后，才会插入或删除断点。注册/注销函数在断点已经被插入或移除之后才返回（看下一章节）。</p>
-<!-- ### Registering Probes within Probe Handlers
-A uprobe or uretprobe handler can call any of the functions
-in the Uprobes API ([un]register_uprobe(), [un]register_uretprobe()).
-A handler can even unregister its own probe.  However, when invoked
-from a handler, the actual [un]register operations do not take
-place immediately.  Rather, they are queued up and executed after
-all handlers for that probepoint have been run.  In the handler,
-the [un]register call returns -EINPROGRESS.  If you set the
-registration_callback field in the uprobe object, that callback will
-be called when the [un]register operation completes. -->
-<h3 id="探针回调函数內注册探针">探针回调函数內注册探针</h3>
-<p><code>uprobe</code> 或 <code>uretprobe</code> 回调函数可以调用 Uprobes API 中的任何函数（<code>[un]register_uprobe()</code>, <code>[un]register_uretprobe()</code>）。探针回调函数甚至可以注销它自己。不过，在回调函数中调用的时候，实际的注册/注销操作不会立刻执行。反而，它们会被放入队列，在该探测点已经运行所有回调函数之后执行。在回调函数中，注册/注销函数会返回 <code>-EINPROGRESS</code>。如果在 uprobe 对象中设置了 <code>registration_callback</code> 字段，会在注册/注销操作完成的时候调用。</p>
-<!-- ## Architectures Supported
-Uprobes and uretprobes are implemented on the following
-architectures: -->
-<h2 id="已支持的-cpu-架构">已支持的 CPU 架构</h2>
-<p><code>uprobes</code> 和 <code>uretprobes</code> 被实现，在下面的架构上：</p>
-<ul>
-<li>i386</li>
-<li>x86_64 (AMD-64, EM64T)</li>
-<li>ppc64</li>
-<li>s390x</li>
-</ul>
-<!--
-## Configuring Uprobes
-// TODO: The patch actually puts Uprobes configuration under "Instrumentation
-// Support" with Kprobes.  Need to decide which is the better place. -->
-<h2 id="配置-uprobes">配置 Uprobes</h2>
-<p>// TODO: 补丁实际上把 Uprobes 配置放在 &ldquo;Instrumentation Support&rdquo; 下面与 Kprobes 一起。需要决定哪个更好。</p>
-<!-- When configuring the kernel using make menuconfig/xconfig/oldconfig,
-ensure that CONFIG_UPROBES is set to "y".  Under "Process debugging
-support," select "Infrastructure for tracing and debugging user
-processes" to enable Utrace, then select "Uprobes". -->
-<p>在使用 <code>make menuconfig/xconfig/oldconfig</code> 配置内核的时候，确保 <code>CONFIG_UPROBES</code> 设置为 &ldquo;y&rdquo;。在 &ldquo;Process debugging support&rdquo; 下面，选择 &ldquo;Infrastructure for tracing and debugging user processes&rdquo; 开启 Utrace，然后选择 &ldquo;Uprobes&rdquo;。</p>
-<!-- So that you can load and unload Uprobes-based instrumentation modules,
-make sure "Loadable module support" (CONFIG_MODULES) and "Module
-unloading" (CONFIG_MODULE_UNLOAD) are set to "y". -->
-<p>确保 &ldquo;Loadable module support&rdquo;（CONFIG_MODULES）和 &ldquo;Module unloading&rdquo; (CONFIG_MODULE_UNLOAD) 都被设置为 &ldquo;y&rdquo;，这样就可以加载或卸载基于 Uprobes 的测试工具模块。</p>
-<!-- ## API Reference
-The Uprobes API includes a "register" function and an "unregister"
-function for each type of probe.  Here are `terse`, mini-man-page
-specifications for these functions and the associated probe handlers
-that you'll write.  See the latter half of this document for examples. -->
-<h2 id="api-参考">API 参考</h2>
-<p>Uprobes API 为每种类型的探针分别提供了&quot;注册&quot;和&quot;注销&quot;函数。这有一份这些函数以及相关的探针处理函数的简短说明。例子见文档后半部分。</p>
-<h3 id="register_uprobe">register_uprobe</h3>
+      <h2 id="起因">起因</h2>
+<p>起因是对一个旧项目的技术更迭。这种项目的初期，自然是要花了很长的时间来做调研。因为都是 HTTP 协议，可以先抓包观察请求和响应的内容，从中找到异样的点。</p>
+<p>偶然抓到了带 <code>Range</code> 的请求，且不是常见的 <code>Range: bytes=18099184-18165549</code> 格式。随问了，什么场景需要读取同一个资源的不同位置的数据呢？无果，只能先记下。然后，对于这种项目肯定要秉持一种原则，就是得支持，不然 &mdash; 。</p>
+<p>支持应该也不是很难，先来<strong>感受一下：</strong></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;linux/uprobes.h&gt;</span><span class="cp">
-</span><span class="cp"></span><span class="kt">int</span> <span class="nf">register_uprobe</span><span class="p">(</span><span class="k">struct</span> <span class="n">uprobe</span> <span class="o">*</span><span class="n">u</span><span class="p">);</span>
+<pre class="chroma"><code class="language-txt" data-lang="txt">&gt; GET ********** HTTP/1.1
+&gt; ....
+&gt; Range: bytes=18099184-18165549,392163-395061,107934-110397,98322-98498,
+&gt; 200261-202919,590655-596843,100554-103007,105471-107933,256379-259075,
+&gt; 115337-117812,171343-173950,103008-105470,267181-269885,512861-517579,
+&gt; 349450-352216,275312-278038,232237-234909,327379-330130,14248467-14300167,
+&gt; 221556-224221,330131-332882,125348-127866,435522-439086,291708-294446,
+&gt; 297186-299925,166145-168736,261776-264475,380585-383472,412567-415595,
+&gt; 117813-120318,313638-316383,9446656-9482385,269886-272595,415596-418738,
+&gt; 316384-319131,806912-814940,242936-245614,324629-327378,321880-324628,208239-210900
+&gt; ...
 </code></pre></td></tr></table>
 </div>
-</div><!-- Sets a breakpoint at virtual address u->vaddr in the process whose
-pid is u->pid.  When the breakpoint is hit, Uprobes calls u->handler. -->
-<p>在 pid 是 <code>u-&gt;pid</code> 的进程中，虚拟地址 <code>u-&gt;vaddr</code>处设置断点。在命中断点的时候，Uprobes 调用 <code>u-&gt;handler</code>。</p>
-<!-- register_uprobe() returns 0 on success, -EINPROGRESS if
-register_uprobe() was called from a uprobe or uretprobe handler
-(and therefore delayed), or a negative errno otherwise. -->
-<p><code>register_uprobe()</code> 调用成功返回 0，如果是在 uprobe 或 uretprobe 回调函数中（因此延迟了）调用返回 <code>-EINPROGRESS</code>，否则返回负的 errno 。</p>
-<!-- Section 4.4, "User's Callback for Delayed Registrations",
-explains how to be notified upon completion of a delayed
-registration. -->
-<p><a href="#%E5%BB%B6%E8%BF%9F%E6%B3%A8%E5%86%8C%E5%9B%9E%E8%B0%83">&ldquo;延迟注册回调&rdquo;</a>，解释了在完成延迟注册后如何通知。</p>
-<!-- User's handler (u->handler): -->
-<p>用户的回调函数（u-&gt;handler）:</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;linux/uprobes.h&gt;</span><span class="cp">
-</span><span class="cp">#include</span> <span class="cpf">&lt;linux/ptrace.h&gt;</span><span class="cp">
-</span><span class="cp"></span><span class="kt">void</span> <span class="nf">handler</span><span class="p">(</span><span class="k">struct</span> <span class="n">uprobe</span> <span class="o">*</span><span class="n">u</span><span class="p">,</span> <span class="k">struct</span> <span class="n">pt_regs</span> <span class="o">*</span><span class="n">regs</span><span class="p">);</span>
-</code></pre></td></tr></table>
-</div>
-</div><!-- Called with u pointing to the uprobe associated with the breakpoint,
-and regs pointing to the struct containing the registers saved when
-the breakpoint was hit. -->
-<p>在断点命中的时候调用，传入指向断点关联的 uprobe 指针 <code>u</code> 和含有保存的寄存器的结构体指针 <code>regs</code>。</p>
-<h3 id="register_uretprobe">register_uretprobe</h3>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;linux/uprobes.h&gt;</span><span class="cp">
-</span><span class="cp"></span><span class="kt">int</span> <span class="nf">register_uretprobe</span><span class="p">(</span><span class="k">struct</span> <span class="n">uretprobe</span> <span class="o">*</span><span class="n">rp</span><span class="p">);</span>
-</code></pre></td></tr></table>
-</div>
-</div><!-- Establishes a return probe in the process whose pid is rp->u.pid for
-the function whose address is rp->u.vaddr.  When that function returns,
-Uprobes calls rp->handler. -->
-<p>在 pid 是 <code>rp-&gt;u.pid</code> 的进程中，函数地址 <code>rp-&gt;u.vaddr</code> 处创建 return 探针。当该函数返回时，Uprobes 调用 <code>rp-&gt;handler</code>。</p>
-<!-- register_uretprobe() returns 0 on success, -EINPROGRESS if
-register_uretprobe() was called from a uprobe or uretprobe handler
-(and therefore delayed), or a negative errno otherwise. -->
-<p><code>register_uretprobe()</code> 成功返回 0 ，如果是在 uprobe 或 uretprobe 回调函数中（因此被延迟）调用返回 <code>-EINPROGRESS</code>，否则返回负的 errno。</p>
-<!-- Section 4.4, "User's Callback for Delayed Registrations",
-explains how to be notified upon completion of a delayed
-registration. -->
-<p><a href="#%E5%BB%B6%E8%BF%9F%E6%B3%A8%E5%86%8C%E5%9B%9E%E8%B0%83">&ldquo;延迟注册回调&rdquo;</a>，解释了在完成延迟注册后如何通知。</p>
-<!-- User's return-probe handler (rp->handler): -->
-<p>用户的 return 探针回调函数（rp-&gt;handler）：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;linux/uprobes.h&gt;</span><span class="cp">
-</span><span class="cp">#include</span> <span class="cpf">&lt;linux/ptrace.h&gt;</span><span class="cp">
-</span><span class="cp"></span><span class="kt">void</span> <span class="nf">uretprobe_handler</span><span class="p">(</span><span class="k">struct</span> <span class="n">uretprobe_instance</span> <span class="o">*</span><span class="n">ri</span><span class="p">,</span> <span class="k">struct</span> <span class="n">pt_regs</span> <span class="o">*</span><span class="n">regs</span><span class="p">);</span>
-</code></pre></td></tr></table>
-</div>
-</div><!-- regs is as described for the user's uprobe handler.  ri points to
-the uretprobe_instance object associated with the particular function
-instance that is currently returning.  The following fields in that
-object may be of interest:
-	- ret_addr: the return address
-	- rp: points to the corresponding uretprobe object -->
-<p><code>regs</code>表示用户的 uprobe 处理函数。<code>ri</code> 指向 <code>uretprobe_instance</code> 对象，其关联了当前正在返回的函数实例。可以关注对象中的两个字段：</p>
+</div><h2 id="术语">术语</h2>
+<blockquote>
+<p>这里的两个词是平时沟通中使用的，意思是把属性附加到请求上了，指的是一种请求。实际上在 HTTP 协议里面称为 single-part 或是 multiple-parts 。</p>
+</blockquote>
 <ul>
-<li><code>ret_addr</code>：return 地址</li>
-<li><code>rp</code>：指向对应的 uretprobe 对象</li>
+<li>
+<p><strong>single-range</strong><br />
+指 HEADER 中带有 “Range: bytes=0-2” 内容的请求。服务端如果可以满足字节范围，就响应 206 并发送对应 “Range” 所指的内容给客户端。书写格式为：<code>Range: &lt;unit&gt;=&lt;range-start&gt;-</code>。</p>
+</li>
+<li>
+<p><strong>multi-ranges</strong><br />
+与 single-range 一样，只不过 HEADER 变成了  “Range: bytes=0-2,3-4,10-20” 。同样的，如果服务端能够满足这些字节范围，就可以响应 206 ，但是把内容封装成 <code>multipart/byteranges;boundary=THIS_STRING_SEPARATES</code> 格式，再发送给客户端。书写格式为：<code>Range: &lt;unit&gt;=&lt;range-start&gt;-&lt;range-end&gt;, &lt;range-start&gt;-&lt;range-end&gt;, &lt;range-start&gt;-&lt;range-end&gt;</code></p>
+</li>
 </ul>
-<!-- In ptrace.h, the regs_return_value(regs) macro provides a simple
-`abstraction` to extract the return value from the appropriate register
-as defined by the architecture's ABI. -->
-<p>在 <code>ptrace.h</code> 文件中，<code>regs_return_value(regs)</code> 宏提供了一种简单的抽象，从架构的 ABI 定义的相关寄存器中获得返回值。</p>
-<h3 id="unregister_probe">unregister_*probe</h3>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;linux/uprobes.h&gt;</span><span class="cp">
-</span><span class="cp"></span><span class="kt">void</span> <span class="nf">unregister_uprobe</span><span class="p">(</span><span class="k">struct</span> <span class="n">uprobe</span> <span class="o">*</span><span class="n">u</span><span class="p">);</span>
-<span class="kt">void</span> <span class="nf">unregister_uretprobe</span><span class="p">(</span><span class="k">struct</span> <span class="n">uretprobe</span> <span class="o">*</span><span class="n">rp</span><span class="p">);</span>
-</code></pre></td></tr></table>
-</div>
-</div><!-- Removes the specified probe.  The unregister function can be called
-at any time after the probe has been registered, and can be called
-from a uprobe or uretprobe handler. -->
-<p>移除探针。注销函数可以在探针注册之后的任何时间调用，还能在 uprobe 或 uretprobe 回调函数中调用。</p>
-<!-- ### User's Callback for Delayed Registrations -->
-<h3 id="延迟注册回调">延迟注册回调</h3>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;linux/uprobes.h&gt;</span><span class="cp">
-</span><span class="cp"></span><span class="kt">void</span> <span class="nf">registration_callback</span><span class="p">(</span><span class="k">struct</span> <span class="n">uprobe</span> <span class="o">*</span><span class="n">u</span><span class="p">,</span> <span class="kt">int</span> <span class="n">reg</span><span class="p">,</span>
-	<span class="k">enum</span> <span class="n">uprobe_type</span> <span class="n">type</span><span class="p">,</span> <span class="kt">int</span> <span class="n">result</span><span class="p">);</span>
-</code></pre></td></tr></table>
-</div>
-</div><!-- As previously mentioned, the functions described in Section 4 can be
-called from within a uprobe or uretprobe handler.  When that happens,
-the [un]registration operation is delayed until all handlers associated
-with that handler's probepoint have been run.  Upon completion of the
-[un]registration operation, Uprobes checks the registration_callback
-member of the associated uprobe: u->registration_callback
-for [un]register_uprobe or rp->u.registration_callback for
-[un]register_uretprobe.  Uprobes calls that callback function, if any,
-passing it the following values:
-- u = the address of the uprobe object.  (For a uretprobe, you can use
-container_of(u, struct uretprobe, u) to `obtain` the address of the
-uretprobe object.)
-
-- reg = 1 for register_u[ret]probe() or 0 for unregister_u[ret]probe()
-
-- type = UPTY_UPROBE or UPTY_URETPROBE
-
-- result = the return value that register_u[ret]probe() would have
-returned if this weren't a delayed operation.  This is always 0
-for unregister_u[ret]probe(). -->
-<p>像前面提到的函数，可以在 uprobe 或 uretprobe 回调函数内部调用。当发生这种情况的时候，注销/注册操作会被延迟，直到与探测点关联的所有回调函数都已运行之后执行。在完成注销/注册操作之后，Uprobes 会检查 uprobe 关联的 <code>registration_callback</code> 成员变量：uprobe 对应 <code>u-&gt;registration_callback</code> 或者 uretprobe 对应 <code>rp-&gt;u.registration_callback</code>。如果存在 Uprobes 会调用 <code>registration_callback</code> 回调函数，并传入下面的值：</p>
-<ul>
-<li>u = uprobe 对象的地址。（uretprobe 对象，可以使用 <code>container_of(u, struct uretprobe, u)</code> 获得 uretprobe 对象的地址。）</li>
-</ul>
-<ul>
-<li>reg = 1 for register_u[ret]probe() or 0 for unregister_u[ret]probe()</li>
-<li>type = UPTY_UPROBE or UPTY_URETPROBE</li>
-</ul>
-<ul>
-<li>result = 如果不是延迟操作，作为 register_u[ret]probe() 的返回值。对于 unregister_u[ret]probe() 总是返回 0 。</li>
-</ul>
-<!-- NOTE: Uprobes calls the registration_callback ONLY in the case of a
-delayed [un]registration. -->
-<p>注意：Uprobes <strong>只在</strong>延迟注销/注册的情况下调用 <code>registration_callback</code>。</p>
-<!-- ## Uprobes Features and Limitations
-The user is expected to assign values to the following members
-of struct uprobe: pid, vaddr, handler, and (as needed)
-registration_callback.  Other members are `reserved` for Uprobes's use.
-Uprobes may produce unexpected results if you:
-- assign non-zero values to reserved members of struct uprobe;
-- change the contents of a uprobe or uretprobe object while it is registered; or
-- attempt to register a uprobe or uretprobe that is already registered. -->
-<h2 id="uprobes-功能与限制">Uprobes 功能与限制</h2>
-<p>希望用户给 uprobe 结构体的成员赋值：pid, vaddr, handler, （如果需要）registration_callback。其他保留的成员给 Uprobes 使用。如果做了下面这些事情，Uprobes 可能会产生不期望的结果：</p>
-<ul>
-<li>把保留的 uprobe 结构体成员设置为非 0 值</li>
-<li>在注册期间改变 uprobe 或 uretprobe 对象的内容</li>
-<li>注册已注册的 uprobe 或 uretprobe</li>
-</ul>
-<!-- Uprobes allows any number of probes (uprobes and/or uretprobes)
-at a particular address.  For a particular probepoint, handlers are
-run in the order in which they were registered. -->
-<p>Uprobes 允许在特定的地址上注册任意数量的探针（uprobes、uretprobe 都可以）。探针回调函数是按照它们注册的顺序调用的。</p>
-<!-- Any number of kernel modules may probe a particular process
-simultaneously, and a particular module may probe any number of
-processes simultaneously. -->
-<p>任意数量的内核模块可以同时探测一个特定的进程，而特定的模块也可以同时探测任意数量的进程。</p>
-<!-- Probes are shared by all threads in a process (including newly created -->
-<p>threads).<br />
-在进程中的所有线程之间的探针是共享的（包括新创建的线程）。</p>
-<!-- If a probed process exits or execs, Uprobes automatically unregisters
-all uprobes and uretprobes associated with that process.  `Subsequent`
-attempts to unregister these probes will be treated as no-ops. -->
-<p>如果被探测进程退出或执行，Uprobes 会自动注销所有与之关联的 uprobes 和 uretprobes 。之后再注销这些探针将会视为无效。</p>
-<!-- On the other hand, if a probed memory area is removed from the
-process's virtual memory map (e.g., via dlclose(3) or munmap(2)),
-it's currently up to you to unregister the probes first. -->
-<p>另外，如果从进程的虚拟内存映射删除探测的内存区域的话（例如：通过 <code>dlclose(3)</code> 或 <code>munmap(2)</code>），目前需要先主动注销探针。</p>
-<!-- There is no way to specify that probes should be inherited across fork;
-Uprobes removes all probepoints in the newly created child process.
-See Section 7, "Interoperation with Utrace", for more information on
-this topic. -->
-<p>没有方法在 fork 进程时继承探针，Uprobes 会在新创建的子进程中移除所有探测点。关于这点更多的信息见&quot;与 Utrace 交互&rdquo;。</p>
-<!-- On at least some architectures, Uprobes makes no attempt to verify
-that the probe address you specify actually marks the start of an
-instruction.  If you get this wrong, chaos may ensue. -->
-<p>至少在某些架构上，Uprobes 不会尝试校验，指定的探针地址是否是一条指令的开始。如果你弄错了，可能造成会混乱。</p>
-<!-- To avoid `interfering` with interactive debuggers, Uprobes will refuse
-to insert a probepoint where a breakpoint instruction already exists,
-unless it was Uprobes that put it there.  Some architectures may
-refuse to insert probes on other types of instructions. -->
-<p>为避免干扰交互式调试工具，Uprobes 会拒绝在已存在断点指令的地方插入探测点，除非是 Uprobes 放那里的。有一些架构可能会拒绝在其他类型的指令上插入探针。</p>
-<!-- If you install a probe in an inline-able function, Uprobes makes
-no attempt to chase down all inline instances of the function and
-install probes there.  gcc may inline a function without being asked,
-so keep this in mind if you're not seeing the probe hits you expect. -->
-<p>如果在可内联的函数中插入一个探针，Uprobes 并不会尝试给该函数的所有内联实例插入探针。如果没有命中期望的探针，要记住，gcc 可能会自动内联一个函数。</p>
-<!-- A probe handler can modify the environment of the probed function
--- e.g., by modifying data structures, or by modifying the
-contents of the pt_regs struct (which are restored to the registers
-upon return from the breakpoint).  So Uprobes can be used, for example,
-to install a bug fix or to inject faults for testing.  Uprobes, of
-course, has no way to distinguish the deliberately injected faults
-from the accidental ones.  Don't drink and probe. -->
-<p>探针回调函数可以修改目标函数的环境 ——例如：修改数据结构，或修改 <code>pt_regs</code> 结构体的内容（从断点返回之后保存的寄存器）。因此，Uprobes 可以用来，安装补丁或测试时注入错误。当然 Uprobes 没有办法区分错误是故意注入的还是意外发生的。所以不要搞事情。</p>
-<!-- Since a return probe is implemented by replacing the return
-address with the trampoline's address, stack backtraces and calls
-to __builtin_return_address() will typically yield the trampoline's
-address instead of the real return address for uretprobed functions. -->
-<p>因为 return 探针是通过使用蹦床的地址替换 return 地址实现的，那么栈回溯和调用 <code>__builtin_return_address()</code> 产生的是蹦床的地址，而不是uretprobed 函数的实际 return 地址。</p>
-<!-- If the number of times a function is called does not match the
-number of times it returns (e.g., if a function exits via longjmp()),
-registering a return probe on that function may produce undesirable
-results. -->
-<p>如果函数调用的次数与 return 次数不匹配（例如：如果函数调用 <code>longjmp()</code> 退出），在这种函数上注册 return 探针，可能会产生不期望的结果。</p>
-<!-- When you register the first probe at probepoint or unregister the
-last probe probe at a probepoint, Uprobes asks Utrace to "`quiesce`"
-the probed process so that Uprobes can insert or remove the breakpoint
-instruction.  If the process is not already stopped, Utrace stops it.
-If the process is running an interruptible system call, this may cause
-the system call to finish early or fail with EINTR.  (The PTRACE_ATTACH
-request of the ptrace system call has this same limitation.) -->
-<p>当在探测点注册第一个探针或者注销最后一个探针的时候，Uprobes 要求 Utrace 去&quot;暂停&quot;目标进程，这样 Uprobes 就可以插入或者移除断点指令。如果进程还没有停止，Utrace 会停止它。如果进程正在运行一个可中断的系统调用，可能会让系统调用提早完成或失败而产生 <code>EINTR</code> 信号。（ptrace 系统调用的 <code>PTRACE_ATTACH</code> 请求有同样的问题。）</p>
-<!-- When Uprobes establishes a probepoint on a previous unprobed page
-of text, Linux creates a new copy of the page via its copy-on-write
-mechanism.  When probepoints are removed, Uprobes makes no attempt
-to `consolidate` identical copies of the same page.  This could affect
-memory availability if you probe many, many pages in many, many
-long-running processes. -->
-<p>当 Uprobes 在先前的未探测的页面上建立探测点的时候，Linux 会通过 <code>copy-on-write</code> 机制创建了这个页面的新副本。在移除探测点的时候，Uprobes 并不会尝试合并同一个页面的副本。如果探测在大量长时间运行的进程中探测大量的页面，会影响内存可用性。</p>
-<!-- ## Interoperation with Kprobes
-Uprobes is `intended` to interoperate usefully with Kprobes (see
-Documentation/kprobes.txt).  For example, an instrumentation module
-can make calls to both the Kprobes API and the Uprobes API. -->
-<h2 id="与-kprobes-交互">与 Kprobes 交互</h2>
-<p>Uprobes 打算与 Kprobes 进行有效的相互操作（见 <code>Documentation/kprobes.txt</code> 文件）。例如，检测模块可以同时调用 Kprobes API 和 Uprobes API。</p>
-<!-- A uprobe or uretprobe handler can register or unregister kprobes,
-jprobes, and kretprobes, as well as uprobes and uretprobes.  On the
-other hand, a kprobe, jprobe, or kretprobe handler must not sleep, and
-therefore cannot register or unregister any of these types of probes.
-(Ideas for removing this restriction are welcome.) -->
-<p>uprobe 或 uretprobe 回调函数可以注册或注销 kprobes、jprobes、kretprobes，以及 uprobes 和 uretprobes。另外，kprobe、jprobe、kretprobe 回调函数一定不能休眠，不然会无法注册或注销这些探针。（欢迎移除这种限制的想法）</p>
-<!-- Note that the overhead of a u[ret]probe hit is several times that of
-a k[ret]probe hit. -->
-<p>注意，命中 <code>u[ret]probe</code> 的开销是命中 <code>k[ret]probe</code> 的几倍。</p>
-<!-- ## Interoperation with Utrace
-As mentioned in Section 1.2, Uprobes is a client of Utrace.  For each
-probed thread, Uprobes establishes a Utrace engine, and registers
-callbacks for the following types of events: clone/fork, exec, exit,
-and "core-dump" signals (which include breakpoint traps).  Uprobes
-establishes this engine when the process is first probed, or when
-Uprobes is notified of the thread's creation, whichever comes first. -->
-<h2 id="与-utrace-交互">与 Utrace 交互</h2>
-<p>在&quot;Utrace 的作用&quot;章节中提到，Uprobes 是 Utrace 的客户端。Uprobes 为每个被探测的线程建立了一个 Utrace 引擎，及为 clone/fork, exec, exit, &ldquo;core-dump&rdquo; 信号（其包括断点陷阱）这类事件创建寄存器回调函数。Uprobes 是在进程首次被探测的时候创建引擎，或者在创建线程时通知，反正先到先处理。</p>
-<!-- An instrumentation module can use both the Utrace and Uprobes APIs (as
-well as Kprobes).  When you do this, keep the following facts in mind:
-- For a particular event, Utrace callbacks are called in the order in
-which the engines are established.  Utrace does not currently provide
-a mechanism for altering this order.
-- When Uprobes learns that a probed process has forked, it removes
-the breakpoints in the child process. -->
-<p>检测模块可以同时使用 Utrace 和 Uprobes APIs（以及 Kprobes）。这么做的时候，请记住下面的事情：</p>
-<ul>
-<li>对于特定的事件，Utrace 回调函数是按引擎的创建顺序调用的。目前 Utrace 没有机制来改变顺序。</li>
-<li>在 Uprobes 得知目标进程创建了子进程后，会在子进程中移除断点。</li>
-</ul>
-<!-- - When Uprobes learns that a probed process has exec-ed or exited,
-it `disposes of` its data structures for that process (first allowing
-any outstanding [un]registration operations to terminate). -->
-<ul>
-<li>在 Uprobes 得知目标进程已经执行或退出后，将会清理这个进程中的数据结构（先允许终止未完成的注销、注册操作）。</li>
-</ul>
-<!-- - When a probed thread hits a breakpoint or completes single-stepping
-of a probed instruction, engines with the UTRACE_EVENT(SIGNAL_CORE)
-flag set are notified.  The Uprobes signal callback prevents (via
-UTRACE_ACTION_HIDE) this event from being reported to engines later
-in the list.  But if your engine was established before Uprobes's,
-you will see this this event. -->
-<ul>
-<li>当目标线程命中断点或被探测指令单步执行完成的时候，通知已设置 <code>UTRACE_EVENT(SIGNAL_CORE)</code> 标记的引擎。Uprobes 信号回调函数防止（通过 <code>UTRACE_ACTION_HIDE</code>）这个事件，报告给在列表后面的引擎。但，如果你的引擎是在 Uprobes 的引擎之前创建的，还是会收到这个事件。</li>
-</ul>
-<!-- If you want to establish probes in a newly forked child, you can use
-the following `procedure`: -->
-<p>如果你想在新的子进程中创建探针，可以用以下办法：</p>
-<!-- - Register a report_clone callback with Utrace.  In this callback,
-the CLONE_THREAD flag distinguishes between the creation of a new
-thread vs. a new process. -->
-<ul>
-<li>用 Utrace 注册一个 <code>report_clone</code> 回调函数。在这个回调函数中，以 <code>CLONE_THREAD</code> 标记区分创建新线程还是进程。</li>
-</ul>
-<!-- - In your report_clone callback, call utrace_attach() to attach to
-the child process, and set the engine's UTRACE_ACTION_QUIESCE flag.
-The child process will `quiesce` at a point where it is ready to
-be probed. -->
-<ul>
-<li>在你的 <code>report_clone</code> 回调函数中，调用 <code>utrace_attach()</code> 附着到子进程，以及设置引擎的 <code>UTRACE_ACTION_QUIESCE</code> 标记。子进程将会停顿在准备要探测的位置。</li>
-</ul>
-<!-- - In your report_quiesce callback, register the desired probes.
-(Note that you cannot use the same probe object for both parent
-and child.  If you want to duplicate the probepoints, you must
-create a new set of u[ret]probe objects.) -->
-<ul>
-<li>在 <code>report_quiesce</code> 回调函数中，注册所需要的探针。（注意，不能对父子进程使用同一个探测对象。如果想要复制探测点，必须创建一个新的 <code>u[ret]probe</code> 对象集合。）</li>
-</ul>
-<!-- ## Probe Overhead
-// TODO: This is out of date.
-// TODO: Adjust as other architectures are tested.
-On a typical CPU in use in 2007, a uprobe hit takes about 3
-microseconds to process.  Specifically, a benchmark that hits the
-same probepoint repeatedly, firing a simple handler each time, reports
-300,000 to 350,000 hits per second, depending on the architecture.
-A return-probe hit typically takes 50% longer than a uprobe hit.
-When you have a return probe set on a function, adding a uprobe at
-the entry to that function adds essentially no overhead. -->
-<p>Here are sample overhead figures (in usec) for different architectures.</p>
-<h2 id="探针开销">探针开销</h2>
-<p>// TODO: 已经过时。<br />
-// TODO: 根据其他架构的测试整理。<br />
-在 2007 年常见的 CPU 上，处理 uprobe 命中大约需要3微秒的时间。基准测试反复命中相同的探测点，每次触发一个简单的处理程序，每秒报告 30w-35w 次命中，具体取决于架构。通常，return 探针命中比 uprobe 命中多花 50％ 的时间。当在某个函数上设置了 return 探针，会在该函数的入口处添加 uprobe ，本质上不会增加开销。</p>
-<p>下面是些不同架构的样本（纳秒）。</p>
-<pre><code>u = uprobe; r = return probe; ur = uprobe + return probe
-
-i386: Intel Pentium M, 1495 MHz, 2957.31 bogomips
-u = 2.9 usec; r = 4.7 usec; ur = 4.7 usec
-
-x86_64: AMD Opteron 246, 1994 MHz, 3971.48 bogomips
-// TODO
-
-ppc64: POWER5 (gr), 1656 MHz (SMT disabled, 1 virtual CPU per physical CPU)
-// TODO
-</code></pre><h2 id="todo">TODO</h2>
-<!-- * SystemTap (http://sourceware.org/systemtap): Provides a simplified
-programming interface for probe-based instrumentation.  SystemTap
-already supports kernel probes.  It could exploit Uprobes as well.
-* Support for other architectures. -->
-<ul>
-<li><a href="http://sourceware.org/systemtap">Systemtap</a>：基于探针的检测工具，提供简化的编程接口。SystemTap 已经支持内核探针。还可以利用 Uprobes 。</li>
-<li>支持其他 CPU 架构</li>
-</ul>
-<!-- ## Uprobes Team
-The following people have made major contributions to Uprobes: -->
-<h2 id="uprobes-团队">Uprobes 团队</h2>
-<p>下面的成员对 Uprobes 作出了主要的贡献：</p>
-<ul>
-<li>Jim Keniston - <a href="mailto:jkenisto@us.ibm.com">jkenisto@us.ibm.com</a></li>
-<li>Ananth Mavinakayanahalli - <a href="mailto:ananth@in.ibm.com">ananth@in.ibm.com</a></li>
-<li>Prasanna Panchamukhi - <a href="mailto:prasanna@in.ibm.com">prasanna@in.ibm.com</a></li>
-<li>Dave Wilder - <a href="mailto:dwilder@us.ibm.com">dwilder@us.ibm.com</a></li>
-</ul>
-<!-- ## Uprobes Example
-Here's a sample kernel module showing the use of Uprobes to count the
-number of times an instruction at a particular address is executed,
-and optionally (unless verbose=0) report each time it's executed. -->
-<h2 id="uprobes-例子">Uprobes 例子</h2>
-<p>这儿有份内核模块样本，展示 Uprobes 的用法，统计在特定地址的指令执行了多少次，以及可选的（除非 verbose=0）输出每次执行。</p>
+<p>两种情况的区别就是传输格式不同。single-range 的内容读到的就是实际内容。相反，读到 multi-rangs 的内容后还需要做一点点解码工作。当然这个解码工作其实非常简单，而现在 HTTP 非常流行，各种库或者框架应该都封装好了，应该也不用操心。</p>
+<h2 id="同源">同源</h2>
+<p>好在以前项目是基于非常旧的 1.2.x 的 nginx 源码的，而新的技术栈基于 openresty ，本质上是一样的。</p>
+<p>Nginx 的 range 模块是支持 <code>multi-ranges</code> 请求的，该模块在 body_filter 阶段把输出的内容按照 ranges 的范围进行重新拼装。不过目前只能对静态文件有效，并且其内容只能用一个 buf 来表示。</p>
+<p>Nginx 的 slice 模块支持了一种分片机制，与缓存机制同时使用会有比较好的效果，等于可以缓存资源的某个片段。启用这个特性之后，对于 nginx 内部来讲一个资源可就变成多个相互独立的资源了。Nginx 在加入 slice 模块的时候对 range  模块也做了相应的修改，不过只支持了 <code>single-range</code> 。</p>
+<p>我做调查的时候就在想，为啥当时不把 <code>multi-ranges</code> 一起给实现了呢？；使用的场景？没想出来；断点续传？也没有这样做续传的吧。</p>
+<p>目前的情况是，slice 好用，得开；有这类请求，得支持。</p>
+<h2 id="事前分析">事前分析</h2>
+<p>Nginx 作为代理，为了尽快让客户端得到反馈，设计了一个流式输出机制。这个机制可以把收到的 upstream 的数据同步发送给 downstream 。数据流必经之地就是 body_filter 阶段，想要对内容做手脚的模块就必须挂载到这个阶段。</p>
+<p>这个阶段最重要的参数就是 <code>ngx_chain_t</code> 对象，它是一个把 <code>ngx_buf_t</code> 串联起来的链表结构。每个 body_filter 实际上就是在调整这个链表的长度或者是修改 buf 的内容。</p>
+<p>Nginx 把输出内容的一些状态（什么时候没内容了）放到了 <code>ngx_buf_t</code> 结构体中，用位标记表示，实际在处理链表的时候，是要调整 buf 的标记位的。有个重要的标记：<code>buf-&gt;last_buf</code> ，其表示的就是链表中最后一个 buf ，不会再有内容了。</p>
+<p>再看看 range 模块，实际上就是在遍历链表，找到 start 所在的 buf，把不满足 start 的 buf 删除，再找到 end 所在的 buf ，设置 <code>buf-&gt;last_buf</code> 并把之后的节点删除。另外，遍历过程中，需要把迭代过的 buf 标记位重置，这是因为可能会有别的模块设置了，比如 slice 模块。</p>
+<p>再再看看 slice 模块加进来之后 range 模块有什么改动，对应的<a href="https://github.com/nginx/nginx/commit/8ba626ccd71cbd704c7c69928d1d6fe58fd0445f">提交</a>记录。这次提交最核心的地方就是 <code>ctx-&gt;offset = r-&gt;headers_out.content_offset;</code> 这行代码，这是表示了响应内容的偏移量。主要用途就是支持 slice 的分片请求，因为这种响应内容是从某个固定的偏移开始的，那 range 模块必须要知道是从哪里开始的。</p>
+<p>slice 还必须分析请求 HEADER 中的 Range ，以便知道应该从哪里开始，并把启始偏移量设置到 <code>r-&gt;headers_out.content_offset</code> ，这样 range 模块就知道上下文了。另外， slice 只是针对发送到上游的请求，所以无论 Range 的值是不是合法的，都会工作。对于不合法的 Range 由 range 模块来处理。</p>
+<p>slice 的实现利用了内部子请求机制。子请求对于模块来说与正常请求没什么不同，什么意思？意思是子请求也有输出链。会把一个请求拆成了多个子请求，并且按顺序发送给 upstream ，且所有的 body_filter 模块都会处理子请求的内容。<code>slice_header_filter</code> 会调整 <code>r-&gt;headers_out.content_offset</code> 的值；<code>range_body_filter</code> 会根据 <code>r-&gt;headers_out.content_offset</code> 来调整主请求和子请求的输出链。<code>slice_body_filter</code> 要对输出链内容需要做调整，就是把最后一个 buf 的 last_buf 标记清除了，不然会提前中止主请求。其他处理（拼接输出链）交给子请求的一个核心模块来处理（<code>postpone</code>）。</p>
+<p>*<em>slice 模块在主请求中调整偏移量</em></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt"> 1
@@ -2130,410 +1658,67 @@ and optionally (unless verbose=0) report each time it's executed. -->
 </span><span class="lnt">31
 </span><span class="lnt">32
 </span><span class="lnt">33
-</span><span class="lnt">34
-</span><span class="lnt">35
-</span><span class="lnt">36
-</span><span class="lnt">37
-</span><span class="lnt">38
-</span><span class="lnt">39
-</span><span class="lnt">40
-</span><span class="lnt">41
-</span><span class="lnt">42
-</span><span class="lnt">43
-</span><span class="lnt">44
-</span><span class="lnt">45
-</span><span class="lnt">46
-</span><span class="lnt">47
-</span><span class="lnt">48
-</span><span class="lnt">49
-</span><span class="lnt">50
-</span><span class="lnt">51
-</span><span class="lnt">52
-</span><span class="lnt">53
-</span><span class="lnt">54
-</span><span class="lnt">55
-</span><span class="lnt">56
-</span><span class="lnt">57
-</span><span class="lnt">58
-</span><span class="lnt">59
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="cm">/* uprobe_example.c */</span>
-<span class="cp">#include</span> <span class="cpf">&lt;linux/module.h&gt;</span><span class="cp">
-</span><span class="cp">#include</span> <span class="cpf">&lt;linux/kernel.h&gt;</span><span class="cp">
-</span><span class="cp">#include</span> <span class="cpf">&lt;linux/init.h&gt;</span><span class="cp">
-</span><span class="cp">#include</span> <span class="cpf">&lt;linux/uprobes.h&gt;</span><span class="cp">
-</span><span class="cp"></span>
-<span class="cm">/*
-</span><span class="cm"> * Usage: insmod uprobe_example.ko pid=&lt;pid&gt; vaddr=&lt;address&gt; [verbose=0]
-</span><span class="cm"> * where &lt;pid&gt; identifies the probed process and &lt;address&gt; is the virtual
-</span><span class="cm"> * address of the probed instruction.
-</span><span class="cm"> */</span>
+<pre class="chroma"><code class="language-c" data-lang="c">    <span class="n">r</span><span class="o">-&gt;</span><span class="n">headers_out</span><span class="p">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">NGX_HTTP_OK</span><span class="p">;</span>
+    <span class="n">r</span><span class="o">-&gt;</span><span class="n">headers_out</span><span class="p">.</span><span class="n">status_line</span><span class="p">.</span><span class="n">len</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">r</span><span class="o">-&gt;</span><span class="n">headers_out</span><span class="p">.</span><span class="n">content_length_n</span> <span class="o">=</span> <span class="n">cr</span><span class="p">.</span><span class="n">complete_length</span><span class="p">;</span> <span class="c1">// 整个内容的长度
+</span><span class="c1"></span>    <span class="n">r</span><span class="o">-&gt;</span><span class="n">headers_out</span><span class="p">.</span><span class="n">content_offset</span> <span class="o">=</span> <span class="n">cr</span><span class="p">.</span><span class="n">start</span><span class="p">;</span> <span class="c1">// content_offset 在 range 模块中使用
+</span><span class="c1"></span>    <span class="n">r</span><span class="o">-&gt;</span><span class="n">headers_out</span><span class="p">.</span><span class="n">content_range</span><span class="o">-&gt;</span><span class="n">hash</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">r</span><span class="o">-&gt;</span><span class="n">headers_out</span><span class="p">.</span><span class="n">content_range</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
 
-<span class="k">static</span> <span class="kt">int</span> <span class="n">pid</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-<span class="n">module_param</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
-<span class="n">MODULE_PARM_DESC</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="s">&#34;pid&#34;</span><span class="p">);</span>
+    <span class="p">.....</span>
 
-<span class="k">static</span> <span class="kt">int</span> <span class="n">verbose</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-<span class="n">module_param</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
-<span class="n">MODULE_PARM_DESC</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="s">&#34;verbose&#34;</span><span class="p">);</span>
+    <span class="n">rc</span> <span class="o">=</span> <span class="n">ngx_http_next_header_filter</span><span class="p">(</span><span class="n">r</span><span class="p">);</span>
 
-<span class="k">static</span> <span class="kt">long</span> <span class="n">vaddr</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-<span class="n">module_param</span><span class="p">(</span><span class="n">vaddr</span><span class="p">,</span> <span class="kt">long</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
-<span class="n">MODULE_PARM_DESC</span><span class="p">(</span><span class="n">vaddr</span><span class="p">,</span> <span class="s">&#34;vaddr&#34;</span><span class="p">);</span>
+	  <span class="cm">/* 跳过子请求，不需要计算 */</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">r</span> <span class="o">!=</span> <span class="n">r</span><span class="o">-&gt;</span><span class="n">main</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">rc</span><span class="p">;</span>
+    <span class="p">}</span>
 
-<span class="k">static</span> <span class="kt">int</span> <span class="n">nhits</span><span class="p">;</span>
-<span class="k">static</span> <span class="k">struct</span> <span class="n">uprobe</span> <span class="n">usp</span><span class="p">;</span>
+    <span class="cm">/* 主请求中对齐 range 请求的范围
+</span><span class="cm">     * content_offset 被 range 模块修改了，改成了请求实际需要的启始位置
+</span><span class="cm">     * content_length_n 被 range 模块修改成了实际需要的内容长度
+</span><span class="cm">     * 也因此这里需要重新校对一下 start 和 end，避免发送多余的子请求
+</span><span class="cm">     */</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">r</span><span class="o">-&gt;</span><span class="n">headers_out</span><span class="p">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">NGX_HTTP_PARTIAL_CONTENT</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">ctx</span><span class="o">-&gt;</span><span class="n">start</span> <span class="o">+</span> <span class="p">(</span><span class="n">off_t</span><span class="p">)</span> <span class="n">slcf</span><span class="o">-&gt;</span><span class="n">size</span> <span class="o">&lt;=</span> <span class="n">r</span><span class="o">-&gt;</span><span class="n">headers_out</span><span class="p">.</span><span class="n">content_offset</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">ctx</span><span class="o">-&gt;</span><span class="n">start</span> <span class="o">=</span> <span class="n">slcf</span><span class="o">-&gt;</span><span class="n">size</span>
+                         <span class="o">*</span> <span class="p">(</span><span class="n">r</span><span class="o">-&gt;</span><span class="n">headers_out</span><span class="p">.</span><span class="n">content_offset</span> <span class="o">/</span> <span class="n">slcf</span><span class="o">-&gt;</span><span class="n">size</span><span class="p">);</span>
+        <span class="p">}</span>
 
-<span class="k">static</span> <span class="kt">void</span> <span class="nf">uprobe_handler</span><span class="p">(</span><span class="k">struct</span> <span class="n">uprobe</span> <span class="o">*</span><span class="n">u</span><span class="p">,</span> <span class="k">struct</span> <span class="n">pt_regs</span> <span class="o">*</span><span class="n">regs</span><span class="p">)</span>
-<span class="p">{</span>
-	<span class="n">nhits</span><span class="o">++</span><span class="p">;</span>
-	<span class="k">if</span> <span class="p">(</span><span class="n">verbose</span><span class="p">)</span>
-		<span class="n">printk</span><span class="p">(</span><span class="n">KERN_INFO</span> <span class="s">&#34;Hit #%d on probepoint at %#lx</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span>
-			<span class="n">nhits</span><span class="p">,</span> <span class="n">u</span><span class="o">-&gt;</span><span class="n">vaddr</span><span class="p">);</span>
-<span class="p">}</span>
+        <span class="n">ctx</span><span class="o">-&gt;</span><span class="n">end</span> <span class="o">=</span> <span class="n">r</span><span class="o">-&gt;</span><span class="n">headers_out</span><span class="p">.</span><span class="n">content_offset</span>
+                   <span class="o">+</span> <span class="n">r</span><span class="o">-&gt;</span><span class="n">headers_out</span><span class="p">.</span><span class="n">content_length_n</span><span class="p">;</span>
 
-<span class="kt">int</span> <span class="n">__init</span> <span class="nf">init_module</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
-<span class="p">{</span>
-	<span class="kt">int</span> <span class="n">ret</span><span class="p">;</span>
-	<span class="n">usp</span><span class="p">.</span><span class="n">pid</span> <span class="o">=</span> <span class="n">pid</span><span class="p">;</span>
-	<span class="n">usp</span><span class="p">.</span><span class="n">vaddr</span> <span class="o">=</span> <span class="n">vaddr</span><span class="p">;</span>
-	<span class="n">usp</span><span class="p">.</span><span class="n">handler</span> <span class="o">=</span> <span class="n">uprobe_handler</span><span class="p">;</span>
-	<span class="n">printk</span><span class="p">(</span><span class="n">KERN_INFO</span> <span class="s">&#34;Registering uprobe on pid %d, vaddr %#lx</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span>
-		<span class="n">usp</span><span class="p">.</span><span class="n">pid</span><span class="p">,</span> <span class="n">usp</span><span class="p">.</span><span class="n">vaddr</span><span class="p">);</span>
-	<span class="n">ret</span> <span class="o">=</span> <span class="n">register_uprobe</span><span class="p">(</span><span class="o">&amp;</span><span class="n">usp</span><span class="p">);</span>
-	<span class="k">if</span> <span class="p">(</span><span class="n">ret</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-		<span class="n">printk</span><span class="p">(</span><span class="n">KERN_ERR</span> <span class="s">&#34;register_uprobe() failed, returned %d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">ret</span><span class="p">);</span>
-		<span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
-	<span class="p">}</span>
-	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-<span class="p">}</span>
-
-<span class="kt">void</span> <span class="n">__exit</span> <span class="nf">cleanup_module</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
-<span class="p">{</span>
-	<span class="n">printk</span><span class="p">(</span><span class="n">KERN_INFO</span> <span class="s">&#34;Unregistering uprobe on pid %d, vaddr %#lx</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span>
-		<span class="n">usp</span><span class="p">.</span><span class="n">pid</span><span class="p">,</span> <span class="n">usp</span><span class="p">.</span><span class="n">vaddr</span><span class="p">);</span>
-	<span class="n">printk</span><span class="p">(</span><span class="n">KERN_INFO</span> <span class="s">&#34;Probepoint was hit %d times</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">nhits</span><span class="p">);</span>
-	<span class="n">unregister_uprobe</span><span class="p">(</span><span class="o">&amp;</span><span class="n">usp</span><span class="p">);</span>
-<span class="p">}</span>
-<span class="n">MODULE_LICENSE</span><span class="p">(</span><span class="s">&#34;GPL&#34;</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="n">ctx</span><span class="o">-&gt;</span><span class="n">end</span> <span class="o">=</span> <span class="n">cr</span><span class="p">.</span><span class="n">complete_length</span><span class="p">;</span>
+    <span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
-</div><!-- You can build the kernel module, uprobe_example.ko, using the following Makefile: -->
-<p>你可以用下面的 Makefile 编译内核模块 <code>uprobe_example.ko</code>：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span><span class="lnt">8
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nv">obj-m</span> <span class="o">:=</span> uprobe_example.o
-<span class="nv">KDIR</span> <span class="o">:=</span> /lib/modules/<span class="k">$(</span>shell uname -r<span class="k">)</span>/build
-<span class="nv">PWD</span> <span class="o">:=</span> <span class="k">$(</span>shell <span class="nb">pwd</span><span class="k">)</span>
-<span class="nf">default</span><span class="o">:</span>
-	<span class="k">$(</span>MAKE<span class="k">)</span> -C <span class="k">$(</span>KDIR<span class="k">)</span> <span class="nv">SUBDIRS</span><span class="o">=</span><span class="k">$(</span>PWD<span class="k">)</span> modules
-<span class="nf">clean</span><span class="o">:</span>
-	rm -f *.mod.c *.ko *.o .*.cmd
-	rm -rf .tmp_versions
-</code></pre></td></tr></table>
-</div>
-</div><!-- For example, if you want to run myprog and monitor its calls to myfunc(),
-you can do the following: -->
-<p>例如，如果你想要运行 <code>myprog</code> ，然后监控 <code>myfunc()</code> 的调用情况，你可以这样做：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell">$ make			// Build the uprobe_example module.
-...
-$ nm -p myprog <span class="p">|</span> awk <span class="s1">&#39;$3==&#34;myfunc&#34;&#39;</span>
-080484a8 T myfunc
-$ ./myprog <span class="p">&amp;</span>
-$ ps
-  PID TTY          TIME CMD
- <span class="m">4367</span> pts/3    00:00:00 bash
- <span class="m">8156</span> pts/3    00:00:00 myprog
- <span class="m">8157</span> pts/3    00:00:00 ps
-$ su -
-...
-<span class="c1"># insmod uprobe_example.ko pid=8156 vaddr=0x080484a8</span>
-</code></pre></td></tr></table>
-</div>
-</div><!-- In /var/log/messages and on the console, you will see a message of the
-form "kernel: Hit #1 on probepoint at 0x80484a8" each time myfunc()
-is called.  To turn off probing, remove the module: -->
-<p>每次调用 <code>myfunc()</code> 函数，将会在 <code>/var/log/messages</code> 文件中和终端上，看到这种信息：&ldquo;kernel: Hit #1 on probepoint at 0x80484a8&rdquo;。要关闭探测，就移除模块：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># rmmod uprobe_example</span>
-</code></pre></td></tr></table>
-</div>
-</div><!-- In /var/log/messages and on the console, you will see a message of the
-form "Probepoint was hit 5 times". -->
-<p>将会在 <code>/var/log/messages</code> 文件中和终端上看见这种信息：&ldquo;Probepoint was hit 5 times&rdquo;。</p>
-<!-- ## Uretprobes Example
-Here's a sample kernel module showing the use of a return probe to
-report a function's return values. -->
-<h2 id="uretprobes-例子">Uretprobes 例子</h2>
-<p>这是展示 return 探针用法的内核模块样本，输出函数的返回值。</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span><span class="lnt">32
-</span><span class="lnt">33
-</span><span class="lnt">34
-</span><span class="lnt">35
-</span><span class="lnt">36
-</span><span class="lnt">37
-</span><span class="lnt">38
-</span><span class="lnt">39
-</span><span class="lnt">40
-</span><span class="lnt">41
-</span><span class="lnt">42
-</span><span class="lnt">43
-</span><span class="lnt">44
-</span><span class="lnt">45
-</span><span class="lnt">46
-</span><span class="lnt">47
-</span><span class="lnt">48
-</span><span class="lnt">49
-</span><span class="lnt">50
-</span><span class="lnt">51
-</span><span class="lnt">52
-</span><span class="lnt">53
-</span><span class="lnt">54
-</span><span class="lnt">55
-</span><span class="lnt">56
-</span><span class="lnt">57
-</span><span class="lnt">58
-</span><span class="lnt">59
-</span><span class="lnt">60
-</span><span class="lnt">61
-</span><span class="lnt">62
-</span><span class="lnt">63
-</span><span class="lnt">64
-</span><span class="lnt">65
-</span><span class="lnt">66
-</span><span class="lnt">67
-</span><span class="lnt">68
-</span><span class="lnt">69
-</span><span class="lnt">70
-</span><span class="lnt">71
-</span><span class="lnt">72
-</span><span class="lnt">73
-</span><span class="lnt">74
-</span><span class="lnt">75
-</span><span class="lnt">76
-</span><span class="lnt">77
-</span><span class="lnt">78
-</span><span class="lnt">79
-</span><span class="lnt">80
-</span><span class="lnt">81
-</span><span class="lnt">82
-</span><span class="lnt">83
-</span><span class="lnt">84
-</span><span class="lnt">85
-</span><span class="lnt">86
-</span><span class="lnt">87
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="cm">/* uretprobe_example.c */</span>
-<span class="cp">#include</span> <span class="cpf">&lt;linux/module.h&gt;</span><span class="cp">
-</span><span class="cp">#include</span> <span class="cpf">&lt;linux/kernel.h&gt;</span><span class="cp">
-</span><span class="cp">#include</span> <span class="cpf">&lt;linux/init.h&gt;</span><span class="cp">
-</span><span class="cp">#include</span> <span class="cpf">&lt;linux/uprobes.h&gt;</span><span class="cp">
-</span><span class="cp">#include</span> <span class="cpf">&lt;linux/ptrace.h&gt;</span><span class="cp">
-</span><span class="cp"></span>
-<span class="cm">/*
-</span><span class="cm"> * Usage:
-</span><span class="cm"> * insmod uretprobe_example.ko pid=&lt;pid&gt; func=&lt;addr&gt; [verbose=0]
-</span><span class="cm"> * where &lt;pid&gt; identifies the probed process, and &lt;addr&gt; is the virtual
-</span><span class="cm"> * address of the probed function.
-</span><span class="cm"> */</span>
+</div><h2 id="改进思路">改进思路</h2>
+<p>根据 slice 的实现分析，只处理了 single-range 的请求，那么要支持 multi-ranges 只需要把表示 range 的结构体变成数组就可行了吧？</p>
+<pre><code> HTTP/1.1 206 Partial Content
+ Date: Wed, 15 Nov 1995 06:25:24 GMT
+ Last-Modified: Wed, 15 Nov 1995 04:58:08 GMT
+ Content-Length: 1741
+ Content-Type: multipart/byteranges; boundary=THIS_STRING_SEPARATES
 
-<span class="k">static</span> <span class="kt">int</span> <span class="n">pid</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-<span class="n">module_param</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
-<span class="n">MODULE_PARM_DESC</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="s">&#34;pid&#34;</span><span class="p">);</span>
+ --THIS_STRING_SEPARATES
+ Content-Type: application/pdf
+ Content-Range: bytes 500-999/8000
 
-<span class="k">static</span> <span class="kt">int</span> <span class="n">verbose</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-<span class="n">module_param</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
-<span class="n">MODULE_PARM_DESC</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="s">&#34;verbose&#34;</span><span class="p">);</span>
+ ...the first range...
+ --THIS_STRING_SEPARATES
+ Content-Type: application/pdf
+ Content-Range: bytes 7000-7999/8000
 
-<span class="k">static</span> <span class="kt">long</span> <span class="n">func</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-<span class="n">module_param</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="kt">long</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
-<span class="n">MODULE_PARM_DESC</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s">&#34;func&#34;</span><span class="p">);</span>
-
-<span class="k">static</span> <span class="kt">int</span> <span class="n">ncall</span><span class="p">,</span> <span class="n">nret</span><span class="p">;</span>
-<span class="k">static</span> <span class="k">struct</span> <span class="n">uprobe</span> <span class="n">usp</span><span class="p">;</span>
-<span class="k">static</span> <span class="k">struct</span> <span class="n">uretprobe</span> <span class="n">rp</span><span class="p">;</span>
-
-<span class="k">static</span> <span class="kt">void</span> <span class="nf">uprobe_handler</span><span class="p">(</span><span class="k">struct</span> <span class="n">uprobe</span> <span class="o">*</span><span class="n">u</span><span class="p">,</span> <span class="k">struct</span> <span class="n">pt_regs</span> <span class="o">*</span><span class="n">regs</span><span class="p">)</span>
-<span class="p">{</span>
-	<span class="n">ncall</span><span class="o">++</span><span class="p">;</span>
-	<span class="k">if</span> <span class="p">(</span><span class="n">verbose</span><span class="p">)</span>
-		<span class="n">printk</span><span class="p">(</span><span class="n">KERN_INFO</span> <span class="s">&#34;Function at %#lx called</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">u</span><span class="o">-&gt;</span><span class="n">vaddr</span><span class="p">);</span>
-<span class="p">}</span>
-
-<span class="k">static</span> <span class="kt">void</span> <span class="nf">uretprobe_handler</span><span class="p">(</span><span class="k">struct</span> <span class="n">uretprobe_instance</span> <span class="o">*</span><span class="n">ri</span><span class="p">,</span>
-	<span class="k">struct</span> <span class="n">pt_regs</span> <span class="o">*</span><span class="n">regs</span><span class="p">)</span>
-<span class="p">{</span>
-	<span class="n">nret</span><span class="o">++</span><span class="p">;</span>
-	<span class="k">if</span> <span class="p">(</span><span class="n">verbose</span><span class="p">)</span>
-		<span class="n">printk</span><span class="p">(</span><span class="n">KERN_INFO</span> <span class="s">&#34;Function at %#lx returns %#lx</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span>
-			<span class="n">ri</span><span class="o">-&gt;</span><span class="n">rp</span><span class="o">-&gt;</span><span class="n">u</span><span class="p">.</span><span class="n">vaddr</span><span class="p">,</span> <span class="n">regs_return_value</span><span class="p">(</span><span class="n">regs</span><span class="p">));</span>
-<span class="p">}</span>
-
-<span class="kt">int</span> <span class="n">__init</span> <span class="nf">init_module</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
-<span class="p">{</span>
-	<span class="kt">int</span> <span class="n">ret</span><span class="p">;</span>
-
-	<span class="cm">/* Register the entry probe. */</span>
-	<span class="n">usp</span><span class="p">.</span><span class="n">pid</span> <span class="o">=</span> <span class="n">pid</span><span class="p">;</span>
-	<span class="n">usp</span><span class="p">.</span><span class="n">vaddr</span> <span class="o">=</span> <span class="n">func</span><span class="p">;</span>
-	<span class="n">usp</span><span class="p">.</span><span class="n">handler</span> <span class="o">=</span> <span class="n">uprobe_handler</span><span class="p">;</span>
-	<span class="n">printk</span><span class="p">(</span><span class="n">KERN_INFO</span> <span class="s">&#34;Registering uprobe on pid %d, vaddr %#lx</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span>
-		<span class="n">usp</span><span class="p">.</span><span class="n">pid</span><span class="p">,</span> <span class="n">usp</span><span class="p">.</span><span class="n">vaddr</span><span class="p">);</span>
-	<span class="n">ret</span> <span class="o">=</span> <span class="n">register_uprobe</span><span class="p">(</span><span class="o">&amp;</span><span class="n">usp</span><span class="p">);</span>
-	<span class="k">if</span> <span class="p">(</span><span class="n">ret</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-		<span class="n">printk</span><span class="p">(</span><span class="n">KERN_ERR</span> <span class="s">&#34;register_uprobe() failed, returned %d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">ret</span><span class="p">);</span>
-		<span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
-	<span class="p">}</span>
-
-	<span class="cm">/* Register the return probe. */</span>
-	<span class="n">rp</span><span class="p">.</span><span class="n">u</span><span class="p">.</span><span class="n">pid</span> <span class="o">=</span> <span class="n">pid</span><span class="p">;</span>
-	<span class="n">rp</span><span class="p">.</span><span class="n">u</span><span class="p">.</span><span class="n">vaddr</span> <span class="o">=</span> <span class="n">func</span><span class="p">;</span>
-	<span class="n">rp</span><span class="p">.</span><span class="n">handler</span> <span class="o">=</span> <span class="n">uretprobe_handler</span><span class="p">;</span>
-	<span class="n">printk</span><span class="p">(</span><span class="n">KERN_INFO</span> <span class="s">&#34;Registering return probe on pid %d, vaddr %#lx</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span>
-		<span class="n">rp</span><span class="p">.</span><span class="n">u</span><span class="p">.</span><span class="n">pid</span><span class="p">,</span> <span class="n">rp</span><span class="p">.</span><span class="n">u</span><span class="p">.</span><span class="n">vaddr</span><span class="p">);</span>
-	<span class="n">ret</span> <span class="o">=</span> <span class="n">register_uretprobe</span><span class="p">(</span><span class="o">&amp;</span><span class="n">rp</span><span class="p">);</span>
-	<span class="k">if</span> <span class="p">(</span><span class="n">ret</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-		<span class="n">printk</span><span class="p">(</span><span class="n">KERN_ERR</span> <span class="s">&#34;register_uretprobe() failed, returned %d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span>
-			<span class="n">ret</span><span class="p">);</span>
-		<span class="n">unregister_uprobe</span><span class="p">(</span><span class="o">&amp;</span><span class="n">usp</span><span class="p">);</span>
-		<span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
-	<span class="p">}</span>
-	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-<span class="p">}</span>
-
-<span class="kt">void</span> <span class="n">__exit</span> <span class="nf">cleanup_module</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
-<span class="p">{</span>
-	<span class="n">printk</span><span class="p">(</span><span class="n">KERN_INFO</span> <span class="s">&#34;Unregistering probes on pid %d, vaddr %#lx</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span>
-		<span class="n">usp</span><span class="p">.</span><span class="n">pid</span><span class="p">,</span> <span class="n">usp</span><span class="p">.</span><span class="n">vaddr</span><span class="p">);</span>
-	<span class="n">printk</span><span class="p">(</span><span class="n">KERN_INFO</span> <span class="s">&#34;%d calls, %d returns</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">ncall</span><span class="p">,</span> <span class="n">nret</span><span class="p">);</span>
-	<span class="n">unregister_uprobe</span><span class="p">(</span><span class="o">&amp;</span><span class="n">usp</span><span class="p">);</span>
-	<span class="n">unregister_uretprobe</span><span class="p">(</span><span class="o">&amp;</span><span class="n">rp</span><span class="p">);</span>
-<span class="p">}</span>
-<span class="n">MODULE_LICENSE</span><span class="p">(</span><span class="s">&#34;GPL&#34;</span><span class="p">);</span>
-</code></pre></td></tr></table>
-</div>
-</div><!-- Build the kernel module as shown in the above uprobe example. -->
-<p>像在上面的 uprobe 例子那样编译内核模块。</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell">$ nm -p myprog <span class="p">|</span> awk ‘<span class="nv">$3</span><span class="o">==</span><span class="s2">&#34;myfunc&#34;</span>’
-080484a8 T myfunc
-$ ./myprog <span class="p">&amp;</span>
-$ ps
-  PID TTY          TIME CMD
- <span class="m">4367</span> pts/3    00:00:00 bash
- <span class="m">9156</span> pts/3    00:00:00 myprog
- <span class="m">9157</span> pts/3    00:00:00 ps
-$ su -
-…
-<span class="c1"># insmod uretprobe_example.ko pid=9156 func=0x080484a8</span>
-</code></pre></td></tr></table>
-</div>
-</div><!-- In /var/log/messages and on the console, you will see messages such
-as the following: -->
-<p>在 <code>/var/log/messages</code> 文件中和终端上，会看到如下信息：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell">kernel: Function at 0x80484a8 called
-kernel: Function at 0x80484a8 returns 0x3
-</code></pre></td></tr></table>
-</div>
-</div><!-- To turn off probing, remove the module: -->
-<p>移除模块关闭探测：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># rmmod uretprobe_example</span>
-</code></pre></td></tr></table>
-</div>
-</div><!-- In /var/log/messages and on the console, you will see a message of the
-form "73 calls, 73 returns". -->
-<p>在 <code>/var/log/messages</code> 文件中和终端上，会看到信息：&ldquo;73 calls, 73 returns&rdquo;。</p>
+ ...the second range
+ --THIS_STRING_SEPARATES--
+</code></pre><p>multi-ranges 与 single-range 不同点在于对内容的封装格式，而响应 HEADER 是事先在 range_header_filter 阶段就准备好了的，后面发送就好。要实现，意味着需要记录 multi-ranges 中每个 range 的处理状态，未处理、处理了一半、已处理？。</p>
+<p>nginx 支持的 multi-ranges 非常灵活，Range 内容可以是 <code>-10, 10-, 0-10</code> 这种。加上 slice 之后 body_filter 阶段得到的输出链，可能只包含一点内容。</p>
+<p>这就要 slice 模块根据 Range 值的顺序发起子请求，等某个 range 的内容满足之后，重置状态，再处理下一个，直到结束。range 模块实际也要按照相同的逻辑来处理，另外还要考虑内容封装的逻辑。</p>
+<p>其实还可以考虑把 range 合并，这样发送给 upstream 的请求会少一些，不过这会让 range 模块的实现复杂一点。</p>
+<p>摸一摸几个层次的上下文之后，想法是不是自然会出现？</p>
 
     </article>
     
@@ -2592,45 +1777,19 @@ form "73 calls, 73 returns". -->
     <section class="related">
     
     
-    <h1 class="related__title">
-      <hr class="hr-dots"/>
-      <div>
-        See Also
-      </div>
-      <hr class="hr-dots"/>
-    </h1>
-    <ul class="related-ul">
-        
-        <li>
-          <a href="/public/posts/trace/kernel-kprobes/" class="related__link">译｜2019｜Kernel Probes (Kprobes)</a>
-        </li>
-        
-        <li>
-          <a href="/public/posts/trace/an-introduction-to-kprobes/" class="related__link">译｜2005｜ An Introduction to Kprobes</a>
-        </li>
-        
-    </ul>
-    
   </section>
     <div class="grow"></div>
 <nav class="pagination-single">
   
     
-      <a href="https://jayce.github.io/public/posts/trace/kernel-kprobes/" class="pagination-single__left">
+      <a href="https://jayce.github.io/public/posts/trace/linux-tracing-system-fit-together/" class="pagination-single__left">
         <div class="pagination-single__icon">
           <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0V0z"/><path fill="currentColor" d="M19 11H7.83l4.88-4.88c.39-.39.39-1.03 0-1.42-.39-.39-1.02-.39-1.41 0l-6.59 6.59c-.39.39-.39 1.02 0 1.41l6.59 6.59c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L7.83 13H19c.55 0 1-.45 1-1s-.45-1-1-1z"/></svg>
         </div>
-        <div class="pagination-single__left-title">译｜2019｜Kernel Probes (Kprobes)</div>      
+        <div class="pagination-single__left-title">译｜2017｜Linux 追踪系统&amp;如何组合在一起的</div>      
       </a>
     
     <div class="grow"></div>
-    
-      <a href="https://jayce.github.io/public/posts/trace/linux-tracing-system-fit-together/" class="pagination-single__right">      
-        <div class="pagination-single__right-title">译｜2017｜Linux 追踪系统&amp;如何组合在一起的</div>
-        <div class="pagination-single__icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0V0z"/><path fill="currentColor" d="M5 13h11.17l-4.88 4.88c-.39.39-.39 1.03 0 1.42.39.39 1.02.39 1.41 0l6.59-6.59c.39-.39.39-1.02 0-1.41l-6.58-6.6c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41L16.17 11H5c-.55 0-1 .45-1 1s.45 1 1 1z"/></svg>
-        </div>
-      </a>
     
   
 </nav>
@@ -2988,34 +2147,11 @@ document.addEventListener('DOMContentLoaded', function () {
   <div class="toc " data-dir="ltr" data-folding="false" data-ani="true">
     <nav id="TableOfContents">
   <ul>
-    <li><a href="#译者序">译者序</a></li>
-    <li><a href="#概念uprobesreturn-探针">概念：Uprobes、Return 探针</a>
-      <ul>
-        <li><a href="#uprobe-是怎么工作的">Uprobe 是怎么工作的？</a></li>
-        <li><a href="#utrace-的作用">Utrace 的作用</a></li>
-        <li><a href="#return-探针怎么工作的">Return 探针怎么工作的？</a></li>
-        <li><a href="#多线程应用">多线程应用</a></li>
-        <li><a href="#探针回调函数內注册探针">探针回调函数內注册探针</a></li>
-      </ul>
-    </li>
-    <li><a href="#已支持的-cpu-架构">已支持的 CPU 架构</a></li>
-    <li><a href="#配置-uprobes">配置 Uprobes</a></li>
-    <li><a href="#api-参考">API 参考</a>
-      <ul>
-        <li><a href="#register_uprobe">register_uprobe</a></li>
-        <li><a href="#register_uretprobe">register_uretprobe</a></li>
-        <li><a href="#unregister_probe">unregister_*probe</a></li>
-        <li><a href="#延迟注册回调">延迟注册回调</a></li>
-      </ul>
-    </li>
-    <li><a href="#uprobes-功能与限制">Uprobes 功能与限制</a></li>
-    <li><a href="#与-kprobes-交互">与 Kprobes 交互</a></li>
-    <li><a href="#与-utrace-交互">与 Utrace 交互</a></li>
-    <li><a href="#探针开销">探针开销</a></li>
-    <li><a href="#todo">TODO</a></li>
-    <li><a href="#uprobes-团队">Uprobes 团队</a></li>
-    <li><a href="#uprobes-例子">Uprobes 例子</a></li>
-    <li><a href="#uretprobes-例子">Uretprobes 例子</a></li>
+    <li><a href="#起因">起因</a></li>
+    <li><a href="#术语">术语</a></li>
+    <li><a href="#同源">同源</a></li>
+    <li><a href="#事前分析">事前分析</a></li>
+    <li><a href="#改进思路">改进思路</a></li>
   </ul>
 </nav>
   </div>

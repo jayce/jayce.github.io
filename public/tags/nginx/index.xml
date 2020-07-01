@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" 
+  xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+  xmlns:dc="http://purl.org/dc/elements/1.1/" 
+  xmlns:atom="http://www.w3.org/2005/Atom" 
+  xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" 
+  xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title>nginx on Blog</title>
+    <link>https://jayce.github.io/public/tags/nginx/</link>
+    <description>Recent content in nginx on Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>©{year}, All Rights Reserved</copyright>
+    <lastBuildDate>Wed, 01 Jul 2020 12:09:15 +0800</lastBuildDate>
+    
+        <atom:link href="https://jayce.github.io/public/tags/nginx/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    
+
+      
+      <item>
+        <title>Nginx Slice 模块支持 multi-ranges</title>
+        <link>https://jayce.github.io/public/posts/nginx/multi-ranges-with-slice/</link>
+        <pubDate>Wed, 01 Jul 2020 12:09:15 +0800</pubDate>
+        
+        <atom:modified>Wed, 01 Jul 2020 12:09:15 +0800</atom:modified>
+        <guid>https://jayce.github.io/public/posts/nginx/multi-ranges-with-slice/</guid>
+        <description>起因 起因是对一个旧项目的技术更迭。这种项目的初期，自然是要花了很长的时间来做调研。因为都是 HTTP 协议，可以先抓包观察请求和响应的内容，从中找到异</description>
+        
+        <dc:creator>jayce</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>nginx</category>
+            
+          
+        
+        
+        
+      </item>
+      
+
+    
+  </channel>
+</rss>
