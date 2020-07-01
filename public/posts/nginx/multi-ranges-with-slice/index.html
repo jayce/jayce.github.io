@@ -1622,7 +1622,7 @@
 <p>再再看看 slice 模块加进来之后 range 模块有什么改动，对应的<a href="https://github.com/nginx/nginx/commit/8ba626ccd71cbd704c7c69928d1d6fe58fd0445f">提交</a>记录。这次提交最核心的地方就是 <code>ctx-&gt;offset = r-&gt;headers_out.content_offset;</code> 这行代码，这是表示了响应内容的偏移量。主要用途就是支持 slice 的分片请求，因为这种响应内容是从某个固定的偏移开始的，那 range 模块必须要知道是从哪里开始的。</p>
 <p>slice 还必须分析请求 HEADER 中的 Range ，以便知道应该从哪里开始，并把启始偏移量设置到 <code>r-&gt;headers_out.content_offset</code> ，这样 range 模块就知道上下文了。另外， slice 只是针对发送到上游的请求，所以无论 Range 的值是不是合法的，都会工作。对于不合法的 Range 由 range 模块来处理。</p>
 <p>slice 的实现利用了内部子请求机制。子请求对于模块来说与正常请求没什么不同，什么意思？意思是子请求也有输出链。会把一个请求拆成了多个子请求，并且按顺序发送给 upstream ，且所有的 body_filter 模块都会处理子请求的内容。<code>slice_header_filter</code> 会调整 <code>r-&gt;headers_out.content_offset</code> 的值；<code>range_body_filter</code> 会根据 <code>r-&gt;headers_out.content_offset</code> 来调整主请求和子请求的输出链。<code>slice_body_filter</code> 要对输出链内容需要做调整，就是把最后一个 buf 的 last_buf 标记清除了，不然会提前中止主请求。其他处理（拼接输出链）交给子请求的一个核心模块来处理（<code>postpone</code>）。</p>
-<p>*<em>slice 模块在主请求中调整偏移量</em></p>
+<p><strong>slice 模块在主请求中调整偏移量</strong></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt"> 1
@@ -1715,10 +1715,10 @@
  ...the second range
  --THIS_STRING_SEPARATES--
 </code></pre><p>multi-ranges 与 single-range 不同点在于对内容的封装格式，而响应 HEADER 是事先在 range_header_filter 阶段就准备好了的，后面发送就好。要实现，意味着需要记录 multi-ranges 中每个 range 的处理状态，未处理、处理了一半、已处理？。</p>
-<p>nginx 支持的 multi-ranges 非常灵活，Range 内容可以是 <code>-10, 10-, 0-10</code> 这种。加上 slice 之后 body_filter 阶段得到的输出链，可能只包含一点内容。</p>
-<p>这就要 slice 模块根据 Range 值的顺序发起子请求，等某个 range 的内容满足之后，重置状态，再处理下一个，直到结束。range 模块实际也要按照相同的逻辑来处理，另外还要考虑内容封装的逻辑。</p>
-<p>其实还可以考虑把 range 合并，这样发送给 upstream 的请求会少一些，不过这会让 range 模块的实现复杂一点。</p>
-<p>摸一摸几个层次的上下文之后，想法是不是自然会出现？</p>
+<p>nginx 支持的 multi-ranges 非常灵活，Range 内容可以是 <code>-10, 10-, 0-10</code> 这种。加上 slice 之后 body_filter 阶段得到的输出链，可能只包含一点内容，不够一个 range 。</p>
+<p>这就要 slice 模块根据 Range 值的顺序发起子请求，等某个 range 的内容满足之后，重置状态，再处理下一个，直到结束。range 模块实际也要按照相同的逻辑来处理，只需要保证处理完一个 range 之后，把剩余 buf 内容清掉，另外还要考虑内容封装的逻辑，这部分内容实际也会写入 buf 。</p>
+<p>其实还可以考虑把 range 合并，这样发送给 upstream 的请求会少一些，不过这会让 range 模块的实现变得复杂。</p>
+<p>摸一摸几个层次的上下文之后，想法是不是会自然的浮现？</p>
 
     </article>
     

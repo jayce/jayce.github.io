@@ -70,7 +70,7 @@ slice 还必须分析请求 HEADER 中的 Range ，以便知道应该从哪里�
 
 slice 的实现利用了内部子请求机制。子请求对于模块来说与正常请求没什么不同，什么意思？意思是子请求也有输出链。会把一个请求拆成了多个子请求，并且按顺序发送给 upstream ，且所有的 body_filter 模块都会处理子请求的内容。`slice_header_filter` 会调整 `r->headers_out.content_offset` 的值；`range_body_filter` 会根据 `r->headers_out.content_offset` 来调整主请求和子请求的输出链。`slice_body_filter` 要对输出链内容需要做调整，就是把最后一个 buf 的 last_buf 标记清除了，不然会提前中止主请求。其他处理（拼接输出链）交给子请求的一个核心模块来处理（`postpone`）。
 
-**slice 模块在主请求中调整偏移量*
+**slice 模块在主请求中调整偏移量**
 ```c
     r->headers_out.status = NGX_HTTP_OK;
     r->headers_out.status_line.len = 0;
@@ -132,10 +132,10 @@ slice 的实现利用了内部子请求机制。子请求对于模块来说与�
 
 multi-ranges 与 single-range 不同点在于对内容的封装格式，而响应 HEADER 是事先在 range_header_filter 阶段就准备好了的，后面发送就好。要实现，意味着需要记录 multi-ranges 中每个 range 的处理状态，未处理、处理了一半、已处理？。
 
-nginx 支持的 multi-ranges 非常灵活，Range 内容可以是 `-10, 10-, 0-10` 这种。加上 slice 之后 body_filter 阶段得到的输出链，可能只包含一点内容。
+nginx 支持的 multi-ranges 非常灵活，Range 内容可以是 `-10, 10-, 0-10` 这种。加上 slice 之后 body_filter 阶段得到的输出链，可能只包含一点内容，不够一个 range 。
 
-这就要 slice 模块根据 Range 值的顺序发起子请求，等某个 range 的内容满足之后，重置状态，再处理下一个，直到结束。range 模块实际也要按照相同的逻辑来处理，另外还要考虑内容封装的逻辑。
+这就要 slice 模块根据 Range 值的顺序发起子请求，等某个 range 的内容满足之后，重置状态，再处理下一个，直到结束。range 模块实际也要按照相同的逻辑来处理，只需要保证处理完一个 range 之后，把剩余 buf 内容清掉，另外还要考虑内容封装的逻辑，这部分内容实际也会写入 buf 。
 
-其实还可以考虑把 range 合并，这样发送给 upstream 的请求会少一些，不过这会让 range 模块的实现复杂一点。
+其实还可以考虑把 range 合并，这样发送给 upstream 的请求会少一些，不过这会让 range 模块的实现变得复杂。
 
-摸一摸几个层次的上下文之后，想法是不是自然会出现？
+摸一摸几个层次的上下文之后，想法是不是会自然的浮现？
