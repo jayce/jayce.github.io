@@ -12,7 +12,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>©{year}, All Rights Reserved</copyright>
-    <lastBuildDate>Wed, 01 Jul 2020 12:09:15 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 17 Jul 2020 14:35:10 +0800</lastBuildDate>
     
         <atom:link href="https://jayce.github.io/public/index.xml" rel="self" type="application/rss+xml" />
     
@@ -22,6 +22,38 @@
       
       
 
+      
+      <item>
+        <title>为什么没有 debuginfo-xxx.rpm ？</title>
+        <link>https://jayce.github.io/public/posts/misc/why-no-debuginfo-rpm/</link>
+        <pubDate>Fri, 17 Jul 2020 14:35:10 +0800</pubDate>
+        
+        <atom:modified>Fri, 17 Jul 2020 14:35:10 +0800</atom:modified>
+        <guid>https://jayce.github.io/public/posts/misc/why-no-debuginfo-rpm/</guid>
+        <description>CentOS7 默认情况下，用 rpmbuild 命令制作 RPM 包，还会额外自动生成一个 debuginfo 的 RPM 包，无需多做配置。这个 debuginfo 包很有用， GDB、Systemtap 等调试工具都需要它，没</description>
+        
+        <dc:creator>jayce</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>rpmbuild</category>
+            
+          
+        
+        
+          
+            
+          
+        
+        
+          
+            
+          
+        
+      </item>
       
       <item>
         <title>Nginx Slice 模块支持 multi-ranges</title>
