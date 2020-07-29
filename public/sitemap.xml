@@ -4,7 +4,22 @@
   
   <url>
     <loc>https://jayce.github.io/public/</loc>
-    <lastmod>2020-07-17T14:35:10+08:00</lastmod>
+    <lastmod>2020-07-29T11:32:53+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jayce.github.io/public/tags/nginx/</loc>
+    <lastmod>2020-07-29T11:32:53+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jayce.github.io/public/posts/nginx/the-problem-with-using-slice/</loc>
+    <lastmod>2020-07-29T11:32:53+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jayce.github.io/public/tags/</loc>
+    <lastmod>2020-07-29T11:32:53+08:00</lastmod>
   </url>
   
   <url>
@@ -13,18 +28,8 @@
   </url>
   
   <url>
-    <loc>https://jayce.github.io/public/tags/</loc>
-    <lastmod>2020-07-17T14:35:10+08:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://jayce.github.io/public/posts/misc/why-no-debuginfo-rpm/</loc>
     <lastmod>2020-07-17T14:35:10+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://jayce.github.io/public/tags/nginx/</loc>
-    <lastmod>2020-07-01T12:09:15+08:00</lastmod>
   </url>
   
   <url>

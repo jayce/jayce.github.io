@@ -34,7 +34,7 @@ A kernel probe is a set of handlers placed on a certain instruction address. The
 -->
 kernel probe（内核探针）是一组位于某个指令地址上的处理函数。到目前为止，内核中有两种类型的探针，称作 “KProbes” 和 “JProbes”。 KProbe 由 `pre-handler` 和 `post-handler` 定义。 当 KProbe 被安装到一个特定的指令上，且指令被执行的时候， `pre-handler` 会在这之前执行。同样， `post-handler` 会在这个指令之后执行。 JProbes 用用于在运行时访问内核函数的参数。 JProbe 由 JProbe 处理函数定义，函数原型与要读取的参数的函数相同。当被探测的函数要被执行的时候，控制权会先转移到用户定义的 JProbe 处理函数，之后再将执行权转移到原始函数。 KProbes 软件包是以扩展它自身来构建用于试、追踪、记录的工具而设计的。
 
-{{<img src="/images/KProbes/2A58CF5D-4FB6-4B42-8D43-7CB0EC634691.png" width="350px" height="350px" >}}
+{{<img src="/images/trace/2A58CF5D-4FB6-4B42-8D43-7CB0EC634691.png" width="350px" height="350px" >}}
 
 <!--
 The figure to the right describes the architecture of KProbes. On the x86, KProbes `makes use of` the exception handling mechanisms and modifies the standard breakpoint, debug and a few other exception handlers for its own purpose. Most of the handling of the probes is done in the context of the breakpoint and the debug exception handlers which `make up` the KProbes architecture dependent layer. The KProbes architecture independent layer is the KProbes manager which is used to register and unregister probes. Users provide probe handlers in kernel modules which register probes through the KProbes manager.
@@ -170,7 +170,7 @@ The steps involved in handling a probe are architecture dependent; they are hand
 -->
 ## 命中 KProbe 的时候发生了什么？
 
-{{<img src="/images/KProbes/791B014B-E5A8-4D43-B2EB-66C08B701B17.png" width="550px" height="350px" >}}
+{{<img src="/images/trace/791B014B-E5A8-4D43-B2EB-66C08B701B17.png" width="550px" height="350px" >}}
 
 以上涉及处理探针的步骤都是架构相关的，由 `arch/i386/kernel/kprobes.c` 文件中定义的函数来处理。注册探针后，那些处于激活状态的地址包含了 breakpoint 指令（在 x86 上是 int3）。一旦执行到被探测的地址就会执行 int3 指令，也因此控制权会转到 `arch/i386/kernel/traps.c` 文件中的 `do_int3()` 函数。 `do_int3()` 是通过中断门调用的，所以在控制权转到这里的时候中断是被禁用的。这个函数会通知 KProbes 产生了一个中断， KProbes 会检查中断是不是由 KProbes 的注册函数设置的。如果命中的探测地址上没有探针，只会返回 `0`。相反，它会调用已注册的探针函数。
 
@@ -179,7 +179,7 @@ The steps involved in handling a probe are architecture dependent; they are hand
 A JProbe has to transfer control to another function which has the same prototype as the function on which the probe was placed and then give back control to the original function with the same state as there was before the JProbe was executed. A JProbe `leverages` the mechanism used by a KProbe. Instead of calling a user-defined pre-handler a JProbe specifies its own pre-handler called setjmp_pre_handler() and uses another handler called a break_handler. This is a three-step process.
 -->
 ## 命中 JProbe 的时候发生了什么？
-{{<img src="/images/KProbes/490E7DE1-867E-4CBE-B75E-D9476BDA6C2E.png" width="550px" height="350px" >}}
+{{<img src="/images/trace/490E7DE1-867E-4CBE-B75E-D9476BDA6C2E.png" width="550px" height="350px" >}}
 
 JProbe 必须将控制权转移到另外一个函数，这函数的原型与放置探针的函数相同，然后再将控制权交给原始函数，状态与执行 JProbe 之前相同。JProbe 利用了 KProbe 使用的机制。 JProbe 不是调用用户定义的 `pre-handler` ，而是指定自己的 `pre-handler` ，名为 `setjmp_pre_handler()` ，而且使用了另外一个称为 `break_handler` 的函数。这过程有三个步骤。
 

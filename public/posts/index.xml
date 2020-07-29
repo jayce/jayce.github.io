@@ -21,6 +21,38 @@
 
       
       <item>
+        <title>Nginx Slice 带来的问题</title>
+        <link>https://jayce.github.io/public/posts/nginx/the-problem-with-using-slice/</link>
+        <pubDate>Wed, 29 Jul 2020 11:32:53 +0800</pubDate>
+        
+        <atom:modified>Wed, 29 Jul 2020 11:32:53 +0800</atom:modified>
+        <guid>https://jayce.github.io/public/posts/nginx/the-problem-with-using-slice/</guid>
+        <description>Range &amp;amp; Update 通常，使用 HTTP 协议下载一个文件，如果文件很大，差不多 1G，下载器会同时发送多个带 Range 的请求，并行的下载文件的不同片段，等到所有片段下载完成</description>
+        
+        <dc:creator>jayce</dc:creator>
+        
+        
+        
+        
+          
+            
+              <category>nginx</category>
+            
+          
+        
+        
+          
+            
+          
+        
+        
+          
+            
+          
+        
+      </item>
+      
+      <item>
         <title>为什么没有 debuginfo-xxx.rpm ？</title>
         <link>https://jayce.github.io/public/posts/misc/why-no-debuginfo-rpm/</link>
         <pubDate>Fri, 17 Jul 2020 14:35:10 +0800</pubDate>

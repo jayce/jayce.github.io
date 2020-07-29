@@ -12,7 +12,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>©{year}, All Rights Reserved</copyright>
-    <lastBuildDate>Fri, 17 Jul 2020 14:35:10 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 29 Jul 2020 11:32:53 +0800</lastBuildDate>
     
         <atom:link href="https://jayce.github.io/public/tags/index.xml" rel="self" type="application/rss+xml" />
     
@@ -21,12 +21,12 @@
 
       
       <item>
-        <title>rpmbuild</title>
-        <link>https://jayce.github.io/public/tags/rpmbuild/</link>
-        <pubDate>Fri, 17 Jul 2020 14:35:10 +0800</pubDate>
+        <title>nginx</title>
+        <link>https://jayce.github.io/public/tags/nginx/</link>
+        <pubDate>Wed, 29 Jul 2020 11:32:53 +0800</pubDate>
         
         
-        <guid>https://jayce.github.io/public/tags/rpmbuild/</guid>
+        <guid>https://jayce.github.io/public/tags/nginx/</guid>
         <description></description>
         
         <dc:creator>jayce</dc:creator>
@@ -39,12 +39,12 @@
       </item>
       
       <item>
-        <title>nginx</title>
-        <link>https://jayce.github.io/public/tags/nginx/</link>
-        <pubDate>Wed, 01 Jul 2020 12:09:15 +0800</pubDate>
+        <title>rpmbuild</title>
+        <link>https://jayce.github.io/public/tags/rpmbuild/</link>
+        <pubDate>Fri, 17 Jul 2020 14:35:10 +0800</pubDate>
         
         
-        <guid>https://jayce.github.io/public/tags/nginx/</guid>
+        <guid>https://jayce.github.io/public/tags/rpmbuild/</guid>
         <description></description>
         
         <dc:creator>jayce</dc:creator>
