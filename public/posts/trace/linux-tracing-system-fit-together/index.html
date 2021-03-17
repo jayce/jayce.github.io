@@ -18,9 +18,9 @@
 
 <script defer src="/public/js/lazysizes.min.fb649fcae62177dfe63e67081ddceb830b5ce1f05a4184e9bbb7d87ac4b8f4e5.js"></script>
 
-<script defer src="/public/js/helper/getParents.min.1618c696be7c98933f9a92677f518b512a74e55bdbb976b09936b4182e93181b.js"></script>
+<script defer src="/public/js/helper/getParents.min.ccd45f158c1b17849307ba913a72beac239c410f2b6e648496a79842da84e55b.js"></script>
 
-<script defer src="/public/js/helper/fadeinout.min.efa35f4c090622130b3f4cfae6971448b5ffb61c5f0a8f21cdfd157fa712abc4.js"></script>
+<script defer src="/public/js/helper/fadeinout.min.1d13d3e810c3940e80cbba6216a1c76fbf42b5431fc83537ea6997863802362b.js"></script>
 
 <script defer src="/public/js/helper/closest.min.js"></script>
   
@@ -1341,7 +1341,7 @@
 <meta property="og:type" content="article">
 <meta property="og:description" content="">
 
-<meta name="generator" content="Hugo 0.68.3" />
+<meta name="generator" content="Hugo 0.81.0" />
 <meta name="msapplication-TileColor" content="#fff">
 
 <meta name="theme-color" content="#fff">
@@ -1676,7 +1676,7 @@
 I’ve been confused about Linux tracing systems for *years*. There’s strace, and ltrace, kprobes, and tracepoints, and uprobes, and ftrace, and perf, and eBPF, and how does it all fit together and what does it all MEAN? -->
 <p>我对于 Linux 追踪系统一直很困惑，有好几年了。strace、ltrace、kprobes、tracepoints、uprobes、ftrace、perf、eBPF，它们怎么串联在一起的，又有什么意义呢？</p>
 <!-- Last week I went to Papers We Love and later me & Kamal hung out with [Suchakra](https://twitter.com/tuxology) at [Polytechnique Montréal](http://www.dorsal.polymtl.ca/) (where LTTng comes from) and finally I think I understand how all these pieces fit together, more or less. There are still probably some mistakes in this post, please let me know what they are! (I’m b0rk on twitter). -->
-<p>上周，我去了&rdquo;<a href="https://paperswelove.org/">Papers We Love</a>&quot;<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>，后来我 &amp; Kamal 到<a href="http://www.dorsal.polymtl.ca/">蒙特利尔理工大学</a>（LTTng 项目开始的地方）与 <a href="https://twitter.com/tuxology">Suchakra</a> 一起出去玩，终于我想我理解了所有的这些部件是如何组合在一起的了，或多或少吧。不过，在这篇文章中依然会有一些错误，如果发现了请让我知道！（twitter ID：b0rk）。</p>
+<p>上周，我去了&quot;<a href="https://paperswelove.org/">Papers We Love</a>&quot;<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>，后来我 &amp; Kamal 到<a href="http://www.dorsal.polymtl.ca/">蒙特利尔理工大学</a>（LTTng 项目开始的地方）与 <a href="https://twitter.com/tuxology">Suchakra</a> 一起出去玩，终于我想我理解了所有的这些部件是如何组合在一起的了，或多或少吧。不过，在这篇文章中依然会有一些错误，如果发现了请让我知道！（twitter ID：b0rk）。</p>
 <!-- I’m going to leave strace out of this post (even though it’s my favorite thing) because the overhead is so high – in this post we’re only going to talk about tracing systems that are relatively fast / low overhead. This post also isn’t about sampling `profilers` at all (which is a whole other topic!). Just tracing. -->
 <p>这篇文章我要把 strace 抛开（它是我最喜欢的工具），因为开销太高了 - 在这篇文章中我们只会讨论相对高效/低开销的追踪系统。这篇文章也不是关于样本采集器的（这是另外一个主题！）。只是追踪。</p>
 <!-- The thing I learned last week that helped me really understand was – you can split linux tracing systems into **data sources** (where the tracing data comes from), **mechanisms for collecting data for those sources** (like "ftrace") and **tracing frontends** (the tool you actually interact with to collect/analyse data). The overall picture is still kind of `fragmented` and confusing, but it’s at least a more `approachable` fragmented/confusing system. -->
@@ -1760,7 +1760,7 @@ A few different kinds of things you might want to trace:
 <li>系统调用</li>
 <li>Linux 内核函数调用（TCP 栈中的哪个函数正在被调用？）</li>
 <li>用户空间函数调用（<code>malloc</code> 被调用了吗？）</li>
-<li>在用户空间或是内核空间自定义的&quot;事件&rdquo;</li>
+<li>在用户空间或是内核空间自定义的&quot;事件&quot;</li>
 </ul>
 <!-- All of these things are possible, but `it turns out` the tracing `landscape` is actually pretty complicated. -->
 <p>以上所有事情都是可能的，不过追踪环境实际上是非常复杂的。</p>
@@ -1773,7 +1773,7 @@ Okay, let’s do data sources! This is kind of the most fun part – there are s
 <!-- A **probe** is when the kernel dynamically modifies your assembly program at runtime (like, it changes the instructions) in order to enable tracing. This is super powerful (and kind of scary!) because you can enable a probe on literally any instruction in the program you’re tracing. (though dtrace probes aren’t "probes" in this sense). Kprobes and uprobes are examples of this pattern. -->
 <p>&ldquo;probe&rdquo; 是一种机制，内核可以在运行时修改你的汇编程序（类似，改变指令）来开启追踪。这点非常强大（有点可怕！），因为可以在你追踪的程序任意指令上启用一个 probe。（不过 dtrace probes 不是这种形式的 &ldquo;probes&rdquo;）。Kprobes 和 uprobes 就是这种形式的例子。</p>
 <!-- A **tracepoint** is something you compile into your program. When someone using your program wants to see when that tracepoint is hit and extract data, they can "enable" or "activate" the tracepoint to start using it. Generally a tracepoint in this sense doesn’t cause any extra overhead when it’s not activated, and is relatively low overhead when it is activated. USDT ("dtrace probes"), lttng-ust, and kernel tracepoints are all examples of this pattern. -->
-<p>&ldquo;tracepoint&rdquo; 是一种编译到你的程序中的东西。当使用程序的人，想要看看 tracepoint 什么时候命中及提取数据的时候，他们可以先&quot;启用&quot;或&quot;激活&rdquo; tracepoint 。通常，在 tracepoint 没有被激活的时候不会产生任何额外的开销，甚至在它被激活的时候开销也是相当的低。USDT（&ldquo;dtrace probes&rdquo;）、lttng-ust 、kernel tracepoints 它们都是这种模式的例子。</p>
+<p>&ldquo;tracepoint&rdquo; 是一种编译到你的程序中的东西。当使用程序的人，想要看看 tracepoint 什么时候命中及提取数据的时候，他们可以先&quot;启用&quot;或&quot;激活&quot; tracepoint 。通常，在 tracepoint 没有被激活的时候不会产生任何额外的开销，甚至在它被激活的时候开销也是相当的低。USDT（&ldquo;dtrace probes&rdquo;）、lttng-ust 、kernel tracepoints 它们都是这种模式的例子。</p>
 <h3 id="kprobes">kprobes</h3>
 <!-- Next up is kprobes! What’s that? [From an LWN article](https://lwn.net/Articles/132196/): -->
 <p>接下来是 kprobes！那是什么？下面这段话来自 <a href="https://lwn.net/Articles/132196/">LWN 的一篇文章</a>:</p>
@@ -1847,7 +1847,7 @@ Tracing uprobe readline <span class="o">(</span>r:readline /bin/bash:0x9a520 +0<
 </div>
 </div><h3 id="usdtdtrace-probes">USDT/dtrace probes</h3>
 <!-- USDT `stands for` "Userland Statically Defined Tracing", and "USDT probe" means the same thing as "dtrace probe" (which was surprising to me!). You might have heard of dtrace on BSD/Solaris, but you can actually also use dtrace probes on Linux, though the system is different. It’s basically a way to expose custom events. For example! [Python 3 has dtrace probes](https://docs.python.org/3/howto/instrumentation.html), if you compile it right. -->
-<p>USDT 全称为&quot;用户级静态定义的追踪&rdquo;，&ldquo;USDT 探针&rdquo; 和 &ldquo;dtrace 探针&quot;是一个东西（有点出乎我的意料！）。你也许已经听过 BSD/Solaris 上 dtrace，其实你也能在 Linux 上用 dtrace 探针。其实，它是一种暴露自定义事件的方法。举个例子，假如你编译正确的话， <a href="https://docs.python.org/3/howto/instrumentation.html">Python 3 是有 dtrace 探针的</a>。</p>
+<p>USDT 全称为&quot;用户级静态定义的追踪&quot;，&ldquo;USDT 探针&rdquo; 和 &ldquo;dtrace 探针&quot;是一个东西（有点出乎我的意料！）。你也许已经听过 BSD/Solaris 上 dtrace，其实你也能在 Linux 上用 dtrace 探针。其实，它是一种暴露自定义事件的方法。举个例子，假如你编译正确的话， <a href="https://docs.python.org/3/howto/instrumentation.html">Python 3 是有 dtrace 探针的</a>。</p>
 <p><code>python.function.entry(str filename, str funcname, int lineno, frameptr)</code></p>
 <!-- This means that if you have a tool that can consume dtrace probes, (like eBPF / systemtap), and a version of Python compiled with dtrace support, you can automagically trace Python function calls. That’s really cool! (though this is a little bit of an "if" – not all Pythons are compiled with dtrace support, and the version of Python I have in Ubuntu 16.04 doesn’t seem to be) -->
 <p>如果有一个能够消费 dtrace 探针的工具（例如： eBPF/systemtap），和支持 dtrace 的 Python 版本，你就可以自动的追踪 Python 函数调用。很棒对吧！（然而这是一种&quot;假设&rdquo;————并不是所有编译的 Python 都支持 dtrace 探针的，在 Ubuntu 16.04 中的 Python 就不支持）</p>
@@ -2264,6 +2264,7 @@ I’m really excited that now I (mostly) understand how all these pieces fit tog
   
 </script>
     
+
     
     
 
@@ -2366,7 +2367,7 @@ I’m really excited that now I (mostly) understand how all these pieces fit tog
 </div>
 
 
-<script defer src="/public/js/swipe.min.b4b82839155519d9ca67746615a4c86ccbc1061c196fe6d8aa26e4fe22902718.js"></script>
+<script defer src="/public/js/swipe.min.989e074dfb92ce7f57a92c1df7027f88b53c50a54fd9ad450a673a64aa91bfa4.js"></script>
 
 <script defer src="/public/js/micromodal.min.de01b44b2f383056bbcaf6ee921fd385d79108ec1129afd0eb2f3f5a07e11f45.js"></script>
 
@@ -2776,6 +2777,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
+
 <script defer src="/public/js/helper/getParents.min.js"></script>
 
 <script defer src="/public/js/helper/closest.min.js"></script>
@@ -2785,6 +2787,42 @@ document.addEventListener('DOMContentLoaded', function () {
 <script defer src="/public/js/helper/prop.min.js"></script>
 
 <script defer src="/public/js/helper/fadeinout.min.js"></script>
+
+<script defer src="/public/js/helper/throttle.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2968,6 +3006,23 @@ document.addEventListener('DOMContentLoaded', function () {
       }) : null;
     }
     
+    
+    
+    
+    
+    var topOffset = 120;
+    var botOffset = 70;
+    var handleWindowResize = function () {
+      if (tocElem) {
+        tocElem.style.maxHeight = (window.innerHeight - topOffset - botOffset) + 'px';
+      }
+    }
+    var throttledWindowResize = throttle(handleWindowResize, 300);
+    throttledWindowResize()
+
+    
+    window.addEventListener('resize', throttledWindowResize);
+    
 
 
 
@@ -2986,7 +3041,7 @@ document.addEventListener('DOMContentLoaded', function () {
       var newElemOuter = document.createElement('span');
       newElemOuter.classList.add('anchor');
       newElemOuter.classList.add('hide');
-      newElemOuter.setAttribute('data-clipboard-text', link);
+      newElemOuter.setAttribute('data-clipboard-text', decodeURI(link));
       newElemOuter.style.position = 'relative';
 
       var newElemInner = document.createElement('span');
@@ -3328,7 +3383,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 
             <p class="caption">
                 
-                    ©2020, All Rights Reserved
+                    ©2021, All Rights Reserved
                 
             </p>
         
